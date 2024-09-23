@@ -6,49 +6,49 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("")
-public class DemoController {
+public class HomeController {
 	@GetMapping("index")
 	public String index() {
-		return "demo/index";
+		return "home/index";
 	}
 	
 	@GetMapping("about")
 	public String about() {
-		return "demo/about";
+		return "home/about";
 	}
 	
 	@GetMapping("contact")
 	public String contact() {
-		return "demo/contact";
+		return "home/contact";
 	}
 	
 	@GetMapping("service")
 	public String service() {
-		return "demo/service";
+		return "home/service";
 	}
 	
 	@GetMapping("industries")
 	public String industries() {
-		return "demo/industries";
+		return "home/industries";
 	}
 	
 	@GetMapping("blog")
 	public String blog() {
-		return "demo/blog/blog";
+		return "home/blog/blog";
 	}
 	
 	@GetMapping("blog-1")
 	public String blog1() {
-		return "demo/blog/blog-1";
+		return "home/blog/blog-1";
 	}
 	
 	@GetMapping("career")
 	public String career() {
-		return "demo/career/career";
+		return "home/career/career";
 	}
 	
 	@GetMapping("career-1")
 	public String career1() {
-		return "demo/career/career-1";
+		return "home/career/career-1";
 	}
 } 	
