@@ -1,14 +1,14 @@
 package net.codejava.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class EmployeeContractSchedule {
     private int scheduleId;
     private int contractDetailId; 
-    private Date workDate;
-    private String startTime;
-    private String endTime;
-    private int hoursWorked;
+    private int workDate;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private LocalDateTime hoursWorked;
     private int status;
 
     
@@ -24,28 +24,28 @@ public class EmployeeContractSchedule {
     public void setContractDetailId(int contractDetailId) { 
     	this.contractDetailId = contractDetailId;
     	}
-    public Date getWorkDate() {
+    public int getWorkDate() {
     	return workDate; 
     	}
-    public void setWorkDate(Date workDate) { 
+    public void setWorkDate(int workDate) { 
     	this.workDate = workDate; 
     	}
-    public String getStartTime() {
+    public LocalDateTime getStartTime() {
     	return startTime; 
     	}
-    public void setStartTime(String startTime) { 
+    public void setStartTime(LocalDateTime startTime) { 
     	this.startTime = startTime; 
     	}
-    public String getEndTime() { 
+    public LocalDateTime getEndTime() { 
     	return endTime;
     	}
-    public void setEndTime(String endTime) {
+    public void setEndTime(LocalDateTime endTime) {
     	this.endTime = endTime;
     	}
-    public int getHoursWorked() { 
+    public LocalDateTime getHoursWorked() { 
     	return hoursWorked; 
     	}
-    public void setHoursWorked(int hoursWorked) { 
+    public void setHoursWorked(LocalDateTime hoursWorked) { 
     	this.hoursWorked = hoursWorked; 
     	}
     public int getStatus() { 

@@ -1,15 +1,15 @@
 package net.codejava.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class SalaryProposals {
     private int proposalId;
     private int employeeId; 
     private int proposedSalary;
-    private Date fromDate;
-    private Date toDate;
+    private int fromDate;
+    private int toDate;
     private int approvalStatus;
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     
     public int getProposalId() { 
@@ -30,16 +30,16 @@ public class SalaryProposals {
     public void setProposedSalary(int proposedSalary) {
     	this.proposedSalary = proposedSalary;
     	}
-    public Date getFromDate() {
+    public int getFromDate() {
     	return fromDate; 
     	}
-    public void setFromDate(Date fromDate) { 
+    public void setFromDate(int fromDate) { 
     	this.fromDate = fromDate; 
     	}
-    public Date getToDate() { 
+    public int getToDate() { 
     	return toDate; 
     	}
-    public void setToDate(Date toDate) { 
+    public void setToDate(int toDate) { 
     	this.toDate = toDate; 
     	}
     public int getApprovalStatus() { 
@@ -48,10 +48,10 @@ public class SalaryProposals {
     public void setApprovalStatus(int approvalStatus) {
     	this.approvalStatus = approvalStatus; 
     	}
-    public Date getCreatedAt() { 
+    public LocalDateTime getCreatedAt() { 
     	return createdAt; 
     	}
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
     	this.createdAt = createdAt;
     	}
 }

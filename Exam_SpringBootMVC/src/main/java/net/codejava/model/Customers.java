@@ -1,5 +1,6 @@
 package net.codejava.model;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Customers {
@@ -11,7 +12,7 @@ public class Customers {
     private String address;
     private String profileImage;
     private int status;
-    private Date createdAt;
+    private LocalDateTime createdAt;
     private String verifyCode;
     private String token;
 
@@ -79,11 +80,11 @@ public class Customers {
     	this.status = status; 
     	}
     
-    public Date getCreatedAt() { 
+    public LocalDateTime getCreatedAt() { 
     	return createdAt; 
     	}
     
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
     	this.createdAt = createdAt; 
     	}
     

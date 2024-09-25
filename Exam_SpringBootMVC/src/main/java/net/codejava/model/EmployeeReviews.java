@@ -1,13 +1,13 @@
 package net.codejava.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
-public class EmployeeReview {
+public class EmployeeReviews {
     private int reviewId;
     private int contractDetailId; 
     private int rating;
     private String comment;
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     
     public int getReviewId() { 
@@ -34,10 +34,10 @@ public class EmployeeReview {
     public void setComment(String comment) { 
     	this.comment = comment; 
     	}
-    public Date getCreatedAt() { 
+    public LocalDateTime getCreatedAt() { 
     	return createdAt;
     	}
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
     	this.createdAt = createdAt; 
     	}
 }

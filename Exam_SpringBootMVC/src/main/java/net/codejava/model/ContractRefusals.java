@@ -1,14 +1,14 @@
 package net.codejava.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class ContractRefusals {
     private int refusalId;
     private int contractDetailId; 
     private String refusalReason;
     private int status;
-    private Date refusalDate;
-    private Date createdAt;
+    private LocalDateTime refusalDate;
+    private LocalDateTime createdAt;
 
     
     public int getRefusalId() { 
@@ -35,16 +35,16 @@ public class ContractRefusals {
     public void setStatus(int status) { 
     	this.status = status;
     	}
-    public Date getRefusalDate() { 
+    public LocalDateTime getRefusalDate() { 
     	return refusalDate; 
     	}
-    public void setRefusalDate(Date refusalDate) { 
+    public void setRefusalDate(LocalDateTime refusalDate) { 
     	this.refusalDate = refusalDate;
     	}
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
     	return createdAt; 
     	}
-    public void setCreatedAt(Date createdAt) { 
+    public void setCreatedAt(LocalDateTime createdAt) { 
     	this.createdAt = createdAt;
     	}
 }

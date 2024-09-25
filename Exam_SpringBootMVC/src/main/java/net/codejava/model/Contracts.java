@@ -1,6 +1,6 @@
 package net.codejava.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class Contracts {
     private int contractId;
@@ -8,7 +8,7 @@ public class Contracts {
     private int contractStatus;
     private int totalPrice;
     private int paymentStatus;
-    private Date createdAt;
+    private LocalDateTime createdAt;
     private String contractFile;
 
 
@@ -53,11 +53,11 @@ public class Contracts {
     	this.paymentStatus = paymentStatus; 
     }
     
-    public Date getCreatedAt() { 
+    public LocalDateTime getCreatedAt() { 
     	return createdAt; 
     }
     
-    public void setCreatedAt(Date createdAt) { 
+    public void setCreatedAt(LocalDateTime createdAt) { 
     	this.createdAt = createdAt; 
     }
     

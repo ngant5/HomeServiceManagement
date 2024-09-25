@@ -1,6 +1,6 @@
 package net.codejava.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class ContractDetails {
     private int contractDetailId;
@@ -8,8 +8,8 @@ public class ContractDetails {
     private int empServiceId; 
     private String serviceAddress;
     private String servicePhone;
-    private Date startDate;
-    private Date endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     private int status;
     private int hoursWorked;
     private int totalPrice;
@@ -47,16 +47,16 @@ public class ContractDetails {
     public void setServicePhone(String servicePhone) { 
     	this.servicePhone = servicePhone; 
     	}
-    public Date getStartDate() { 
+    public LocalDateTime getStartDate() { 
     	return startDate; 
     	}
-    public void setStartDate(Date startDate) { 
+    public void setStartDate(LocalDateTime startDate) { 
     	this.startDate = startDate;
     	}
-    public Date getEndDate() {
+    public LocalDateTime getEndDate() {
     	return endDate; 
     	}
-    public void setEndDate(Date endDate) { 
+    public void setEndDate(LocalDateTime endDate) { 
     	this.endDate = endDate;
     	}
     public int getStatus() { 
