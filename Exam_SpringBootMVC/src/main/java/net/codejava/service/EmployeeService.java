@@ -69,7 +69,7 @@ public class EmployeeService {
         employeeRepository.saveUser(employee);
         
         // Send verification email
-        emailService.sendVerificationEmail(employee, siteURL);
+        emailService.sendVerificationEmailforEmployees(employee, siteURL);
         
         return employee;
     }

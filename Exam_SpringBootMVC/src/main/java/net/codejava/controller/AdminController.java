@@ -66,8 +66,6 @@ public class AdminController {
                 switch (employee.getUserType().toUpperCase()) {
                     case "ADMIN":
                         return "redirect:/admin/dashboard";
-                    case "MANAGER":
-                        return "redirect:/manager/dashboard";
                     case "EMPLOYEE":
                         return "redirect:/employee/dashboard";
                     default:

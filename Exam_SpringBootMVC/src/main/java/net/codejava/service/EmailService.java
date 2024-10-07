@@ -19,7 +19,7 @@ public class EmailService {
         String fromAddress = "ank138795@gmail.com"; // Replace with your email
         String senderName = "Aptech";
         String subject = "Please verify your registration";
-        String verifyURL = siteURL + "/admin/verify?code=" + employee.getVerifyCode();
+        String verifyURL = siteURL + "/employee/verify?code=" + employee.getVerifyCode();
 
         String content = "Dear " + employee.getFullname() + ",\n\n"
                 + "Thank you for registering. Please click the link below to verify your email address:\n"

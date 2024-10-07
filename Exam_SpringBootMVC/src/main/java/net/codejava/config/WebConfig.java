@@ -1,7 +1,8 @@
 package net.codejava.config;
 
 import net.codejava.interceptor.AdminInterceptor;
-import net.codejava.interceptor.LoginInterceptor;
+import net.codejava.interceptor.CustomerInterceptor;
+import net.codejava.interceptor.EmployeeInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;
 
@@ -10,35 +11,44 @@ public class WebConfig implements WebMvcConfigurer {
     
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // Đăng ký LoginInterceptor cho tất cả các đường dẫn trừ các đường dẫn ngoại lệ
-        registry.addInterceptor(new LoginInterceptor())
-                .excludePathPatterns(
-                        "/admin/login",
-                        "/admin/chklogin",
-                        "/admin/register",
-                        "/admin/register/**",
-                        "/admin/verify",
-                        "/css/**",
-                        "/js/**",
-                        "/images/**",
-                        "/error"
-                );
-        
-        // Đăng ký AdminInterceptor cho các đường dẫn admin trừ các đường dẫn ngoại lệ
+        registry.addInterceptor(new CustomerInterceptor())
+            .addPathPatterns("/customer/**")
+            .excludePathPatterns(
+                "/customer/login",
+                "/customer/chklogin",
+                "/customer/register",
+                "/customer/register/**",
+                "/customer/verify",
+                "/css/**",
+                "/js/**",
+                "/images/**",
+                "/error"
+            );
+
         registry.addInterceptor(new AdminInterceptor())
-                .addPathPatterns("/admin/**")
-                .excludePathPatterns(
-                        "/admin/login",
-                        "/admin/chklogin",
-                        "/admin/register",
-                        "/admin/register/**",
-                        "/admin/verify"
-                );
+            .addPathPatterns("/admin/**")
+            .excludePathPatterns(
+                "/admin/login",
+                "/admin/chklogin",
+                "/admin/register",
+                "/admin/register/**",
+                "/admin/verify"
+            );
+
+
+        registry.addInterceptor(new EmployeeInterceptor())
+            .addPathPatterns("/employee/**")
+            .excludePathPatterns(
+                "/employee/login",
+                "/employee/chklogin",
+                "/employee/register",
+                "/employee/register/**",
+                "/employee/verify"
+            );
     }
-    
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Cấu hình các tài nguyên tĩnh (CSS, JS, Images)
         registry.addResourceHandler("/css/**")
                 .addResourceLocations("classpath:/static/css/");
         registry.addResourceHandler("/js/**")

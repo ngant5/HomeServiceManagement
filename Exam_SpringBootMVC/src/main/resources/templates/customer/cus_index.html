@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Profile</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <h1>Welcome to Your Profile</h1>
+    <p>Hello, <span th:text="${session.customer.fullname}">Customer</span>!</p>
+    <ul>
+        <li><a th:href="@{/customer/register}">Register A New Account</a></li>
+        <!-- Thêm các liên kết quản lý khác tại đây -->
+        <li><a th:href="@{/customer/logout}">Logout</a></li>
+    </ul>
+</body>
+</html>
