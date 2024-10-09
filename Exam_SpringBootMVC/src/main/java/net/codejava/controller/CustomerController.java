@@ -67,11 +67,12 @@ public class CustomerController {
 
             } else {
                 logger.error("Password check failed for user: " + email);
+                return "redirect:/customer/login?error=wrongPassword"; 
             }
         } else {
             logger.error("User not found: " + email);
+            return "redirect:/customer/login?error=wrongPassword"; 
         }
-        return "redirect:/customer/login?error=true";
     }
 
 
@@ -92,6 +93,9 @@ public class CustomerController {
                                @RequestParam("status") int status,
                                HttpServletRequest request) {
 
+    	if (customerService.findByEmail(email) != null) {
+            return "redirect:/customer/register?error=emailExists"; 
+        }
         
         Customers newCustomer = new Customers();
         newCustomer.setFullname(fullname);
@@ -131,4 +135,45 @@ public class CustomerController {
         model.addAttribute("message", "Your account has been verified. You can now log in.");
         return "customer/cus_verify"; 
     }
+    
+ // Lấy thông tin khách hàng
+    @GetMapping("/info")
+    public String getCustomerInfo(HttpServletRequest request, Model model) {
+        HttpSession session = request.getSession();
+        Customers customer = (Customers) session.getAttribute("customer");
+
+        if (customer != null) {
+            Customers customerInfo = customerService.getCustomerInfo(customer.getCustomerId());
+            model.addAttribute("customerInfo", customerInfo);
+            return "customer/cus_info"; // Chỉ định view để hiển thị thông tin
+        }
+        return "redirect:/customer/login"; // Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
+    }
+
+    // Cập nhật thông tin khách hàng
+    @PostMapping("/update")
+    public String updateCustomerInfo(@ModelAttribute("customerInfo") Customers customerInfo, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Customers currentCustomer = (Customers) session.getAttribute("customer");
+
+        if (currentCustomer != null) {
+            customerInfo.setCustomerId(currentCustomer.getCustomerId()); 
+            logger.info("Updating customer info: " + customerInfo);
+            if (customerService.updateCustomerInfo(customerInfo)) {
+                session.setAttribute("customer", customerInfo); 
+                return "redirect:/customer/info?updateSuccess=true"; 
+            }
+        }
+        return "redirect:/customer/info?updateError=true"; 
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate(); 
+        }
+        return "redirect:/customer/login"; 
+    }
+
 }

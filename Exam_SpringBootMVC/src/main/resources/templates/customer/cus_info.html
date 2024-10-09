@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Customer Info</title>
+</head>
+<body>
+    <h1>Customer Information</h1>
+    <form action="#" th:action="@{/customer/update}" method="post">
+        <label for="fullname">Full Name:</label>
+        <input type="text" id="fullname" name="fullname" th:value="${customerInfo.fullname}" required />
+        <br/>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" th:value="${customerInfo.email}" required />
+        <br/>
+
+        <label for="phone">Phone:</label>
+        <input type="text" id="phone" name="phone" th:value="${customerInfo.phone}" />
+        <br/>
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" th:value="${customerInfo.address}" />
+        <br/>
+
+        <button type="submit">Update Info</button>
+    </form>
+    <br/>
+    <div>
+        <p th:if="${param.updateSuccess}">Update successful!</p>
+        <p th:if="${param.updateError}">Error updating information.</p>
+    </div>
+    <br/>
+    <div>
+        <a th:href="@{/customer/index}" style="margin-right: 10px;">Back to Index</a>
+        <a th:href="@{/customer/logout}">Logout</a>
+    </div>
+</body>
+</html>

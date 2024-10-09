@@ -4,8 +4,11 @@ import net.codejava.model.Employees;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -135,10 +138,53 @@ public class EmployeeRepository {
             employee.getEmployeeId()
         );
     }
+    
+    public Optional<Employees> findByToken(String token) {
+        String sql = "SELECT * FROM Employees WHERE token = ?";
+        
+        List<Employees> employees = jdbcTemplate.query(sql, new Object[]{token}, new RowMapper<Employees>() {
+            @Override
+            public Employees mapRow(ResultSet rs, int rowNum) throws SQLException {
+                Employees employee = new Employees();
+                employee.setEmployeeId(rs.getInt("employee_id"));
+                employee.setFullname(rs.getString("fullname"));
+                employee.setPassword(rs.getString("password"));
+                employee.setUserType(rs.getString("user_type"));
+                employee.setEmail(rs.getString("email"));
+                employee.setPhone(rs.getString("phone"));
+                employee.setAddress(rs.getString("address"));
+                employee.setProfileImage(rs.getString("profile_image"));
+                employee.setExperienceYears(rs.getInt("experience_years"));
+                employee.setSalary(rs.getInt("salary"));
+                employee.setStatus(rs.getInt("status"));
+                employee.setVerifyCode(rs.getString("verify_code"));
+                employee.setToken(rs.getString("token"));
+                employee.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                return employee;
+            }
+        });
+
+        if (employees.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(employees.get(0));
+    }
 
     // Delete employee by ID
     public int deleteById(int id) {
         String sql = "DELETE FROM Employees WHERE employee_id = ?";
         return jdbcTemplate.update(sql, id);
     }
+    
+    public Employees findByContractId(int contractId) {
+        String sql = "SELECT e.* FROM Employees e " +
+                     "JOIN Contracts c ON e.employee_id = c.employee_id " +
+                     "WHERE c.contract_id = ?";
+        return jdbcTemplate.queryForObject(
+            sql,
+            new Object[]{contractId},
+            new BeanPropertyRowMapper<>(Employees.class)
+        );
+    }
+
 }
