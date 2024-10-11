@@ -1,6 +1,7 @@
 package net.codejava.controller;
 
 import net.codejava.model.Customers;
+import net.codejava.model.Employees;
 import net.codejava.service.CustomerService;
 import net.codejava.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -175,5 +176,102 @@ public class CustomerController {
         }
         return "redirect:/customer/login"; 
     }
+    
+    @GetMapping("/change-password")
+    public String changePasswordForm(Model model, HttpSession session) {
+        Customers customer = (Customers) session.getAttribute("customer");
+        if (customer == null) {
+            return "redirect:/customer/login"; 
+        }
+        model.addAttribute("customer", customer);
+        return "customer/cus_change_password"; 
+    }
+
+    
+    @PostMapping("/change-password")
+    public String changePassword(@RequestParam("currentPassword") String currentPassword,
+                                 @RequestParam("newPassword") String newPassword,
+                                 @RequestParam("confirmPassword") String confirmPassword,
+                                 HttpSession session, Model model) {
+    	Customers customer = (Customers) session.getAttribute("customer");
+        
+        if (customer == null) {
+            return "redirect:/customer/login";
+        }
+
+        
+        if (!newPassword.equals(confirmPassword)) {
+            model.addAttribute("error", "New passwords do not match.");
+            return "customer/cus_change_password";
+        }
+
+        
+        boolean success = customerService.changePassword(customer, currentPassword, newPassword);
+
+        if (success) {
+            model.addAttribute("message", "Password changed successfully.");
+            return "customer/index"; 
+        } else {
+            model.addAttribute("error", "Current password is incorrect.");
+            return "customer/cus_change_password";
+        }
+    }
+    
+    @GetMapping("/forgot-password")
+    public String showForgotPasswordForm() {
+        return "customer/cus_forgot_password"; 
+    }
+
+    // Handle forgot password submission
+    @PostMapping("/forgot-password")
+    public String handleForgotPassword(@RequestParam("email") String email, HttpServletRequest request) {
+        String siteURL = ServletUriComponentsBuilder.fromRequestUri(request)
+                .replacePath(null)
+                .build()
+                .toUriString();
+
+        customerService.generateResetToken(email, siteURL);
+        
+        return "redirect:/customer/forgot-password?sent=true"; // Redirect to confirm the email was sent
+    }
+    
+ // Show reset password form
+    @GetMapping("/reset-password")
+    public String showResetPasswordForm(@RequestParam("token") String token, Model model) {
+        Customers customer = customerService.findByResetToken(token);
+
+        if (customer == null) {
+            model.addAttribute("message", "Invalid or expired reset token.");
+            return "customer/cus_reset_password"; // Create this view
+        }
+
+        model.addAttribute("token", token); // Pass the token to the form
+        return "customer/cus_reset_password";
+    }
+
+    // Handle reset password submission
+    @PostMapping("/reset-password")
+    public String handleResetPassword(@RequestParam("token") String token,
+                                      @RequestParam("newPassword") String newPassword,
+                                      @RequestParam("confirmPassword") String confirmPassword,
+                                      Model model) {
+        if (!newPassword.equals(confirmPassword)) {
+            model.addAttribute("error", "Passwords do not match.");
+            model.addAttribute("token", token);
+            return "customer/cus_reset_password";
+        }
+
+        boolean success = customerService.resetPassword(token, newPassword);
+
+        if (success) {
+            model.addAttribute("message", "Your password has been reset. You can now log in.");
+        } else {
+            model.addAttribute("message", "Invalid or expired reset token.");
+        }
+
+        return "customer/cus_reset_password";
+    }
+
+    
 
 }

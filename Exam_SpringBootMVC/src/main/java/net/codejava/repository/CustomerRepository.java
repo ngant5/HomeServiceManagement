@@ -2,13 +2,17 @@ package net.codejava.repository;
 
 import net.codejava.model.Contracts;
 import net.codejava.model.Customers;
+import net.codejava.model.Employees;
 import net.codejava.model.Payments;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -93,18 +97,49 @@ public class CustomerRepository {
 
     
     public int updateUser(Customers customer) {
-    	String sql = "UPDATE Customers SET fullname=?, email=?, phone=?, address=?, profile_image=? WHERE customer_id=?";
+    	String sql = "UPDATE Customers SET fullname=?, password=?, email=?, phone=?, address=?, profile_image=?, status=?, create_at=?, verify_code=?, token=? WHERE customer_id=?";
     	return jdbcTemplate.update(
             sql,
             customer.getFullname(),
+            customer.getPassword(),
             customer.getEmail(),
             customer.getPhone(),
             customer.getAddress(),
             customer.getProfileImage(),
+            customer.getStatus(),
+            customer.getCreatedAt(),
+            customer.getVerifyCode(),
+            customer.getToken(),
             customer.getCustomerId()
         );
     }
 
+    public Optional<Customers> findByToken(String token) {
+        String sql = "SELECT * FROM Customers WHERE token = ?";
+        
+        List<Customers> customer = jdbcTemplate.query(sql, new Object[]{token}, new RowMapper<Customers>() {
+            @Override
+            public Customers mapRow(ResultSet rs, int rowNum) throws SQLException {
+            	Customers customer = new Customers();
+            	customer.setCustomerId(rs.getInt("customer_id"));
+            	customer.setFullname(rs.getString("fullname"));
+            	customer.setPassword(rs.getString("password"));
+            	customer.setEmail(rs.getString("email"));
+            	customer.setPhone(rs.getString("phone"));
+            	customer.setAddress(rs.getString("address"));
+            	customer.setStatus(rs.getInt("status"));
+            	customer.setVerifyCode(rs.getString("verify_code"));
+            	customer.setToken(rs.getString("token"));
+            	customer.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                return customer;
+            }
+        });
+
+        if (customer.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(customer.get(0));
+    }
     
     public int deleteById(int id) {
         String sql = "DELETE FROM Customers WHERE customer_id = ?";

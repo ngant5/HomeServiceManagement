@@ -24,13 +24,64 @@ public class CustomerService {
     private CustomerRepository customerRepository;
     
     @Autowired
+    private EmployeeRepository employeeRepository;
+    
+    @Autowired
     private EmailService emailService;
 
     @Autowired
     private JdbcTemplate jdbcTemplate; 
     
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    
+    
+    public boolean changePassword(Customers customer, String currentPassword, String newPassword) {
+        // Verify current password
+        if (checkPassword(currentPassword, customer.getPassword())) {
+            // Encrypt and set new password
+            String hashedNewPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+            customer.setPassword(hashedNewPassword);
+            
+            // Update employee in the database
+            int updated = updateUser(customer); 
+            return updated > 0; // Return true if the update was successful
+        } 
+        return false; // Return false if the current password is incorrect
+    }
+    
+    public void generateResetToken(String email, String siteURL) {
+    	Customers customer = findByEmail(email);
+        
+        if (customer != null) {
+            // Generate reset token
+            String token = UUID.randomUUID().toString();
+            customer.setToken(token);
+            updateUser(customer); // Save the token to the database
+            
+            // Send reset email
+            String resetURL = siteURL + "/customer/reset-password?token=" + token;
+            emailService.sendResetPasswordEmailforCustomers(customer, resetURL);
+        }
+    }
+
+    // Find user by reset token
+    public Customers findByResetToken(String token) {
+        return customerRepository.findByToken(token).orElse(null);
+    }
+
+    // Reset password
+    public boolean resetPassword(String token, String newPassword) {
+    	Customers customer = findByResetToken(token);
+        
+        if (customer != null) {
+            // Encrypt the new password
+            String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+            customer.setPassword(hashedPassword);
+            customer.setToken(null); // Clear the token after successful reset
+            updateUser(customer);
+            return true;
+        }
+        return false;
+    }
 
 
     public Customers findById(int id) {

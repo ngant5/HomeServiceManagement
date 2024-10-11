@@ -1,10 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard</title>
 </head>
 <body>
-	<h6>Employee Info</h6>
+	<h1>Welcome Employee</h1>
+		    <p>Hello, <span th:text="${session.employee.fullname}">Employee</span>!</p>
+		    <ul>
+		        <li><a th:href="@{/employees/change-password}">Change Password</a></li>
+		        <!-- Thêm các liên kết quản lý khác tại đây -->
+		        <li><a th:href="@{/employees/logout}">Logout</a></li>
+		    </ul>
+
+    <!-- Profile Image -->
+	<!-- Profile Image -->
+	<div th:if="${employee != null}">
+	    <img th:src="@{'/uploads/' + ${employee.profileImage}}" 
+	         class="card-img-top" 
+	         alt="Employee Profile Image"  
+	         width="100" 
+	         height="100"  
+	         onerror="this.src='http://via.placeholder.com/100';" />
+	</div>
+
+
+    <!-- Button to navigate to Update Info page -->
+    <button onclick="window.location.href='/employees/updateInfo'">Update Info</button>
 </body>
 </html>

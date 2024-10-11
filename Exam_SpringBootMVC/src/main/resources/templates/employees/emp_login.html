@@ -6,7 +6,7 @@
     <title>Employees Login</title>
 </head>
 <body>
-    <h1>Login</h1>
+    <h1>Login for Employees</h1>
     
     <div th:if="${param.registered}">
         <p>Registration successful! Please check your email to verify your account.</p>
@@ -32,7 +32,9 @@
         <div>
             <button type="submit">Login</button>
         </div>
+		
     </form>
+	<a th:href="@{/employees/forgot-password}">Forgot Password</a>
     
     <a href="/employees/register">Register</a>
 </body>

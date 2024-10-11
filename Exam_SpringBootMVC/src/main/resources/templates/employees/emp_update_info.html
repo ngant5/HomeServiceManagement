@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Employee Info</title>
+</head>
+<body>
+    <h1>Update Your Information</h1>
+	<p>Hello, <span th:text="${session.employee.fullname}">Employee</span>!</p>
+			    <ul>````````````````````````````````````````````````````````````````````````````
+			        <li><a th:href="@{/employees/logout}">Logout</a></li>
+			    </ul>
+
+    <form action="/employees/updateInfo" method="post" enctype="multipart/form-data">
+        <label for="fullname">Full Name:</label><br>
+        <input type="text" id="fullname" name="fullname" th:value="${employee.fullname}" required><br><br>
+
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" th:value="${employee.email}" required><br><br>
+
+        <label for="phone">Phone:</label><br>
+        <input type="text" id="phone" name="phone" th:value="${employee.phone}" required><br><br>
+
+        <label for="address">Address:</label><br>
+        <input type="text" id="address" name="address" th:value="${employee.address}" required><br><br>
+        
+	    <label for="profileImage">Profile Image:</label><br>
+	    <input type="file" id="profileImage" name="profileImage"><br><br>
+
+        <button type="submit">Update Info</button>
+    </form>
+</body>
+</html>

@@ -7,11 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +35,99 @@ public class EmployeesController {
     @Autowired
     private EmailService emailService;
     
+    private static final String UPLOAD_DIR = "uploads/";
+    
+   
+    @GetMapping("/updateInfo")
+    public String showUpdateInfoForm(HttpSession session, Model model) {
+        Employees employee = (Employees) session.getAttribute("employee");
+        
+        if (employee == null) {
+            return "redirect:/employees/login";
+        }
+
+        model.addAttribute("employee", employee);  // Add employee to the model
+        return "employees/emp_update_info";
+    }
+
+
+    
+    @PostMapping("/updateInfo")
+    public String updateProfile(@RequestParam("fullname") String fullname,
+                                @RequestParam("phone") String phone,
+                                @RequestParam("address") String address,
+                                @RequestParam("profileImage") MultipartFile profileImage,
+                                HttpServletRequest request, Model model) {
+        HttpSession session = request.getSession();
+        Employees employee = (Employees) session.getAttribute("employee");
+
+        if (employee == null) {
+            return "redirect:/employees/login";
+        }
+
+        // Ensure the upload directory exists
+        File uploadDir = new File(UPLOAD_DIR);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs(); // Create the directory if it doesn't exist
+        }
+
+        // Update employee details
+        employee.setFullname(fullname);
+        employee.setPhone(phone);
+        employee.setAddress(address);
+
+        // Handle profile image upload
+        if (!profileImage.isEmpty()) {
+            try {
+                // Check for existing profile image
+                String existingImageName = employee.getProfileImage(); // Get the old image name
+                if (existingImageName != null && !existingImageName.isEmpty()) {
+                    // Create a File object for the existing image
+                    File existingImageFile = new File(UPLOAD_DIR + existingImageName);
+                    
+                    // Delete the existing image file if it exists
+                    if (existingImageFile.exists()) {
+                        boolean deleted = existingImageFile.delete();
+                        if (!deleted) {
+                            model.addAttribute("error", "Failed to delete old image.");
+                            return "employees/emp_update_profile"; // Return to the update form on error
+                        }
+                    }
+                }
+
+                // Construct the path to save the uploaded file
+                String newFileName = profileImage.getOriginalFilename();
+                Path uploadPath = Paths.get(UPLOAD_DIR + newFileName);
+
+                // Write the new file to the specified path
+                Files.write(uploadPath, profileImage.getBytes());
+
+                // Save only the new filename in the database
+                employee.setProfileImage(newFileName); // Save only the new filename, not the path
+            } catch (IOException e) {
+                model.addAttribute("error", "Failed to upload image.");
+                return "employees/emp_update_profile"; // Return to the update form on error
+            }
+        }
+
+        // Update the employee information in the database
+        employeeService.updateEmployeeInfo(employee);
+
+        // Update session
+        session.setAttribute("employee", employee);
+        return "redirect:/employees/dashboard"; // Redirect to the dashboard after successful update
+    }
+
+
+    
    
     @GetMapping("/dashboard")
-    public String dashboard() {
+    public String dashboard(Model model, HttpSession session) {
+        
+        model.addAttribute("products", employeeService.getAllEmployees());
+        Employees employee = (Employees) session.getAttribute("employee");
+        model.addAttribute("employee", employee);
+        model.addAttribute("session", session);
         return "employees/emp_index";
     }
     
