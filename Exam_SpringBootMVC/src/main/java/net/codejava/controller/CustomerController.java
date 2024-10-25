@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +17,12 @@ import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;  // Import thêm lớp LocalDateTime
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime; 
 
 @Controller
 @RequestMapping("/customer")
@@ -29,10 +35,16 @@ public class CustomerController {
 
     @Autowired
     private EmailService emailService;
+    
+    private static final String UPLOAD_DIR = "uploads/";
 
     
     @GetMapping("/index")
-    public String dashboard() {
+    public String dashboard(Model model, HttpSession session) {
+    	model.addAttribute("products", customerService.getAllCustomers());
+    	Customers customer = (Customers) session.getAttribute("customer");
+    	model.addAttribute("customer", customer);
+    	model.addAttribute("session", session);
         return "customer/cus_index";
     }
 
@@ -151,21 +163,71 @@ public class CustomerController {
         return "redirect:/customer/login"; // Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
     }
 
-    // Cập nhật thông tin khách hàng
+ // Cập nhật thông tin khách hàng
     @PostMapping("/update")
-    public String updateCustomerInfo(@ModelAttribute("customerInfo") Customers customerInfo, HttpServletRequest request) {
+    public String updateProfile(@RequestParam("fullname") String fullname,
+                                @RequestParam("phone") String phone,
+                                @RequestParam("address") String address,
+                                @RequestParam("profileImage") MultipartFile profileImage,
+                                HttpServletRequest request, Model model) {
         HttpSession session = request.getSession();
-        Customers currentCustomer = (Customers) session.getAttribute("customer");
+        Customers customer = (Customers) session.getAttribute("customer");
 
-        if (currentCustomer != null) {
-            customerInfo.setCustomerId(currentCustomer.getCustomerId()); 
-            logger.info("Updating customer info: " + customerInfo);
-            if (customerService.updateCustomerInfo(customerInfo)) {
-                session.setAttribute("customer", customerInfo); 
-                return "redirect:/customer/info?updateSuccess=true"; 
+        if (customer == null) {
+            return "redirect:/customer/login";
+        }
+
+        // Ensure the upload directory exists
+        File uploadDir = new File(UPLOAD_DIR);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs(); // Create the directory if it doesn't exist
+        }
+
+        // Update employee details
+        customer.setFullname(fullname);
+        customer.setPhone(phone);
+        customer.setAddress(address);
+
+        // Handle profile image upload
+        if (!profileImage.isEmpty()) {
+            try {
+                // Check for existing profile image
+                String existingImageName = customer.getProfileImage(); // Get the old image name
+                if (existingImageName != null && !existingImageName.isEmpty()) {
+                    // Create a File object for the existing image
+                    File existingImageFile = new File(UPLOAD_DIR + existingImageName);
+                    
+                    // Delete the existing image file if it exists
+                    if (existingImageFile.exists()) {
+                        boolean deleted = existingImageFile.delete();
+                        if (!deleted) {
+                            model.addAttribute("error", "Failed to delete old image.");
+                            return "customer/cus_info"; // Return to the update form on error
+                        }
+                    }
+                }
+
+                // Construct the path to save the uploaded file
+                String newFileName = profileImage.getOriginalFilename();
+                Path uploadPath = Paths.get(UPLOAD_DIR + newFileName);
+
+                // Write the new file to the specified path
+                Files.write(uploadPath, profileImage.getBytes());
+
+                // Save only the new filename in the database
+                customer.setProfileImage(newFileName); // Save only the new filename, not the path
+            } catch (IOException e) {
+                model.addAttribute("error", "Failed to upload image.");
+                return "customer/cus_info"; // Return to the update form on error
             }
         }
-        return "redirect:/customer/info?updateError=true"; 
+
+        // Update the employee information in the database
+        customerService.updateCustomerInfo(customer);
+
+        // Update session
+        session.setAttribute("customer", customer);
+        return "redirect:/customer/index"; // Redirect to the dashboard after successful update
     }
 
     @GetMapping("/logout")
@@ -271,7 +333,4 @@ public class CustomerController {
 
         return "customer/cus_reset_password";
     }
-
-    
-
 }

@@ -10,12 +10,11 @@ import org.springframework.web.servlet.config.annotation.*;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    
-	
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-    	registry.addInterceptor(new LoginInterceptor())
-        .excludePathPatterns(
+        registry.addInterceptor(new LoginInterceptor())
+            .excludePathPatterns(
                 "/admin/login",
                 "/admin/chklogin",
                 "/admin/forgot-password",
@@ -40,9 +39,10 @@ public class WebConfig implements WebMvcConfigurer {
                 "/css/**",
                 "/js/**",
                 "/images/**",
+                "/assets_admin/**", 
                 "/error"
-        );
-    	
+            );
+
         registry.addInterceptor(new CustomerInterceptor())
             .addPathPatterns("/customer/**")
             .excludePathPatterns(
@@ -56,6 +56,7 @@ public class WebConfig implements WebMvcConfigurer {
                 "/css/**",
                 "/js/**",
                 "/images/**",
+                "/assets_admin/**", 
                 "/error"
             );
 
@@ -72,9 +73,9 @@ public class WebConfig implements WebMvcConfigurer {
                 "/css/**",
                 "/js/**",
                 "/images/**",
+                "/assets_admin/**", 
                 "/error"
             );
-
 
         registry.addInterceptor(new EmployeeInterceptor())
             .addPathPatterns("/employees/**")
@@ -89,6 +90,7 @@ public class WebConfig implements WebMvcConfigurer {
                 "/css/**",
                 "/js/**",
                 "/images/**",
+                "/assets_admin/**", 
                 "/error"
             );
     }
@@ -96,12 +98,14 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/css/**")
-                .addResourceLocations("classpath:/static/css/");
+            .addResourceLocations("classpath:/static/assets_admin/css/");
         registry.addResourceHandler("/js/**")
-                .addResourceLocations("classpath:/static/js/");
+            .addResourceLocations("classpath:/static/assets_admin/js/");
+        registry.addResourceHandler("/fonts/**")
+            .addResourceLocations("classpath:/static/assets_admin/fonts/");
         registry.addResourceHandler("/uploads/**")
-        .addResourceLocations("file:uploads/")
-        .setCachePeriod(3600)
-        .resourceChain(true);
+            .addResourceLocations("file:uploads/")
+            .setCachePeriod(3600)
+            .resourceChain(true);
     }
 }

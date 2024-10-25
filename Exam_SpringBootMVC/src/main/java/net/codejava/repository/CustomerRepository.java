@@ -97,7 +97,7 @@ public class CustomerRepository {
 
     
     public int updateUser(Customers customer) {
-    	String sql = "UPDATE Customers SET fullname=?, password=?, email=?, phone=?, address=?, profile_image=?, status=?, create_at=?, verify_code=?, token=? WHERE customer_id=?";
+    	String sql = "UPDATE Customers SET fullname=?, password=?, email=?, phone=?, address=?, profile_image=?, status=?, created_at=?, verify_code=?, token=? WHERE customer_id=?";
     	return jdbcTemplate.update(
             sql,
             customer.getFullname(),

@@ -58,6 +58,28 @@ public class EmailService {
         mailSender.send(message);
     }
     
+    public void sendResetPasswordEmailforAdmin(Employees admin, String resetURL) {
+        String toAddress = admin.getEmail();
+        String fromAddress = "nguyentuyetnga.5@gmail.com"; // Replace with your email
+        String senderName = "Aptech";
+        String subject = "Reset Your Password";
+        
+        String content = "Dear " + admin.getFullname() + ",\n\n"
+                + "We received a request to reset your password. Click the link below to change your password:\n"
+                + resetURL + "\n\n"
+                + "If you did not request a password reset, you can ignore this email.\n\n"
+                + "Best regards,\n"
+                + senderName;
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromAddress);
+        message.setTo(toAddress);
+        message.setSubject(subject);
+        message.setText(content);
+
+        mailSender.send(message);
+    }
+    
     public void sendResetPasswordEmailforEmployees(Employees employee, String resetURL) {
         String toAddress = employee.getEmail();
         String fromAddress = "nguyentuyetnga.5@gmail.com"; // Replace with your email

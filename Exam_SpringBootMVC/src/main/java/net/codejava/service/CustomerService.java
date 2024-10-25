@@ -153,8 +153,15 @@ public class CustomerService {
         return customerRepository.findById(customerId).orElse(null);
     }
 
-    public boolean updateCustomerInfo(Customers customer) {
-        return customerRepository.updateUser(customer) > 0;
+    public int updateCustomerInfo(Customers customer) {
+    	return jdbcTemplate.update(
+    			"UPDATE Customers SET fullname=?, phone=?, address=?, profile_image=? WHERE customer_id=?",
+    			customer.getFullname(),
+    			customer.getPhone(),
+    			customer.getAddress(),
+    			customer.getProfileImage(),
+    			customer.getCustomerId()
+    			);
     }
     
     public List<Customers> getAllCustomers() {

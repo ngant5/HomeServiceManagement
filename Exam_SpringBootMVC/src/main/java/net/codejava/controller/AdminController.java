@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +55,7 @@ public class AdminController {
         model.addAttribute("contracts", contracts);
 
         
-        return "admin/pages/dashboard";
+        return "admin/dashboard";
     }
     
     
@@ -106,58 +107,118 @@ public class AdminController {
     }
 
     
-    @GetMapping("/register")
-    public String registerForm() {
-        return "admin/ad_register";
+    @GetMapping("/change-password")
+    public String changePasswordForm(Model model, HttpSession session) {
+        Employees employee = (Employees) session.getAttribute("employee");
+        if (employee == null) {
+            return "redirect:/admin/login"; // Redirect to login if not authenticated
+        }
+        model.addAttribute("employee", employee);
+        return "admin/pages/ad_change_password"; // Create this view
+    }
+
+    // Handle change password form submission
+    @PostMapping("/change-password")
+    public String changePassword(@RequestParam("currentPassword") String currentPassword,
+                                 @RequestParam("newPassword") String newPassword,
+                                 @RequestParam("confirmPassword") String confirmPassword,
+                                 HttpSession session, Model model) {
+        Employees employee = (Employees) session.getAttribute("employee");
+        
+        if (employee == null) {
+            return "redirect:/admin/login";
+        }
+
+        // Check if the new passwords match
+        if (!newPassword.equals(confirmPassword)) {
+            model.addAttribute("error", "New passwords do not match.");
+            return "admin/ad_change_password";
+        }
+
+        // Try to change the password
+        boolean success = employeeService.changePassword(employee, currentPassword, newPassword);
+
+        if (success) {
+            model.addAttribute("message", "Password changed successfully.");
+            return "admin/ad_change_password"; 
+        } else {
+            model.addAttribute("error", "Current password is incorrect.");
+            return "admin/ad_change_password";
+        }
     }
     
-    
-    @PostMapping("/register")
-    public String registerUser(@RequestParam("fullname") String fullname,
-                               @RequestParam("pwd") String password,
-                               @RequestParam("userType") String userType,
-                               @RequestParam("email") String email,
-                               @RequestParam("phone") String phone,
-                               @RequestParam("address") String address,
-                               @RequestParam("profileImage") String profileImage,
-                               @RequestParam("experienceYears") int experienceYears,
-                               @RequestParam("salary") int salary,
-                               @RequestParam("status") int status,
-                               HttpServletRequest request) {
-        
-        
-        Employees newEmployee = new Employees();
-        newEmployee.setFullname(fullname);
-        newEmployee.setPassword(password); 
-        newEmployee.setUserType(userType);
-        newEmployee.setEmail(email);
-        newEmployee.setPhone(phone);
-        newEmployee.setAddress(address);
-        newEmployee.setProfileImage(profileImage);
-        newEmployee.setExperienceYears(experienceYears);
-        newEmployee.setSalary(salary);
-        newEmployee.setStatus(status);
+    @GetMapping("/forgot-password")
+    public String showForgotPasswordForm() {
+        return "admin/ad_forgot_password"; 
+    }
 
-        
+    // Handle forgot password submission
+    @PostMapping("/forgot-password")
+    public String handleForgotPassword(@RequestParam("email") String email, HttpServletRequest request) {
         String siteURL = ServletUriComponentsBuilder.fromRequestUri(request)
-                        .replacePath(null)
-                        .build()
-                        .toUriString();
+                .replacePath(null)
+                .build()
+                .toUriString();
 
+        Employees admin = employeeService.findByEmail(email);
+        if (admin != null) {
+            String token = UUID.randomUUID().toString(); 
+            admin.setResetToken(token); 
+            employeeService.updateUser(admin); 
+
+            
+            String resetURL = siteURL + "/admin/reset-password?token=" + token;
+
+            
+            emailService.sendResetPasswordEmailforAdmin(admin, resetURL);
+        }
         
-        employeeService.saveUser(newEmployee, siteURL);
-        
-        logger.info("New user registered: " + fullname + ", UserType: " + userType);
-        
-        
-        return "redirect:/admin/login?registered=true";
+        return "redirect:/admin/forgot-password?sent=true"; // Redirect để xác nhận email đã gửi
+
+    }
+
+    // Show reset password form
+    @GetMapping("/reset-password")
+    public String showResetPasswordForm(@RequestParam("token") String token, Model model) {
+        Employees employee = employeeService.findByResetToken(token);
+
+        if (employee == null) {
+            model.addAttribute("message", "Invalid or expired reset token.");
+            return "admin/ad_reset_password"; // Create this view
+        }
+
+        model.addAttribute("token", token); // Pass the token to the form
+        return "admin/ad_reset_password";
+    }
+
+    // Handle reset password submission
+    @PostMapping("/reset-password")
+    public String handleResetPassword(@RequestParam("token") String token,
+                                      @RequestParam("newPassword") String newPassword,
+                                      @RequestParam("confirmPassword") String confirmPassword,
+                                      Model model) {
+        if (!newPassword.equals(confirmPassword)) {
+            model.addAttribute("error", "Passwords do not match.");
+            model.addAttribute("token", token);
+            return "admin/ad_reset_password";
+        }
+
+        boolean success = employeeService.resetPassword(token, newPassword);
+
+        if (success) {
+            model.addAttribute("message", "Your password has been reset. You can now log in.");
+        } else {
+            model.addAttribute("message", "Invalid or expired reset token.");
+        }
+
+        return "admin/ad_reset_password";
     }
     
     @GetMapping("/admin/contracts")
     public String listContracts(Model model) {
         List<Contracts> contracts = contractService.getAllContracts();
         model.addAttribute("contracts", contracts);
-        return "admin/pages/ad_contracts/"; 
+        return "admin/ad_contracts/"; 
     }
 
     
@@ -183,7 +244,7 @@ public class AdminController {
     public String getAllCustomers(Model model) {
         List<Customers> customers = customerService.getAllCustomers();
         model.addAttribute("customers", customers);
-        return "admin/pages/ad_customers"; 
+        return "admin/ad_customers"; 
     }
 
     @GetMapping("/customers/{customerId}")
@@ -195,7 +256,7 @@ public class AdminController {
         }
         
         model.addAttribute("contracts", contracts);
-        return "admin/pages/ad_contracts_by_cus"; 
+        return "admin/ad_contracts_by_cus"; 
     }
 
     @GetMapping("/contracts/{contractId}")
@@ -212,7 +273,7 @@ public class AdminController {
         model.addAttribute("contract", contract);
         model.addAttribute("formattedCreatedAt", formattedDate);
         
-        return "admin/pages/ad_contract_detail"; 
+        return "admin/ad_contract_detail"; 
 
     }
 
@@ -228,7 +289,7 @@ public class AdminController {
     public String getAllContracts(Model model) {
         List<Contracts> contracts = contractService.getAllContracts();
         model.addAttribute("contracts", contracts);
-        return "admin/pages/ad_contracts"; 
+        return "admin/ad_contracts"; 
     }
 
     @GetMapping("/contracts/duration")

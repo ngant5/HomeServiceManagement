@@ -144,6 +144,11 @@ public class Employees {
 	public void setToken(String token) {
 		this.token = token;
 	}
+	
+	public void setResetToken(String token) {
+	    this.token = token;
+	}
+
 
 	public LocalDateTime getCreatedAt() {
 		return createdAt;
