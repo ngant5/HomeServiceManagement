@@ -3,6 +3,7 @@ package net.codejava.model;
 import java.time.LocalDateTime;
 
 public class Contracts {
+	private Customers customer;
     private int contractId;
     private int customerId; 
     private int contractStatus;
@@ -11,6 +12,13 @@ public class Contracts {
     private LocalDateTime createdAt;
     private String contractFile;
 
+    public Customers getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customers customer) {
+        this.customer = customer;
+    }
 
     public int getContractId() { 
     	return contractId; 

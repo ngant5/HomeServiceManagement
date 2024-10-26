@@ -54,7 +54,6 @@ public class AdminController {
         List<Contracts> contracts = customerService.getAllContracts();
         model.addAttribute("contracts", contracts);
 
-        
         return "admin/dashboard";
     }
     
@@ -214,14 +213,6 @@ public class AdminController {
         return "admin/ad_reset_password";
     }
     
-    @GetMapping("/admin/contracts")
-    public String listContracts(Model model) {
-        List<Contracts> contracts = contractService.getAllContracts();
-        model.addAttribute("contracts", contracts);
-        return "admin/ad_contracts/"; 
-    }
-
-    
     @GetMapping("/verify")
     public String verifyAccount(@RequestParam("code") String code, Model model) {
         Employees employee = employeeService.findByVerifyCode(code);
@@ -258,14 +249,34 @@ public class AdminController {
         model.addAttribute("contracts", contracts);
         return "admin/ad_contracts_by_cus"; 
     }
+    
+    @GetMapping("/contracts")
+    public String getAllContracts(Model model) {
+        List<Contracts> contracts = contractService.getAllContracts();
+        for (Contracts contract : contracts) {
+        	Customers customer = customerService.findById(contract.getCustomerId());
+            contract.setCustomer(customer);
+        }
 
-    @GetMapping("/contracts/{contractId}")
+        model.addAttribute("contracts", contracts);
+        return "admin/ad_contracts"; 
+    }
+
+    @GetMapping("/contract/{contractId}")
     public String getContractById(@PathVariable int contractId, Model model) {
         Contracts contract = contractService.getContractById(contractId);
         if (contract == null) {
-            model.addAttribute("errorMessage", "Contract Not Found");
+            model.addAttribute("errorMessage", "Contract Not Found with ID: " + contractId);
             return "error"; 
         }
+        Customers customer = customerService.findById(contract.getCustomerId());
+        if (customer == null) {
+            logger.error("Customer not found for Contract ID: " + contractId);
+            model.addAttribute("errorMessage", "Customer Not Found for Contract ID: " + contractId);
+            return "error"; 
+        }
+
+        contract.setCustomer(customer);
         
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
         String formattedDate = contract.getCreatedAt().format(formatter);
@@ -285,12 +296,7 @@ public class AdminController {
    
 
 
-    @GetMapping("/contracts")
-    public String getAllContracts(Model model) {
-        List<Contracts> contracts = contractService.getAllContracts();
-        model.addAttribute("contracts", contracts);
-        return "admin/ad_contracts"; 
-    }
+    
 
     @GetMapping("/contracts/duration")
     public List<Contracts> findContractsByDuration(@RequestParam int duration) {

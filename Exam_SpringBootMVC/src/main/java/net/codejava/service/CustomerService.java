@@ -34,6 +34,7 @@ public class CustomerService {
     
     
     
+    
     public boolean changePassword(Customers customer, String currentPassword, String newPassword) {
         // Verify current password
         if (checkPassword(currentPassword, customer.getPassword())) {
