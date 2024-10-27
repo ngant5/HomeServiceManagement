@@ -1,18 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>My Profile</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title>My Page</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
 </head>
 <body>
-    <h1>Welcome to Your Profile</h1>
-    <p>Hello, <span th:text="${session.customer.fullname}">Customer</span>!</p>
-	<a href="/customer/info" class="button">View Info</a>
-
-    <ul>
-		<li><a th:href="@{/employees/change-password}">Change Password</a></li>
-        <li><a th:href="@{/customer/logout}">Logout</a></li>
-    </ul>
+    <header>
+        <h1>Customer Profile</h1>
+    </header>
+    <div>
+        <h2>Thông tin cá nhân</h2>
+        <p><strong>Họ tên:</strong> <span th:text="${customer.fullname}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${customer.email}"></span></p>
+        <p><strong>Điện thoại:</strong> <span th:text="${customer.phone}"></span></p>
+        <p><strong>Địa chỉ:</strong> <span th:text="${customer.address}"></span></p>
+        <img th:src="${customer.profileImage}" alt="Profile Image" />
+    </div>
+	<div>
+	     
+	      <a th:href="@{/customer/index}" class="btn">Quay về trang chính</a>
+	  </div>
 </body>
 </html>

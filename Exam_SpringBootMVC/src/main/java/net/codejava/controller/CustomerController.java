@@ -80,7 +80,8 @@ public class CustomerController {
         Customers customer = customerService.findByEmail(email);
 
         if (customer != null) {
-            logger.info("User found: " + email);
+        	logger.info("User found: {}", email);
+
             
             if (customer.getStatus() == 0) {
                 logger.warn("Attempt to login with unverified account: " + email);
@@ -90,8 +91,8 @@ public class CustomerController {
             if (customerService.checkPassword(password, customer.getPassword())) {
                 HttpSession session = request.getSession();
                 session.setAttribute("customer", customer);
-                logger.info("User authenticated: " + email);
-                return "redirect:/customer/index"; 
+                logger.info("User authenticated: {}", email);
+                return "redirect:/customer/cus_mypage"; 
 
             } else {
                 logger.error("Password check failed for user: " + email);
@@ -102,6 +103,20 @@ public class CustomerController {
             return "redirect:/customer/login?error=wrongPassword"; 
         }
     }
+
+    @GetMapping("/cus_mypage")
+    public String viewMyPage(Model model, HttpSession session) {
+        Customers customer = (Customers) session.getAttribute("customer");
+        if (customer == null) {
+            logger.info("Customer not found in session, redirecting to login");
+            return "redirect:/customer/login";
+        }
+        
+        logger.info("Customer found: " + customer.getFullname());
+        model.addAttribute("customer", customer);
+        return "customer/cus_mypage";
+    }
+
 
 
     

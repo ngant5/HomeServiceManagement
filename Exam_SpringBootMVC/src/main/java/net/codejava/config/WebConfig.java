@@ -4,7 +4,6 @@ import net.codejava.interceptor.AdminInterceptor;
 import net.codejava.interceptor.CustomerInterceptor;
 import net.codejava.interceptor.EmployeeInterceptor;
 import net.codejava.interceptor.LoginInterceptor;
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;
 
@@ -13,6 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // Interceptor cho Login
         registry.addInterceptor(new LoginInterceptor())
             .excludePathPatterns(
                 "/admin/login",
@@ -20,23 +20,14 @@ public class WebConfig implements WebMvcConfigurer {
                 "/admin/forgot-password",
                 "/admin/reset-password",
                 "/admin/register",
-                "/admin/register/**",
-                "/admin/verify", 
                 "/employees/login",
                 "/employees/chklogin",
                 "/employees/forgot-password",
                 "/employees/reset-password",
-                "/employees/register",
-                "/employees/register/**",
-                "/employees/verify",
-                "/customer/index",
                 "/customer/login",
                 "/customer/chklogin",
                 "/customer/forgot-password",
                 "/customer/reset-password",
-                "/customer/register",
-                "/customer/register/**",
-                "/customer/verify",
                 "/css/**",
                 "/js/**",
                 "/images/**",
@@ -44,17 +35,15 @@ public class WebConfig implements WebMvcConfigurer {
                 "/error"
             );
 
+        // Interceptor cho Customer
         registry.addInterceptor(new CustomerInterceptor())
             .addPathPatterns("/customer/**")
             .excludePathPatterns(
-            	"/customer/index",
                 "/customer/login",
                 "/customer/chklogin",
                 "/customer/forgot-password",
                 "/customer/reset-password",
                 "/customer/register",
-                "/customer/register/**",
-                "/customer/verify",
                 "/css/**",
                 "/js/**",
                 "/images/**",
@@ -62,6 +51,7 @@ public class WebConfig implements WebMvcConfigurer {
                 "/error"
             );
 
+        // Interceptor cho Admin
         registry.addInterceptor(new AdminInterceptor())
             .addPathPatterns("/admin/**")
             .excludePathPatterns(
@@ -70,8 +60,6 @@ public class WebConfig implements WebMvcConfigurer {
                 "/admin/forgot-password",
                 "/admin/reset-password",
                 "/admin/register",
-                "/admin/register/**",
-                "/admin/verify",
                 "/css/**",
                 "/js/**",
                 "/images/**",
@@ -79,6 +67,7 @@ public class WebConfig implements WebMvcConfigurer {
                 "/error"
             );
 
+        // Interceptor cho Employee
         registry.addInterceptor(new EmployeeInterceptor())
             .addPathPatterns("/employees/**")
             .excludePathPatterns(
@@ -87,8 +76,6 @@ public class WebConfig implements WebMvcConfigurer {
                 "/employees/forgot-password",
                 "/employees/reset-password",
                 "/employees/register",
-                "/employees/register/**",
-                "/employees/verify",
                 "/css/**",
                 "/js/**",
                 "/images/**",
@@ -110,9 +97,7 @@ public class WebConfig implements WebMvcConfigurer {
             .setCachePeriod(3600)
             .resourceChain(true);
         
-     
         registry.addResourceHandler("/css/**")
             .addResourceLocations("classpath:/static/assets/css/");
-        
     }       
 }
