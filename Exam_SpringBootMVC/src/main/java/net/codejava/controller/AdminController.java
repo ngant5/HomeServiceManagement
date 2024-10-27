@@ -57,6 +57,23 @@ public class AdminController {
         return "admin/dashboard";
     }
     
+    @GetMapping("/tables")
+    public String table() {
+    	
+
+        
+        return "admin/tables";
+    }
+    
+    @GetMapping("/index")
+    public String index() {
+    	
+
+        
+        return "admin/ad_index";
+    }
+    
+
     
     @GetMapping("/login")
     public String loginForm() {
@@ -231,11 +248,11 @@ public class AdminController {
         return "admin/ad_verify"; 
     }
     
-    @GetMapping("/customers")
+    @GetMapping("/customers/list")
     public String getAllCustomers(Model model) {
         List<Customers> customers = customerService.getAllCustomers();
         model.addAttribute("customers", customers);
-        return "admin/ad_customers"; 
+        return "admin/customers/cus_list"; 
     }
 
     @GetMapping("/customers/{customerId}")
@@ -247,10 +264,10 @@ public class AdminController {
         }
         
         model.addAttribute("contracts", contracts);
-        return "admin/ad_contracts_by_cus"; 
+        return "admin/customers/contracts_by_cus"; 
     }
     
-    @GetMapping("/contracts")
+    @GetMapping("/contracts/list")
     public String getAllContracts(Model model) {
         List<Contracts> contracts = contractService.getAllContracts();
         for (Contracts contract : contracts) {
@@ -259,7 +276,7 @@ public class AdminController {
         }
 
         model.addAttribute("contracts", contracts);
-        return "admin/ad_contracts"; 
+        return "admin/contracts/con_list"; 
     }
 
     @GetMapping("/contract/{contractId}")
@@ -284,7 +301,7 @@ public class AdminController {
         model.addAttribute("contract", contract);
         model.addAttribute("formattedCreatedAt", formattedDate);
         
-        return "admin/ad_contract_detail"; 
+        return "admin/contracts/detail"; 
 
     }
 
@@ -324,5 +341,11 @@ public class AdminController {
     public void updateContractEmployee(@PathVariable int contractId, @RequestBody Employees employee) {
     	int employeeId = employee.getEmployeeId(); 
         customerService.updateContractEmployee(contractId, employeeId);
+    }
+    
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/admin/login";
     }
 }

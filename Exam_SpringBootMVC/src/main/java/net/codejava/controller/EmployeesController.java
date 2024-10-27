@@ -90,7 +90,7 @@ public class EmployeesController {
                         boolean deleted = existingImageFile.delete();
                         if (!deleted) {
                             model.addAttribute("error", "Failed to delete old image.");
-                            return "employees/emp_update_profile"; // Return to the update form on error
+                            return "employees/emp_update_info";  // Return to the update form on error
                         }
                     }
                 }
@@ -106,7 +106,7 @@ public class EmployeesController {
                 employee.setProfileImage(newFileName); // Save only the new filename, not the path
             } catch (IOException e) {
                 model.addAttribute("error", "Failed to upload image.");
-                return "employees/emp_update_profile"; // Return to the update form on error
+                return "employees/emp_update_info";  // Return to the update form on error
             }
         }
 
@@ -337,5 +337,10 @@ public class EmployeesController {
         }
 
         return "employees/emp_reset_password";
+    }
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/employees/login";
     }
 }

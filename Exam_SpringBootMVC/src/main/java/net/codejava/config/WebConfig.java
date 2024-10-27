@@ -39,7 +39,7 @@ public class WebConfig implements WebMvcConfigurer {
                 "/css/**",
                 "/js/**",
                 "/images/**",
-                "/assets_admin/**", 
+                "/assets_admin/**",
                 "/error"
             );
 
@@ -90,7 +90,7 @@ public class WebConfig implements WebMvcConfigurer {
                 "/css/**",
                 "/js/**",
                 "/images/**",
-                "/assets_admin/**", 
+                "/assets_admin/**",
                 "/error"
             );
     }

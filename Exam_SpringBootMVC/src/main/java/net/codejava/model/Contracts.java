@@ -1,6 +1,8 @@
 package net.codejava.model;
 
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.time.ZoneId;
 
 public class Contracts {
 	private Customers customer;
@@ -76,4 +78,8 @@ public class Contracts {
     public void setContractFile(String contractFile) { 
     	this.contractFile = contractFile; 
     }
+    public Date getCreatedAtAsDate() {
+        return Date.from(createdAt.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
 }

@@ -1,41 +1,120 @@
-<!-- src/main/resources/templates/admin/ad_login.html -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Employees Login</title>
-</head>
-<body>
-    <h1>Login for Employees</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="../assets_admin/images/favicon.svg" type="image/x-icon" />
+    <title>Sign In | PlainAdmin Demo</title>
+	<style th:replace="common/head_tag"></style>
+  </head>
+  <body>
+<!--   	<div th:replace="common/ad_content_first"></div> -->
     
-    <div th:if="${param.registered}">
-        <p>Registration successful! Please check your email to verify your account.</p>
-    </div>
-    
-    <div th:if="${param.unverified}">
-        <p style="color: orange;">Your account is not verified. Please check your email for the verification link.</p>
-    </div>
-    
-    <div th:if="${param.error}">
-        <p style="color: red;">Invalid email or password.</p>
-    </div>
-    
-    <form action="#" th:action="@{/employees/chklogin}" method="POST">
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required="">
+
+      <!-- ========== signin-section start ========== -->
+      <section class="signin-section">
+        <div class="container-fluid">
+          <!-- ========== title-wrapper start ========== -->
+          <div class="title-wrapper pt-30">
+            <div class="row align-items-center">
+              <div class="col-md-6">
+                <div class="title">
+                  <h2>Sign in</h2>
+                </div>
+              </div>
+              <!-- end col -->
+              <div class="col-md-6">
+                <div class="breadcrumb-wrapper">
+                  <nav aria-label="breadcrumb">
+                   
+                  </nav>
+                </div>
+              </div>
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+          <!-- ========== title-wrapper end ========== -->
+
+          <div class="row g-0 auth-row">
+            <div class="col-lg-6">
+              <div class="auth-cover-wrapper bg-primary-100">
+                <div class="auth-cover">
+                  <div class="title text-center">
+                    <h1 class="text-primary mb-10">Welcome Back</h1>
+                    <p class="text-medium">
+                      Sign in to your Existing account to continue
+                    </p>
+                  </div>
+                  <div class="cover-image">
+                    <img src="../assets_admin//images/auth/signin-image.svg" alt="" />
+                  </div>
+                  <div class="shape-image">
+                    <img src="../assets_admin//images/auth/shape.svg" alt="" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- end col -->
+            <div class="col-lg-6">
+              <div class="signin-wrapper">
+                <div class="form-wrapper">
+                  <h6 class="mb-15">Sign In Employee</h6>
+                  <p class="text-sm mb-25">
+                    Start creating the best possible user experience for you
+                    customers.
+                  </p>
+                  <form action="#" th:action="@{/employees/chklogin}" method="POST">
+                    <div class="row">
+                      <div class="col-12">
+                        <div class="input-style-1">
+                          <label>Email</label>
+                          <input type="email" id="email" name="email" placeholder="Email" required/>
+                        </div>
+                      </div>
+                      <!-- end col -->
+                      <div class="col-12">
+                        <div class="input-style-1">
+                          <label>Password</label>
+                          <input type="password" id="pwd" name="pwd" placeholder="Password" />
+                        </div>
+                      </div>
+                      <!-- end col -->
+                      <div class="col-xxl-6 col-lg-12 col-md-6">
+                        <div class="form-check checkbox-style mb-30">
+
+                        </div>
+                      </div>
+                      <!-- end col -->
+                      <div class="col-xxl-6 col-lg-12 col-md-6">
+                        <div class="text-start text-md-end text-lg-start text-xxl-end mb-30">
+                          <a href="forgot-password" class="hover-underline">
+                            Forgot Password?
+                          </a>
+                        </div>
+                      </div>
+                      <!-- end col -->
+                      <div class="col-12">
+                        <div class="button-group d-flex justify-content-center flex-wrap">
+                          <button type="submit" class="main-btn primary-btn btn-hover w-100 text-center">
+                            Sign In
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- end row -->
+                  </form>
+                </div>
+              </div>
+            </div>
+            <!-- end col -->
+          </div>
+          <!-- end row -->
         </div>
-        <div>
-            <label for="pwd">Password:</label>
-            <input type="password" id="pwd" name="pwd" required="">
-        </div>
-        <div>
-            <button type="submit">Login</button>
-        </div>
-		
-    </form>
-	<a th:href="@{/employees/forgot-password}">Forgot Password</a>
-    
-    <a href="/employees/register">Register</a>
-</body>
+      </section>
+      <!-- ========== signin-section end ========== -->
+
+   	<div th:replace="common/ad_content_footer"></div>
+  </body>
 </html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Service</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Edit Service</h2>
+        <form th:action="@{/admin/services/edit/{id}(id=${service.serviceId})}" method="post">
+            <div class="form-group">
+                <label for="serviceName">Service Name</label>
+                <input type="text" id="serviceName" name="serviceName" class="form-control" th:value="${service.serviceName}" required>
+            </div>
+            <div class="form-group">
+                <label for="serviceDescription">Description</label>
+                <textarea id="serviceDescription" name="serviceDescription" class="form-control" rows="3" th:text="${service.serviceDescription}" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="servicePrice">Price</label>
+                <input type="number" id="servicePrice" name="servicePrice" class="form-control" th:value="${service.servicePrice}" required>
+            </div>
+            <div class="form-group">
+                <label for="serviceStatus">Status</label>
+                <select id="serviceStatus" name="serviceStatus" class="form-control">
+                    <option th:value="1" th:selected="${service.serviceStatus == 1}">Active</option>
+                    <option th:value="0" th:selected="${service.serviceStatus == 0}">Inactive</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="serviceImage">Image URL</label>
+                <input type="text" id="serviceImage" name="serviceImage" class="form-control" th:value="${service.serviceImage}">
+            </div>
+            <button type="submit" class="btn btn-primary">Update Service</button>
+            <a href="/admin/services" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

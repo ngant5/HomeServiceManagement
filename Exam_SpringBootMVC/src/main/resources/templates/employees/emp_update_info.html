@@ -1,34 +1,156 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Employee Info</title>
-</head>
-<body>
-    <h1>Update Your Information</h1>
-	<p>Hello, <span th:text="${session.employee.fullname}">Employee</span>!</p>
-			    <ul>````````````````````````````````````````````````````````````````````````````
-			        <li><a th:href="@{/employees/logout}">Logout</a></li>
-			    </ul>
+  <head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="shortcut icon" href="../assets_admin//images/favicon.svg" type="image/x-icon" />
+	<style th:replace="common/head_tag"></style>
+    <title>Profile</title>
+  </head>
+  <body>
+	<div th:replace="common/emp_content_first"></div>
 
-    <form action="/employees/updateInfo" method="post" enctype="multipart/form-data">
-        <label for="fullname">Full Name:</label><br>
-        <input type="text" id="fullname" name="fullname" th:value="${employee.fullname}" required><br><br>
+      <!-- ========== section start ========== -->
+      <section class="section">
+        <div class="container-fluid">
+          <!-- ========== title-wrapper start ========== -->
+          <div class="title-wrapper pt-30">
+            <div class="row align-items-center">
+              <div class="col-md-6">
+                <div class="title">
+                  <h2>Profile </h2>
+                </div>
+              </div>
+              <!-- end col -->
+              <div class="col-md-6">
+                <div class="breadcrumb-wrapper">
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item">
+                        <a href="#0">Dashboard</a>
+                      </li>
+                      <li class="breadcrumb-item"><a href="#0">Pages</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">
+                        Settings
+                      </li>
+                    </ol>
+                  </nav>
+                </div>
+              </div>
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+          <!-- ========== title-wrapper end ========== -->
 
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email" th:value="${employee.email}" required><br><br>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="card-style settings-card-1 mb-30">
+                <div class="title mb-30 d-flex justify-content-between align-items-center">
+                  <h6>My Profile</h6>
+<!--                   <button class="border-0 bg-transparent">
+                    <i class="lni lni-pencil-alt"></i>
+                  </button> -->
+                </div>
+                <div class="profile-info">
+                  <div class="d-flex align-items-center mb-30">
+                    <div class="profile-image" th:if="${employee != null}">
+                      <img th:src="@{'/uploads/' + ${employee.profileImage}}" 
+				         class="card-img-top" 
+				         alt="Employee Profile Image"  
+				         height="75"  
+				         onerror="this.src='http://via.placeholder.com/75';" />
+                      <div class="update-image"> 
+                        <label for="profileImage" class="lni lni-cloud-upload"></label>
+                        <input type="file" />
+                      </div>
+                    </div>
+                    <div class="profile-meta">
+                      <h5 class="text-bold text-dark mb-10" th:text="${employee.fullname}"></h5>
+                    </div>
+                  </div>
+                  <div class="input-style-1">
+                    <label>Email</label>
+                    <input type="email" placeholder="admin@example.com" th:value="${employee.email}" disabled/>
+                  </div>
+                  <div class="input-style-1">
+				    <form action="#" th:action="@{/employees/change-password}" method="post">
+				        <div>
+				            <label for="currentPassword">Current Password:</label>
+				            <input type="password" id="currentPassword" name="currentPassword" required />
+				        </div>
+				        <div>
+				            <label for="newPassword">New Password:</label>
+				            <input type="password" id="newPassword" name="newPassword" required />
+				        </div>
+				        <div>
+				            <label for="confirmPassword">Confirm New Password:</label>
+				            <input type="password" id="confirmPassword" name="confirmPassword" required />
+				        </div>
+	                    <div class="mt-4">
+	                      <button type="submit" class="main-btn primary-btn btn-hover">
+	                        Update Password
+	                      </button>
+	                    </div>
+				    </form>
+                  </div>
+                </div>
+              </div>
+              <!-- end card -->
+            </div>
+            <!-- end col -->
 
-        <label for="phone">Phone:</label><br>
-        <input type="text" id="phone" name="phone" th:value="${employee.phone}" required><br><br>
+            <div class="col-lg-6">
+              <div class="card-style settings-card-2 mb-30">
+                <div class="title mb-30">
+                  <h6>My Profile</h6>
+                </div>
+                <form action="/employees/updateInfo" method="post" enctype="multipart/form-data">
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="input-style-1">
+                        <label for="fullname">Full Name*</label>
+                        <input type="text" id="fullname" name="fullname" th:value="${employee.fullname}" required placeholder="Full Name" />
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <div class="input-style-1">
+                        <label for="phone">Phone*</label>
+                        <input type="text" id="phone" name="phone" th:value="${employee.phone}" required placeholder="Phone" />
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <div class="input-style-1">
+                        <label for="address">Address*</label>
+                        <input type="text" id="address" name="address" th:value="${employee.address}" required placeholder="Address" />
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <div class="input-style-1">
+                        <label for="profileImage">Profile Image</label>
+                        <input type="file" id="profileImage" name="profileImage"/>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <button type="submit" class="main-btn primary-btn btn-hover" onclick="showToast('Profile updated successfully!')">
+                        Update Profile
+                      </button>
+                      	<div id="toast-container" class="toast-container"></div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <!-- end card -->
+            </div>
+            <!-- end col -->
+          </div>
+          <!-- end row -->
+        </div>
+        <!-- end container -->
+      </section>
+      <!-- ========== section end ========== -->
 
-        <label for="address">Address:</label><br>
-        <input type="text" id="address" name="address" th:value="${employee.address}" required><br><br>
-        
-	    <label for="profileImage">Profile Image:</label><br>
-	    <input type="file" id="profileImage" name="profileImage"><br><br>
-
-        <button type="submit">Update Info</button>
-    </form>
-</body>
+     <div th:replace="common/ad_content_footer"></div>
+  </body>
 </html>
