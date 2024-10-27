@@ -2,8 +2,12 @@ package net.codejava.controller;
 
 import net.codejava.model.Customers;
 import net.codejava.model.Employees;
+import net.codejava.model.Services;
 import net.codejava.service.CustomerService;
 import net.codejava.service.EmailService;
+import net.codejava.service.EmployeeService;
+import net.codejava.service.ServiceService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +26,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime; 
+import java.time.LocalDateTime;
+import java.util.List; 
 
 @Controller
 @RequestMapping("/customer")
@@ -30,6 +35,12 @@ public class CustomerController {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
 
+    @Autowired
+    private EmployeeService employeeService;
+    
+    @Autowired
+    private ServiceService servicesService;
+    
     @Autowired
     private CustomerService customerService;
 
@@ -40,13 +51,17 @@ public class CustomerController {
 
     
     @GetMapping("/index")
-    public String dashboard(Model model, HttpSession session) {
-    	model.addAttribute("products", customerService.getAllCustomers());
-    	Customers customer = (Customers) session.getAttribute("customer");
-    	model.addAttribute("customer", customer);
-    	model.addAttribute("session", session);
-        return "customer/cus_index";
+    public String showIndex(Model model) {
+        List<Services> servicesList = servicesService.getAllServices();
+        List<Employees> employeesList = employeeService.getAllEmployees(); 
+        model.addAttribute("services", servicesList);
+        model.addAttribute("employees", employeesList);
+        return "customer/index"; 
     }
+
+
+
+
 
     
     @GetMapping("/login")

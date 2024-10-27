@@ -24,10 +24,12 @@ public class EmployeeService {
     @Autowired
     private JdbcTemplate jdbcTemplate; 
     
-    public List<Employees> getAllEmployees(){
-    	String sql = "SELECT * FROM Employees";
-    	return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Employees.class));
+    public List<Employees> getAllEmployees() {
+        String sql = "SELECT * FROM Employees WHERE user_type = 'EMPLOYEE'"; 
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Employees.class));
     }
+
+    
     
     public boolean changePassword(Employees employee, String currentPassword, String newPassword) {
         // Verify current password

@@ -28,7 +28,8 @@ public class WebConfig implements WebMvcConfigurer {
                 "/employees/reset-password",
                 "/employees/register",
                 "/employees/register/**",
-                "/employees/verify"  ,
+                "/employees/verify",
+                "/customer/index",
                 "/customer/login",
                 "/customer/chklogin",
                 "/customer/forgot-password",
@@ -46,6 +47,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new CustomerInterceptor())
             .addPathPatterns("/customer/**")
             .excludePathPatterns(
+            	"/customer/index",
                 "/customer/login",
                 "/customer/chklogin",
                 "/customer/forgot-password",
@@ -56,7 +58,7 @@ public class WebConfig implements WebMvcConfigurer {
                 "/css/**",
                 "/js/**",
                 "/images/**",
-                "/assets_admin/**", 
+                "/assets/**", 
                 "/error"
             );
 
@@ -97,7 +99,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/css/**")
+        registry.addResourceHandler("admin/css/**")
             .addResourceLocations("classpath:/static/assets_admin/css/");
         registry.addResourceHandler("/js/**")
             .addResourceLocations("classpath:/static/assets_admin/js/");
@@ -107,5 +109,10 @@ public class WebConfig implements WebMvcConfigurer {
             .addResourceLocations("file:uploads/")
             .setCachePeriod(3600)
             .resourceChain(true);
-    }
+        
+     
+        registry.addResourceHandler("/css/**")
+            .addResourceLocations("classpath:/static/assets/css/");
+        
+    }       
 }
