@@ -20,20 +20,20 @@ public class ServiceController {
     public String listServices(Model model) {
         List<Services> services = serviceService.getAllServices();
         model.addAttribute("services", services);
-        return "admin/service/service_list";
+        return "admin/services/service_list";
     }
 
     @GetMapping("/{id}")
     public String getServiceById(@PathVariable int id, Model model) {
         Services service = serviceService.getServiceById(id);
         model.addAttribute("service", service);
-        return "admin/service/service_detail";
+        return "admin/services/service_detail";
     }
 
     @GetMapping("/add")
     public String addServiceForm(Model model) {
         model.addAttribute("service", new Services());
-        return "admin/service/service_add";
+        return "admin/services/service_add";
     }
 
     @PostMapping("/add")
@@ -46,7 +46,7 @@ public class ServiceController {
     public String editServiceForm(@PathVariable int id, Model model) {
         Services service = serviceService.getServiceById(id);
         model.addAttribute("service", service);
-        return "admin/service/service_edit";
+        return "admin/services/service_edit";
     }
 
     @PostMapping("/edit/{id}")
