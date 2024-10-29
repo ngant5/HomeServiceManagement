@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpSession;
+
 import java.util.List;
 
 @Controller
@@ -30,7 +32,7 @@ public class CustomerServiceController {
     }
 
     @GetMapping("/{id}")
-    public String getService(@PathVariable("id") int id, Model model) {
+    public String getService(@PathVariable("id") int id, Model model, HttpSession session) {
         Services service = serviceService.getServiceById(id);
         if (service != null) {
             List<EmployeeServices> employeeServices = employeeServicesService.findByServiceId(id);
@@ -41,10 +43,11 @@ public class CustomerServiceController {
                 employeeService.setEmployee(employee); // Thêm setter cho Employee vào EmployeeServices
             }
 
+            session.setAttribute("serviceId", id);
             
             model.addAttribute("service", service);
             model.addAttribute("employeeServices", employeeServices);
-            return "customer/service/detail"; // Tên view
+            return "customer/service/select-employee"; // Tên view
         } else {
             return "error"; // Trang lỗi
         }

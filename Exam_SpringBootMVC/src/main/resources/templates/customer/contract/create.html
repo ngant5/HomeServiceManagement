@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Thanh Toán</title>
+    <title>Create Contract</title>
     <script>
         function calculateTotalHours() {
             const hoursPerDay = document.getElementById('hoursPerDay').value;
@@ -32,7 +32,7 @@
 
 	<h3>Tổng Số Tiền: <span th:text="${totalPrice}"></span></h3>
     <form th:action="@{/contracts/create}" method="post">
-        <input type="hidden" name="customerId" th:value="${session.getAttribute('customerId')}"/>
+		<p th:text="${session.customerId}"></p>
         <input type="hidden" name="contractStatus" value="0"/> <!-- Trạng thái mặc định -->
         <input type="hidden" name="paymentStatus" value="0"/> <!-- Trạng thái mặc định -->
 

@@ -14,8 +14,8 @@ public class ContractService {
     @Autowired
     private ContractRepository contractRepository;
 
-    public int createContract(Contracts contract) {
-        return contractRepository.createContract(contract);
+    public int createContract(Contracts contract, double servicePrice) {
+        return contractRepository.createContract(contract, servicePrice);
     }
     
     public List<Contracts> getAllContracts() {

@@ -17,32 +17,54 @@ public class ContractDetailsRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void createContractDetail(List<ContractDetails> contractDetails) {
-        String sql = "INSERT INTO Contract_Details (contract_id, emp_service_id, service_address, service_phone, start_date, end_date, status, hours_worked, total_price) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        for (ContractDetails detail : contractDetails) {
-            jdbcTemplate.update(sql, detail.getContractId(), detail.getEmpServiceId(), 
-                                detail.getServiceAddress(), detail.getServicePhone(), 
-                                detail.getStartDate(), detail.getEndDate(), 
-                                detail.getStatus(), detail.getHoursWorked(), 
-                                detail.getTotalPrice());
-        }
-    }
-
+    // Tạo chi tiết hợp đồng đơn lẻ
     public void createContractDetail(ContractDetails contractDetail) {
-        String sql = "INSERT INTO Contract_Details (contract_id, emp_service_id, service_address, service_phone, start_date, end_date, status, hours_worked, total_price) " +
+        String sql = "INSERT INTO ContractDetails (contract_id, emp_service_id, service_address, service_phone, start_date, end_date, status, hours_worked, total_price) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, contractDetail.getContractId(), contractDetail.getEmpServiceId(), 
-                            contractDetail.getServiceAddress(), contractDetail.getServicePhone(), 
-                            contractDetail.getStartDate(), contractDetail.getEndDate(), 
-                            contractDetail.getStatus(), contractDetail.getHoursWorked(), 
+                            contractDetail.getServiceAddress(), contractDetail.getServicePhone(),
+                            contractDetail.getStartDate(), contractDetail.getEndDate(),
+                            contractDetail.getStatus(), contractDetail.getHoursWorked(),
                             contractDetail.getTotalPrice());
     }
 
+    // Tạo danh sách chi tiết hợp đồng
+    public void createContractDetails(List<ContractDetails> contractDetails) {
+        for (ContractDetails detail : contractDetails) {
+            createContractDetail(detail); // Gọi phương thức tạo đơn lẻ
+        }
+    }
+
+    // Lấy tất cả chi tiết hợp đồng
+    public List<ContractDetails> getAllContractDetails() {
+        String sql = "SELECT * FROM ContractDetails";
+        return jdbcTemplate.query(sql, this::mapRowToContractDetail);
+    }
+
+    public ContractDetails getContractDetailById(int id) {
+        String sql = "SELECT * FROM ContractDetails WHERE contract_detail_id = ?";
+        return jdbcTemplate.queryForObject(sql, this::mapRowToContractDetail, id);
+    }
+
+    public void updateContractDetail(ContractDetails contractDetail) {
+        String sql = "UPDATE ContractDetails SET emp_service_id = ?, service_address = ?, service_phone = ?, start_date = ?, end_date = ?, status = ?, hours_worked = ?, total_price = ? WHERE contract_detail_id = ?";
+        jdbcTemplate.update(sql, contractDetail.getEmpServiceId(), contractDetail.getServiceAddress(),
+                            contractDetail.getServicePhone(), contractDetail.getStartDate(),
+                            contractDetail.getEndDate(), contractDetail.getStatus(),
+                            contractDetail.getHoursWorked(), contractDetail.getTotalPrice(), 
+                            contractDetail.getContractDetailId());
+    }
+
+    public void deleteContractDetail(int id) {
+        String sql = "DELETE FROM ContractDetails WHERE contract_detail_id = ?";
+        jdbcTemplate.update(sql, id);
+    }
+    
     public List<ContractDetails> findByContractId(int contractId) {
-        String sql = "SELECT * FROM Contract_Details WHERE contract_id = ?";
+        String sql = "SELECT * FROM ContractDetails WHERE contract_id = ?";
         return jdbcTemplate.query(sql, this::mapRowToContractDetail, contractId);
     }
+
 
     private ContractDetails mapRowToContractDetail(ResultSet rs, int rowNum) throws SQLException {
         ContractDetails detail = new ContractDetails();
@@ -58,28 +80,7 @@ public class ContractDetailsRepository {
         detail.setTotalPrice(rs.getDouble("total_price"));
         return detail;
     }
+    
 
-    public List<ContractDetails> getAllContractDetails() {
-        String sql = "SELECT * FROM Contract_Details";
-        return jdbcTemplate.query(sql, this::mapRowToContractDetail);
-    }
-
-    public ContractDetails getContractDetailById(int id) {
-        String sql = "SELECT * FROM Contract_Details WHERE contract_detail_id = ?";
-        return jdbcTemplate.queryForObject(sql, this::mapRowToContractDetail, id);
-    }
-
-    public void updateContractDetail(ContractDetails contractDetail) {
-        String sql = "UPDATE Contract_Details SET contract_id = ?, emp_service_id = ?, service_address = ?, service_phone = ?, start_date = ?, end_date = ?, status = ?, hours_worked = ?, total_price = ? WHERE contract_detail_id = ?";
-        jdbcTemplate.update(sql, contractDetail.getContractId(), contractDetail.getEmpServiceId(),
-                contractDetail.getServiceAddress(), contractDetail.getServicePhone(),
-                contractDetail.getStartDate(), contractDetail.getEndDate(),
-                contractDetail.getStatus(), contractDetail.getHoursWorked(),
-                contractDetail.getTotalPrice(), contractDetail.getContractDetailId());
-    }
-
-    public void deleteContractDetail(int id) {
-        String sql = "DELETE FROM Contract_Details WHERE contract_detail_id = ?";
-        jdbcTemplate.update(sql, id);
-    }
+   
 }

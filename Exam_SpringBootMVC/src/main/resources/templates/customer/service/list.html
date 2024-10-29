@@ -21,7 +21,6 @@
         <td th:text="${service.serviceDescription}"></td>
         <td th:text="${service.servicePrice}"></td>
         <td th:text="${service.serviceStatus}"></td>
-        <td><img th:src="${service.serviceImage}" alt="Service Image" width="100"/></td>
         <td>
             <a th:href="@{/customer/services/{id}(id=${service.serviceId})}">View Details</a>
         </td>

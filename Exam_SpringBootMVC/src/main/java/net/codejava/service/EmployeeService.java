@@ -29,12 +29,17 @@ public class EmployeeService {
     
     @Autowired
     private EmployeeServicesRepository employeeServicesRepository;
+    
+    
 
     public List<Employees> getAllEmployees() {
         String sql = "SELECT * FROM Employees";
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Employees.class));
     }
     
+    public Employees getEmployee(int employeeId) {
+        return employeeRepository.findById(employeeId).orElse(null); 
+    }
 
     
     public boolean changePassword(Employees employee, String currentPassword, String newPassword) {

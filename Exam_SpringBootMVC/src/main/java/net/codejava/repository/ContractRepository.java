@@ -17,13 +17,44 @@ public class ContractRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public int createContract(Contracts contract) {
+    public int createContract(Contracts contract, double servicePrice) {
+        System.out.println("Creating contract with customerId: " + contract.getCustomerId());
+        
+        System.out.println("Contract details: " +
+                " Status: " + contract.getContractStatus() +
+                ", Total Price: " + contract.getTotalPrice() +
+                ", Payment Status: " + contract.getPaymentStatus() +
+                ", Created At: " + contract.getCreatedAt() +
+                ", Contract File: " + contract.getContractFile());
+
+        if (contract.getCustomerId() == 0 || contract.getTotalPrice() <= 0 || contract.getCreatedAt() == null) {
+            throw new IllegalArgumentException("Invalid contract details provided.");
+        }
+
         String sql = "INSERT INTO Contracts (customer_id, contract_status, total_price, payment_status, created_at, contract_file) " +
-                     "VALUES (?, ?, ?, ?, ?, ?)";
-        return jdbcTemplate.update(sql, contract.getCustomerId(), contract.getContractStatus(), 
-                                    contract.getTotalPrice(), contract.getPaymentStatus(), 
-                                    contract.getCreatedAt(), contract.getContractFile());
+                     "OUTPUT INSERTED.contract_id VALUES (?, ?, ?, ?, ?, ?)";
+        
+        try {
+            // Thực hiện câu lệnh chèn và lấy ID cùng một lúc
+            Integer generatedId = jdbcTemplate.queryForObject(sql, new Object[]{
+                    contract.getCustomerId(), contract.getContractStatus(), contract.getTotalPrice(), 
+                    contract.getPaymentStatus(), contract.getCreatedAt(), contract.getContractFile()},
+                    Integer.class);
+
+            if (generatedId == null) {
+                System.err.println("Failed to retrieve generated ID for the contract.");
+                throw new IllegalStateException("Failed to retrieve generated ID for the contract.");
+            }
+
+            contract.setContractId(generatedId);
+            return generatedId;
+        } catch (Exception e) {
+            System.err.println("Database error during contract creation: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
+
     
     public List<Contracts> getAllContracts() {
         String sql = "SELECT * FROM Contracts";
