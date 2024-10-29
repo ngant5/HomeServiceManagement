@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Available Services</title>
+</head>
+<body>
+<h2>Available Services</h2>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Status</th>
+        <th>Image</th>
+        <th>Actions</th>
+    </tr>
+    <tr th:each="service : ${services}">
+        <td th:text="${service.serviceId}"></td>
+        <td th:text="${service.serviceName}"></td>
+        <td th:text="${service.serviceDescription}"></td>
+        <td th:text="${service.servicePrice}"></td>
+        <td th:text="${service.serviceStatus}"></td>
+        <td><img th:src="${service.serviceImage}" alt="Service Image" width="100"/></td>
+        <td>
+            <a th:href="@{/customer/services/{id}(id=${service.serviceId})}">View Details</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

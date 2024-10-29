@@ -1,7 +1,10 @@
 package net.codejava.service;
 
+import net.codejava.model.EmployeeServices;
 import net.codejava.model.Employees;
 import net.codejava.repository.EmployeeRepository;
+import net.codejava.repository.EmployeeServicesRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,12 +27,15 @@ public class EmployeeService {
     @Autowired
     private JdbcTemplate jdbcTemplate; 
     
+    @Autowired
+    private EmployeeServicesRepository employeeServicesRepository;
+
     public List<Employees> getAllEmployees() {
-        String sql = "SELECT * FROM Employees WHERE user_type = 'EMPLOYEE'"; 
+        String sql = "SELECT * FROM Employees";
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Employees.class));
     }
-
     
+
     
     public boolean changePassword(Employees employee, String currentPassword, String newPassword) {
         // Verify current password
@@ -79,8 +85,7 @@ public class EmployeeService {
         }
         return false;
     }
-
-
+    
     // Tìm theo ID
     public Employees findById(int id) {
         return employeeRepository.findById(id).orElse(null); // This can stay as is if your repository still returns Optional
@@ -105,7 +110,7 @@ public class EmployeeService {
         return BCrypt.checkpw(rawPassword, encodedPassword);
     }
 
-    
+    // Lưu nhân viên mới
     public Employees saveUser(Employees employee, String siteURL) {
         // Encrypt password
         String hashedPassword = BCrypt.hashpw(employee.getPassword(), BCrypt.gensalt());
@@ -137,15 +142,16 @@ public class EmployeeService {
     }
     
     public int updateEmployeeInfo(Employees employee) {
-    	return jdbcTemplate.update(
-    			"UPDATE Employees SET fullname=?, phone=?, address=?, profile_image=? WHERE employee_id=?",
-    			employee.getFullname(),
-    			employee.getPhone(),
-    			employee.getAddress(),
-    			employee.getProfileImage(),
-    			employee.getEmployeeId()
-    			);
+        return jdbcTemplate.update(
+            "UPDATE Employees SET fullname=?, phone=?, address=?, profile_image=? WHERE employee_id=?",
+            employee.getFullname(),
+            employee.getPhone(),
+            employee.getAddress(),
+            employee.getProfileImage(),
+            employee.getEmployeeId()
+        );
     }
+
 
     // Cập nhật nhân viên
     public int updateUser(Employees employee) {
@@ -172,4 +178,17 @@ public class EmployeeService {
     public boolean deleteById(int id) {
         return employeeRepository.deleteById(id) > 0;
     }
+    
+    public Employees getEmployeeById(int employeeId) {
+        String sql = "SELECT fullname, profile_image, experience_years FROM Employees WHERE employee_id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{employeeId}, (rs, rowNum) -> {
+            Employees employee = new Employees();
+            employee.setEmployeeId(rs.getInt("employee_id"));
+            employee.setFullname(rs.getString("fullname"));
+            employee.setProfileImage(rs.getString("profile_image"));
+            employee.setExperienceYears(rs.getInt("experience_years"));
+            return employee;
+        });
+    }
+
 }

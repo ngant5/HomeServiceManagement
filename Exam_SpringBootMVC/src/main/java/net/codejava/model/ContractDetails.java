@@ -12,7 +12,7 @@ public class ContractDetails {
     private LocalDateTime endDate;
     private int status;
     private int hoursWorked;
-    private int totalPrice;
+    private double totalPrice;
 
     
     public int getContractDetailId() { 
@@ -71,10 +71,10 @@ public class ContractDetails {
     public void setHoursWorked(int hoursWorked) { 
     	this.hoursWorked = hoursWorked;
     	}
-    public int getTotalPrice() { 
+    public double getTotalPrice() { 
     	return totalPrice; 
     	}
-    public void setTotalPrice(int totalPrice) { 
+    public void setTotalPrice(double totalPrice) { 
     	this.totalPrice = totalPrice;
     	}
 }

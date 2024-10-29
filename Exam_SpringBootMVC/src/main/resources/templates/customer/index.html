@@ -1,47 +1,160 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Danh sách dịch vụ và nhân viên</title>
+    <title>Chọn Dịch Vụ và Nhân Viên</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .tab {
+            display: none;
+        }
+        .tab.active {
+            display: block;
+        }
+        .tab-buttons {
+            display: flex;
+            cursor: pointer;
+        }
+        .tab-button {
+            padding: 10px;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            margin-right: 5px;
+        }
+        .tab-button.active {
+            background-color: #ccc;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        input[type="text"], input[type="datetime-local"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        function validateDates() {
+            const startDate = new Date(document.getElementById('start_date').value);
+            const endDate = new Date(document.getElementById('end_date').value);
+            if (endDate <= startDate) {
+                alert('Ngày kết thúc phải lớn hơn ngày bắt đầu.');
+                return false;
+            }
+            return true;
+        }
+        
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const buttons = document.querySelectorAll('.tab-button');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`.tab-button[data-tab="${tabName}"]`).classList.add('active');
+        }
+
+        window.onload = function() {
+            showTab('services'); // Show services tab by default
+        }
+    </script>
 </head>
 <body>
-    <h1>Danh sách dịch vụ</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Tên dịch vụ</th>
-                <th>Mô tả</th>
-                <th>Giá</th>
-            </tr>
-        </thead>
-		<tbody>
-		    <tr th:each="service : ${services}">
-		        <td th:text="${service.serviceId}"></td>
-		        <td th:text="${service.serviceName}"></td>
-		        <td th:text="${service.serviceDescription}"></td>
-		        <td th:text="${service.servicePrice}"></td>
-		    </tr>
-		</tbody>
-    </table>
+    <h1>Chọn Dịch Vụ và Nhân Viên</h1>
+    
+    <div class="tab-buttons">
+        <div class="tab-button" data-tab="services" onclick="showTab('services')">Dịch Vụ</div>
+        <div class="tab-button" data-tab="employees" onclick="showTab('employees')">Nhân Viên</div>
+    </div>
 
-    <h1>Danh sách nhân viên</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Tên nhân viên</th>
-                <th>Email</th>
-                <th>Số điện thoại</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="employee : ${employees}">
-                <td th:text="${employee.employeeId}"></td>
-                <td th:text="${employee.fullname}"></td>
-                <td th:text="${employee.email}"></td>
-                <td th:text="${employee.phone}"></td>
-            </tr>
-        </tbody>
-    </table>
+    <form action="/contracts/create" method="post" onsubmit="return validateDates()">
+        <div class="container">
+            <div class="column tab active" id="services">
+                <h3>Danh Sách Dịch Vụ</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Chọn</th>
+                            <th>ID Dịch Vụ</th>
+                            <th>Tên Dịch Vụ</th>
+                            <th>Giá Dịch Vụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="service : ${services}">
+                            <td>
+                                <input type="checkbox" th:value="${service.serviceId}" name="selectedServices" />
+                            </td>
+                            <td th:text="${service.serviceId}"></td>
+                            <td th:text="${service.serviceName}"></td>
+                            <td th:text="${service.servicePrice}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="column tab" id="employees">
+                <h3>Danh Sách Nhân Viên</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Nhân Viên</th>
+                            <th>Tên Nhân Viên</th>
+                            <th>Chi Tiết</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="employee : ${employees}">
+                            <td th:text="${employee.employeeId}"></td>
+                            <td th:text="${employee.name}"></td>
+                            <td th:text="${employee.details}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <h3>Thông Tin Hợp Đồng</h3>
+        <label for="serviceAddress">Địa chỉ dịch vụ:</label>
+        <input type="text" id="serviceAddress" name="serviceAddress" required />
+        
+        <label for="servicePhone">Điện thoại dịch vụ:</label>
+        <input type="text" id="servicePhone" name="servicePhone" required />
+        
+        <label for="start_date">Ngày bắt đầu:</label>
+        <input type="datetime-local" id="start_date" name="startDate" required />
+        
+        <label for="end_date">Ngày kết thúc:</label>
+        <input type="datetime-local" id="end_date" name="endDate" required />
+        
+        <button type="submit">Tạo Hợp Đồng</button>
+        
+        <div class="error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+    </form>
 </body>
 </html>

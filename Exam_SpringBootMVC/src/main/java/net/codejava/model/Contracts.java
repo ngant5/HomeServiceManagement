@@ -9,7 +9,7 @@ public class Contracts {
     private int contractId;
     private int customerId; 
     private int contractStatus;
-    private int totalPrice;
+    private double totalPrice;
     private int paymentStatus;
     private LocalDateTime createdAt;
     private String contractFile;
@@ -47,11 +47,11 @@ public class Contracts {
     	this.contractStatus = contractStatus; 
     }
     
-    public int getTotalPrice() { 
+    public double getTotalPrice() { 
     	return totalPrice; 
     }
     
-    public void setTotalPrice(int totalPrice) { 
+    public void setTotalPrice(double totalPrice) { 
     	this.totalPrice = totalPrice; 
     }
     

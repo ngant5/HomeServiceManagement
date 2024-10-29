@@ -30,20 +30,22 @@ import org.slf4j.LoggerFactory;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
+	private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
     
-    private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
-    
+	private final EmployeeService employeeService;
+    private final EmailService emailService;
+    private final CustomerService customerService;
+    private final ContractService contractService;
+
     @Autowired
-    private EmployeeService employeeService;
-    
-    @Autowired
-    private EmailService emailService;
-    
-    @Autowired
-    private CustomerService customerService;
-    
-    @Autowired
-    private ContractService contractService;
+    public AdminController(EmployeeService employeeService, EmailService emailService, 
+                           CustomerService customerService, ContractService contractService) {
+        this.employeeService = employeeService;
+        this.emailService = emailService;
+        this.customerService = customerService;
+        this.contractService = contractService;
+    }
+
     
     
     @GetMapping("/dashboard")
@@ -84,43 +86,27 @@ public class AdminController {
     @PostMapping("/chklogin")
     public String checkLogin(@RequestParam("email") String email,
                              @RequestParam("pwd") String password,
-                             HttpServletRequest request,
-                             HttpServletResponse response) {
-        Employees employee = employeeService.findByEmail(email);
-        
-        if (employee != null) {
+                             HttpServletRequest request) {
+        try {
+            Employees employee = employeeService.findByEmail(email);
+            if (employee == null) {
+                return "redirect:/admin/login?error=userNotFound";
+            }
             if (employee.getStatus() == 0) {
-                
-                logger.warn("Attempt to login with unverified account: " + email);
-                return "redirect:/admin/login?unverified=true";
+                return "redirect:/admin/login?error=unverified";
+            }
+            if (!employeeService.checkPassword(password, employee.getPassword())) {
+                return "redirect:/admin/login?error=invalidPassword";
             }
             
-            if (employeeService.checkPassword(password, employee.getPassword())) {
-                
-                HttpSession session = request.getSession();
-                session.setAttribute("employee", employee);
-                
-                logger.info("User authenticated: " + email + ", UserType: " + employee.getUserType());
-                
-                
-                switch (employee.getUserType().toUpperCase()) {
-                    case "ADMIN":
-                        return "redirect:/admin/dashboard";
-                    case "EMPLOYEE":
-                        return "redirect:/employee/dashboard";
-                    default:
-                        logger.warn("Unknown userType: " + employee.getUserType());
-                        return "redirect:/admin/login?error=true";
-                }
-            } else {
-                logger.error("Password check failed for user: " + email);
-            }
-        } else {
-            logger.error("User not found: " + email);
+            request.getSession().setAttribute("employee", employee);
+            return employee.getUserType().equalsIgnoreCase("ADMIN") ? "redirect:/admin/dashboard" : "redirect:/employee/dashboard";
+        } catch (Exception e) {
+            logger.error("Error during login: ", e);
+            return "redirect:/admin/login?error=serverError";
         }
-        
-        return "redirect:/admin/login?error=true";
     }
+
 
     
     @GetMapping("/change-password")

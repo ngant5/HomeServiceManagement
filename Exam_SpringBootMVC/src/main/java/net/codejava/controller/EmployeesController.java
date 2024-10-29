@@ -1,8 +1,13 @@
 package net.codejava.controller;
 
+import net.codejava.model.EmployeeServices;
 import net.codejava.model.Employees;
+import net.codejava.model.Services;
 import net.codejava.service.EmailService;
 import net.codejava.service.EmployeeService;
+import net.codejava.service.EmployeeServicesService;
+import net.codejava.service.ServiceService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +24,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +38,15 @@ public class EmployeesController {
     @Autowired
     private EmployeeService employeeService;
     
+    
     @Autowired
-    private EmailService emailService;
+    private ServiceService serviceService;
+    
+    @Autowired
+    private EmployeeServicesService employeeServicesService;
     
     private static final String UPLOAD_DIR = "uploads/";
     
-   
     @GetMapping("/updateInfo")
     public String showUpdateInfoForm(HttpSession session, Model model) {
         Employees employee = (Employees) session.getAttribute("employee");
@@ -45,8 +54,11 @@ public class EmployeesController {
         if (employee == null) {
             return "redirect:/employees/login";
         }
-
-        model.addAttribute("employee", employee);  // Add employee to the model
+        List<Services> services = serviceService.getAllServices();
+        model.addAttribute("services", services);
+        List<EmployeeServices> employeeServices = employeeServicesService.findAll();
+        model.addAttribute("employeeServices", employeeServices);
+        model.addAttribute("employee", employee);  
         return "employees/emp_update_info";
     }
 
@@ -90,7 +102,7 @@ public class EmployeesController {
                         boolean deleted = existingImageFile.delete();
                         if (!deleted) {
                             model.addAttribute("error", "Failed to delete old image.");
-                            return "employees/emp_update_info";  // Return to the update form on error
+                            return "employees/emp_update_info"; // Return to the update form on error
                         }
                     }
                 }
@@ -106,18 +118,17 @@ public class EmployeesController {
                 employee.setProfileImage(newFileName); // Save only the new filename, not the path
             } catch (IOException e) {
                 model.addAttribute("error", "Failed to upload image.");
-                return "employees/emp_update_info";  // Return to the update form on error
+                return "employees/emp_update_info"; // Return to the update form on error
             }
         }
 
         // Update the employee information in the database
         employeeService.updateEmployeeInfo(employee);
-
         // Update session
         session.setAttribute("employee", employee);
-        return "redirect:/employees/dashboard"; // Redirect to the dashboard after successful update
+        return "redirect:/employees/updateInfo?success=update"; // Redirect to the dashboard after successful update
     }
-
+    
 
     
    
@@ -181,13 +192,13 @@ public class EmployeesController {
         return "redirect:/employees/login?error=true";
     }
 
-   
-    @GetMapping("/register")
+  /*   
+   @GetMapping("/register") 
     public String registerForm() {
         return "employees/emp_register";
     }
     
-    
+  
     @PostMapping("/register")
     public String registerUser(@RequestParam("fullname") String fullname,
                                @RequestParam("pwd") String password,
@@ -224,7 +235,7 @@ public class EmployeesController {
         
         return "redirect:/employees/login?registered=true";
     }
-    
+*/
     // Verify account
     @GetMapping("/verify")
     public String verifyAccount(@RequestParam("code") String code, Model model) {
@@ -269,7 +280,7 @@ public class EmployeesController {
         // Check if the new passwords match
         if (!newPassword.equals(confirmPassword)) {
             model.addAttribute("error", "New passwords do not match.");
-            return "employees/emp_change_password";
+            return "employees/emp_update_profile";
         }
 
         // Try to change the password
@@ -277,10 +288,10 @@ public class EmployeesController {
 
         if (success) {
             model.addAttribute("message", "Password changed successfully.");
-            return "employees/emp_change_password"; // You can redirect to dashboard if needed
+            return "employees/emp_update_info"; // You can redirect to dashboard if needed
         } else {
             model.addAttribute("error", "Current password is incorrect.");
-            return "employees/emp_change_password";
+            return "employees/emp_update_info";
         }
     }
     
@@ -338,9 +349,11 @@ public class EmployeesController {
 
         return "employees/emp_reset_password";
     }
+    
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/employees/login";
+        return "redirect:/admin/login";
     }
+    
 }
