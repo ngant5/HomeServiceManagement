@@ -1,57 +1,36 @@
 package net.codejava.service;
 
-import net.codejava.model.ContractDetails;
 import net.codejava.model.Contracts;
-import net.codejava.model.EmployeeServices;
 import net.codejava.repository.ContractRepository;
-import net.codejava.repository.EmployeeServicesRepository; 
-import net.codejava.repository.ServiceRepository;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Service
 public class ContractService {
 
     @Autowired
-    private ServiceRepository serviceRepository;
+    private ContractRepository contractRepository;
 
-    @Autowired
-    private ContractRepository contractRepository; 
-    
-    @Autowired
-    private EmployeeServicesRepository employeeServiceRepository; 
-
-    private static final Logger logger = Logger.getLogger(ContractService.class.getName());
-
-    
+    public int createContract(Contracts contract) {
+        return contractRepository.createContract(contract);
+    }
     
     public List<Contracts> getAllContracts() {
-        return contractRepository.findAll(); 
+        return contractRepository.getAllContracts();
     }
 
     public Contracts getContractById(int contractId) {
-        return contractRepository.findById(contractId); 
-    }
-    
-    public Contracts createContract(Contracts contract, List<ContractDetails> details) {
-    	if (contract.getCreatedAt() == null) {
-            contract.setCreatedAt(LocalDateTime.now());
-        }
-        Contracts savedContract = contractRepository.createContract(contract);
-        contractRepository.saveContractDetails(savedContract.getContractId(), details);
-        return savedContract;
+        return contractRepository.getContractById(contractId);
     }
 
-    public double getServicePrice(int serviceId) {
-        return serviceRepository.getServicePrice(serviceId);
+    public void updateContract(Contracts contract) {
+        contractRepository.updateContract(contract);
     }
-    
-    public double calculateTotalPrice(List<Integer> serviceIds) {
-        return serviceIds.stream().mapToDouble(this::getServicePrice).sum();
+
+    public void deleteContract(int contractId) {
+        contractRepository.deleteContract(contractId);
     }
 }

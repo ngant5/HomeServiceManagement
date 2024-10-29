@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Service
 public class ContractDetailService {
@@ -15,29 +13,32 @@ public class ContractDetailService {
     @Autowired
     private ContractDetailsRepository contractDetailsRepository;
 
-    private static final Logger logger = Logger.getLogger(ContractDetailService.class.getName());
+    public void createContractDetails(List<ContractDetails> contractDetails) {
+        contractDetailsRepository.createContractDetail(contractDetails);
+    }
+    
+    // Thêm phương thức tạo chi tiết hợp đồng đơn lẻ
+    public void createContractDetail(ContractDetails contractDetail) {
+        contractDetailsRepository.createContractDetail(contractDetail);
+    }
 
     public List<ContractDetails> getAllContractDetails() {
-        return contractDetailsRepository.findAll();
+        return contractDetailsRepository.getAllContractDetails();
     }
 
-    public ContractDetails getContractDetailById(int detailId) {
-        return contractDetailsRepository.findById(detailId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy chi tiết hợp đồng với ID: " + detailId));
-    }
-
-    public void createContractDetail(ContractDetails contractDetail) {
-        contractDetailsRepository.save(contractDetail);
-        logger.log(Level.INFO, "Đã tạo chi tiết hợp đồng với ID: " + contractDetail.getContractDetailId());
+    public ContractDetails getContractDetailById(int id) {
+        return contractDetailsRepository.getContractDetailById(id);
     }
 
     public void updateContractDetail(ContractDetails contractDetail) {
-        contractDetailsRepository.update(contractDetail);
-        logger.log(Level.INFO, "Đã cập nhật chi tiết hợp đồng với ID: " + contractDetail.getContractDetailId());
+        contractDetailsRepository.updateContractDetail(contractDetail);
     }
 
-    public void deleteContractDetail(int detailId) {
-        contractDetailsRepository.deleteById(detailId);
-        logger.log(Level.INFO, "Đã xóa chi tiết hợp đồng với ID: " + detailId);
+    public void deleteContractDetail(int id) {
+        contractDetailsRepository.deleteContractDetail(id);
+    }
+
+    public List<ContractDetails> getContractDetailsByContractId(int contractId) {
+        return contractDetailsRepository.findByContractId(contractId);
     }
 }
