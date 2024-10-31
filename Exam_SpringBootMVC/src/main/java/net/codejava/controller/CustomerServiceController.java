@@ -36,20 +36,22 @@ public class CustomerServiceController {
         Services service = serviceService.getServiceById(id);
         if (service != null) {
             List<EmployeeServices> employeeServices = employeeServicesService.findByServiceId(id);
-            
-            // Thêm logic để lấy thông tin nhân viên cho mỗi dịch vụ
             for (EmployeeServices employeeService : employeeServices) {
                 Employees employee = employeeServicesService.getEmployeeInfo(employeeService.getEmployeeId());
-                employeeService.setEmployee(employee); // Thêm setter cho Employee vào EmployeeServices
+                employeeService.setEmployee(employee); 
             }
 
+            Integer servicePrice = service.getServicePrice();
             session.setAttribute("serviceId", id);
+            session.setAttribute("servicePrice", servicePrice != null ? servicePrice.doubleValue() : null);
+            session.setAttribute("serviceName", service.getServiceName());
+
             
             model.addAttribute("service", service);
             model.addAttribute("employeeServices", employeeServices);
-            return "customer/service/select-employee"; // Tên view
+            return "customer/service/select-employee"; 
         } else {
-            return "error"; // Trang lỗi
+            return "error"; 
         }
     }
 

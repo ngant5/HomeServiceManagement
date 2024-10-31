@@ -24,7 +24,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/admin/services")
-public class ServiceController {
+public class AdminServiceController {
 
     @Autowired
     private ServiceService serviceService;

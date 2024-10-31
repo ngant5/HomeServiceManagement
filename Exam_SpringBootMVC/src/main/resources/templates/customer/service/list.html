@@ -2,29 +2,43 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <title>Available Services</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h2 {
+            text-align: center;
+        }
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Hai cột */
+            gap: 20px; /* Khoảng cách giữa các ô */
+        }
+        .service-card {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .service-card img {
+            width: 100px; /* Kích thước hình ảnh */
+            height: 100px; /* Kích thước hình ảnh */
+        }
+    </style>
 </head>
 <body>
-<h2>Available Services</h2>
-<table border="1">
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Price</th>
-        <th>Status</th>
-        <th>Image</th>
-        <th>Actions</th>
-    </tr>
-    <tr th:each="service : ${services}">
-        <td th:text="${service.serviceId}"></td>
-        <td th:text="${service.serviceName}"></td>
-        <td th:text="${service.serviceDescription}"></td>
-        <td th:text="${service.servicePrice}"></td>
-        <td th:text="${service.serviceStatus}"></td>
-        <td>
-            <a th:href="@{/customer/services/{id}(id=${service.serviceId})}">View Details</a>
-        </td>
-    </tr>
-</table>
+    <h2>Available Services</h2>
+    <div class="service-grid">
+        <div th:each="service : ${services}" class="service-card">
+            <img th:src="${service.serviceImage}" alt="Service Image">
+            <h3 th:text="${service.serviceName}"></h3>
+            <p th:text="${service.serviceDescription}"></p>
+            <p th:text="${service.servicePrice}"></p>
+            <p th:text="${service.serviceStatus}"></p>
+            <a th:href="@{/customer/services/{id}(id=${service.serviceId})}">Choose Employee</a>
+        </div>
+    </div>
 </body>
 </html>

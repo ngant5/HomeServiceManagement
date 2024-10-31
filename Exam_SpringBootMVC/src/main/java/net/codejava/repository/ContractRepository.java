@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -37,8 +39,12 @@ public class ContractRepository {
         try {
             // Thực hiện câu lệnh chèn và lấy ID cùng một lúc
             Integer generatedId = jdbcTemplate.queryForObject(sql, new Object[]{
-                    contract.getCustomerId(), contract.getContractStatus(), contract.getTotalPrice(), 
-                    contract.getPaymentStatus(), contract.getCreatedAt(), contract.getContractFile()},
+                    contract.getCustomerId(), 
+                    contract.getContractStatus(), 
+                    contract.getTotalPrice(), 
+                    contract.getPaymentStatus(), 
+                    Timestamp.valueOf(contract.getCreatedAt()),
+                    contract.getContractFile()},
                     Integer.class);
 
             if (generatedId == null) {
@@ -80,6 +86,8 @@ public class ContractRepository {
     }
 
     private Contracts mapRowToContract(ResultSet rs, int rowNum) throws SQLException {
+    	
+
         Contracts contract = new Contracts();
         contract.setContractId(rs.getInt("contract_id"));
         contract.setCustomerId(rs.getInt("customer_id"));

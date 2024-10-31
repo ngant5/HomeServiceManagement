@@ -26,13 +26,24 @@
 	            <td th:text="${employee.fullname}"></td>
 	            <td th:text="${service.serviceName}"></td>
 	            <td th:text="${totalPrice}"></td>
+				<input type="hidden" name="empServiceId" value="yourEmpServiceIdValue"/>
+
 	        </tr>
 	    </tbody>
 	</table>
 
 	<h3>Tổng Số Tiền: <span th:text="${totalPrice}"></span></h3>
-    <form th:action="@{/contracts/create}" method="post">
+    <form th:action="@{/contracts/checkout}" method="post">
 		<p th:text="${session.customerId}"></p>
+		
+
+		<!-- Thêm trường totalPrice -->
+		<input type="hidden" name="empServiceId" value="${session.empServiceId}"/>
+		<input type="hidden" name="contractId" value="${contractId}"/>
+		<input type="hidden" name="totalPrice" value="${session.servicePrice}"/>
+
+
+
         <input type="hidden" name="contractStatus" value="0"/> <!-- Trạng thái mặc định -->
         <input type="hidden" name="paymentStatus" value="0"/> <!-- Trạng thái mặc định -->
 
@@ -70,5 +81,7 @@
 
         <button type="submit">Tạo Hợp Đồng</button>
     </form>
+	
+	
 </body>
 </html>

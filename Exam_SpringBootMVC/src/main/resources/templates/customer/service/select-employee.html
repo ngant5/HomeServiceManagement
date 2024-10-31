@@ -11,9 +11,10 @@
     <img th:src="${service.serviceImage}" alt="Service Image"/>
 
 	<h2>Employee List by Service</h2>
-    <form th:action="@{/contracts/create}" method="post">
-		<input type="hidden" name="serviceId" th:value="${session['serviceId']}"/>
+    <form th:action="@{/contracts/create}" method="POST">
+		<input type="hidden" name="serviceId" th:value="${service.serviceId}"/> 
 		<input type="hidden" name="servicePrice" th:value="${service.servicePrice}"/> 
+		<input type="hidden" name="serviceName" th:value="${service.serviceName}"/>
         <table>
             <thead>
                 <tr>
@@ -31,8 +32,9 @@
                     <td th:text="${employeeService.employee.experienceYears}"></td> 
                     <td th:text="${employeeService.details}"></td>
 					<td>
-						<input type="radio" name="empServiceId" th:value="${employeeService.empServiceId}" required/>
+					    <input type="radio" name="empServiceId" th:value="${employeeService.empServiceId}" required/>
 					</td>
+
                 </tr>
             </tbody>
         </table>

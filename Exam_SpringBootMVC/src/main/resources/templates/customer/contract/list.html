@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh Sách Hợp Đồng</title>
+    <link rel="stylesheet" href="path/to/your/styles.css"> <!-- Đường dẫn đến tệp CSS nếu cần -->
+</head>
+<body>
+    <div class="container">
+        <h1>Danh Sách Hợp Đồng</h1>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>ID Hợp Đồng</th>
+                    <th>ID Khách Hàng</th>
+                    <th>Trạng Thái</th>
+                    <th>Tổng Giá</th>
+                    <th>Ngày Tạo</th>
+                    <th>Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="contract : ${contracts}">
+                    <td th:text="${contract.contractId}"></td>
+                    <td th:text="${contract.customerId}"></td>
+                    <td th:text="${contract.contractStatus}"></td>
+                    <td th:text="${contract.totalPrice}"></td>
+                    <td th:text="${contract.createdAt}"></td>
+                    <td>
+                        <a th:href="@{/contracts/{id}(id=${contract.contractId})}">View Contract Detail</a>
+                        <form th:action="@{/contracts/{id}/delete(id=${contract.contractId})}" method="post" style="display:inline;">
+                            <button type="submit">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <a href="/contracts/create">Tạo Hợp Đồng Mới</a>
+    </div>
+</body>
+</html>

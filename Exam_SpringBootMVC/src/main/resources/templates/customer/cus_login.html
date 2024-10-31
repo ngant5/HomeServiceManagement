@@ -1,40 +1,111 @@
-<!-- src/main/resources/templates/home/ad_login.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Login</title>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="shortcut icon" href="../assets_admin//images/favicon.svg" type="image/x-icon" />
+	<title>Sign In | PlainAdmin Demo</title>
+	<th:block th:insert="~{common/head_tag}"></th:block>
 </head>
 <body>
-    <h1>Login for Customer</h1>
-    
-    <div th:if="${param.registered}">
-        <p>Registration successful! Please check your email to verify your account.</p>
-    </div>
-    
-    <div th:if="${param.unverified}">
-        <p style="color: orange;">Your account is not verified. Please check your email for the verification link.</p>
-    </div>
-    
-    <div th:if="${param.error}">
-        <p style="color: red;">Invalid email or password.</p>
-    </div>
-    
-    <form action="#" th:action="@{/customer/chklogin}" method="POST">
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required="">
-        </div>
-        <div>
-            <label for="pwd">Password:</label>
-            <input type="password" id="pwd" name="pwd" required="">
-        </div>
-        <div>
-            <button type="submit">Login</button>
-        </div>
-    </form>
-	<a th:href="@{/customer/forgot-password}">Forgot Password</a>
-    
-    <a href="/customer/register">Register</a>
+
+	<div th:if="${param.registered}">
+		<p>Registration successful! Please check your email to verify your
+			account.</p>
+	</div>
+
+	<div th:if="${param.unverified}">
+		<p style="color: orange;">Your account is not verified. Please
+			check your email for the verification link.</p>
+	</div>
+
+	<div th:if="${param.error}">
+		<p style="color: red;">Invalid email or password.</p>
+	</div>
+
+	<!-- ========== signin-section start ========== -->
+	<section class="signin-section">
+		<div class="container-fluid">
+			<!-- ========== title-wrapper start ========== -->
+			<div class="title-wrapper pt-30">
+				<div class="row align-items-center">
+					<div class="col-md-6">
+						<div class="title">
+							<h2>Sign in</h2>
+						</div>
+					</div>
+					<!-- end col -->
+					<div class="col-md-6">
+						<div class="breadcrumb-wrapper">
+							<nav aria-label="breadcrumb">
+
+							</nav>
+						</div>
+					</div>
+					<!-- end col -->
+				</div>
+				<!-- end row -->
+			</div>
+			<!-- ========== title-wrapper end ========== -->
+
+			
+				<div class="col-lg-12">
+					<div class="signin-wrapper">
+						<div class="form-wrapper">
+							<h6 class="mb-15">Sign In Customer</h6>
+							<p class="text-sm mb-25">Welcome to Home Services</p>
+							<form action="#" th:action="@{/customer/chklogin}" method="POST">
+								<div class="row">
+									<div class="col-12">
+										<div class="input-style-1">
+											<label>Email</label> <input type="email" id="email"
+												name="email" placeholder="Email" required />
+										</div>
+									</div>
+									<!-- end col -->
+									<div class="col-12">
+										<div class="input-style-1">
+											<label>Password</label> <input type="password" id="pwd"
+												name="pwd" placeholder="Password" />
+										</div>
+									</div>
+									<!-- end col -->
+									<div class="col-xxl-6 col-lg-12 col-md-6">
+										<div class="form-check checkbox-style mb-30">
+
+										</div>
+									</div>
+									<!-- end col -->
+									<div class="col-xxl-6 col-lg-12 col-md-6">
+										<div
+											class="text-start text-md-end text-lg-start text-xxl-end mb-30">
+											<a href="reset-password" class="hover-underline"> Forgot
+												Password? </a>
+										</div>
+									</div>
+									<!-- end col -->
+									<div class="col-12">
+										<div
+											class="button-group d-flex justify-content-center flex-wrap">
+											<button type="submit"
+												class="main-btn primary-btn btn-hover w-100 text-center">
+												Sign In</button>
+										</div>
+									</div>
+								</div>
+								<!-- end row -->
+							</form>
+						</div>
+					</div>
+				</div>
+				<!-- end col -->
+			</div>
+			<!-- end row -->
+		</div>
+	</section>
+	<!-- ========== signin-section end ========== -->
+
+	
 </body>
 </html>

@@ -1,6 +1,10 @@
 package net.codejava.repository;
 
+import net.codejava.controller.ContractController;
 import net.codejava.model.ContractDetails;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -12,15 +16,31 @@ import java.util.List;
 public class ContractDetailsRepository {
 
     private final JdbcTemplate jdbcTemplate;
+    
+    private static final Logger logger = LoggerFactory.getLogger(ContractDetailsRepository.class);
 
     public ContractDetailsRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    public boolean empServiceIdExists(int empServiceId) {
+        String sql = "SELECT COUNT(*) FROM Employee_Services WHERE emp_service_id = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, empServiceId);
+        return count != null && count > 0;
+    }
+
+    
+    
     // Tạo chi tiết hợp đồng đơn lẻ
     public void createContractDetail(ContractDetails contractDetail) {
-        String sql = "INSERT INTO ContractDetails (contract_id, emp_service_id, service_address, service_phone, start_date, end_date, status, hours_worked, total_price) " +
+    	if (!empServiceIdExists(contractDetail.getEmpServiceId())) {
+            throw new IllegalArgumentException("empServiceId không hợp lệ: " + contractDetail.getEmpServiceId());
+        }
+    	
+        String sql = "INSERT INTO Contract_Details (contract_id, emp_service_id, service_address, service_phone, start_date, end_date, status, hours_worked, total_price) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        logger.info("Trying to insert contract detail with emp_service_id: {}", contractDetail.getEmpServiceId());
+
         jdbcTemplate.update(sql, contractDetail.getContractId(), contractDetail.getEmpServiceId(), 
                             contractDetail.getServiceAddress(), contractDetail.getServicePhone(),
                             contractDetail.getStartDate(), contractDetail.getEndDate(),
@@ -37,17 +57,18 @@ public class ContractDetailsRepository {
 
     // Lấy tất cả chi tiết hợp đồng
     public List<ContractDetails> getAllContractDetails() {
-        String sql = "SELECT * FROM ContractDetails";
+        String sql = "SELECT * FROM Contract_Details";
         return jdbcTemplate.query(sql, this::mapRowToContractDetail);
     }
 
+    
     public ContractDetails getContractDetailById(int id) {
-        String sql = "SELECT * FROM ContractDetails WHERE contract_detail_id = ?";
+        String sql = "SELECT * FROM Contract_Details WHERE contract_detail_id = ?";
         return jdbcTemplate.queryForObject(sql, this::mapRowToContractDetail, id);
     }
 
     public void updateContractDetail(ContractDetails contractDetail) {
-        String sql = "UPDATE ContractDetails SET emp_service_id = ?, service_address = ?, service_phone = ?, start_date = ?, end_date = ?, status = ?, hours_worked = ?, total_price = ? WHERE contract_detail_id = ?";
+        String sql = "UPDATE Contract_Details SET emp_service_id = ?, service_address = ?, service_phone = ?, start_date = ?, end_date = ?, status = ?, hours_worked = ?, total_price = ? WHERE contract_detail_id = ?";
         jdbcTemplate.update(sql, contractDetail.getEmpServiceId(), contractDetail.getServiceAddress(),
                             contractDetail.getServicePhone(), contractDetail.getStartDate(),
                             contractDetail.getEndDate(), contractDetail.getStatus(),
@@ -56,12 +77,12 @@ public class ContractDetailsRepository {
     }
 
     public void deleteContractDetail(int id) {
-        String sql = "DELETE FROM ContractDetails WHERE contract_detail_id = ?";
+        String sql = "DELETE FROM Contract_Details WHERE contract_detail_id = ?";
         jdbcTemplate.update(sql, id);
     }
     
     public List<ContractDetails> findByContractId(int contractId) {
-        String sql = "SELECT * FROM ContractDetails WHERE contract_id = ?";
+        String sql = "SELECT * FROM Contract_Details WHERE contract_id = ?";
         return jdbcTemplate.query(sql, this::mapRowToContractDetail, contractId);
     }
 

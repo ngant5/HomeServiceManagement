@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+
 import jakarta.servlet.http.HttpSession;
 import net.codejava.model.ContractDetails;
 import net.codejava.model.Contracts;
@@ -49,6 +50,9 @@ public class ContractController {
     @Autowired
     private ServiceService serviceService; 
     
+    private static final Logger logger = LoggerFactory.getLogger(ContractController.class);
+
+    
 
         @GetMapping("/create")
         public String showCreateContractForm(Model model) {
@@ -59,6 +63,7 @@ public class ContractController {
         @PostMapping("/create")
         public String createContract(@ModelAttribute Contracts contract, 
         							@RequestParam double servicePrice, 
+        							@RequestParam int empServiceId,
         							HttpSession session) {
             Integer customerId = (Integer) session.getAttribute("customerId");
 
@@ -67,6 +72,12 @@ public class ContractController {
                 System.err.println("Error: customerId is null. Redirecting to error page.");
                 return "redirect:/error"; // Chuyển đến trang lỗi nếu không tìm thấy customerId
             }
+            
+            if (empServiceId <= 0) {
+                System.err.println("Error: empServiceId is invalid: " + empServiceId);
+                return "redirect:/error"; // Chuyển đến trang lỗi
+            }
+
 
             // Bước 2: Thiết lập customerId cho hợp đồng
             contract.setCustomerId(customerId);
@@ -81,7 +92,7 @@ public class ContractController {
                                ", Payment Status: " + contract.getPaymentStatus() +
                                ", Created At: " + contract.getCreatedAt() +
                                ", Contract File: " + contract.getContractFile());
-
+            System.out.println("empServiceId: " + empServiceId);
 
             try {
                 // Bước 3: Tạo hợp đồng
@@ -90,6 +101,7 @@ public class ContractController {
                 
                 // Bước 4: Lưu contractId vào session
                 session.setAttribute("contractId", contractId);
+                session.setAttribute("empServiceId", empServiceId);
                 return "redirect:/contracts/checkout"; // Chuyển đến trang checkout
             } catch (Exception e) {
                 // Bước 5: Xử lý lỗi và log thông tin chi tiết
@@ -103,13 +115,35 @@ public class ContractController {
         @GetMapping("/checkout")
         public String showCheckoutForm(HttpSession session, Model model) {
             Integer contractId = (Integer) session.getAttribute("contractId");
+            logger.info("Checking out with contractId: {}", contractId);
+
             if (contractId != null) {
                 model.addAttribute("contractId", contractId);
-                // Thêm các thông tin cần thiết khác nếu cần
+                logger.info("ContractId found: {}", contractId);
+                Integer empServiceId = (Integer) session.getAttribute("empServiceId");
+                logger.info("empServiceId found: {}", empServiceId);
+
+
+                if (empServiceId == null || empServiceId == 0) {
+                    logger.warn("Invalid empServiceId: {}. Redirecting to error page.", empServiceId);
+                    return "redirect:/error";
+                }
+
+                Double servicePrice = (Double) session.getAttribute("servicePrice");
+                if (servicePrice == null) {
+                    logger.warn("No totalPrice found in session. Cannot finalize contract.");
+                    return "redirect:/error";
+                }
+                model.addAttribute("servicePrice", servicePrice);
+
+
+                
                 return "customer/contract/create"; // Tên trang checkout
             }
-            return "redirect:/error"; // Chuyển đến trang lỗi nếu không tìm thấy contractId
+            logger.warn("No contractId found in session. Redirecting to error page.");
+            return "redirect:/error"; 
         }
+        
 
         @PostMapping("/checkout")
         public String finalizeContract(@RequestParam String serviceAddress,
@@ -120,36 +154,66 @@ public class ContractController {
                                        HttpSession session,
                                        Model model) {
             Integer contractId = (Integer) session.getAttribute("contractId");
+            Integer empServiceId = (Integer) session.getAttribute("empServiceId"); 
+            Double servicePrice = (Double) session.getAttribute("servicePrice"); 
+
+            logger.info("Finalizing contract for contractId: {} with empServiceId: {}", contractId, empServiceId);
+
+            if (servicePrice == null) {
+                logger.warn("No totalPrice found in session. Cannot finalize contract.");
+                return "redirect:/error"; // Chuyển đến trang lỗi
+            }
+
             if (contractId != null) {
                 // Tạo chi tiết hợp đồng
                 ContractDetails contractDetail = new ContractDetails();
                 contractDetail.setContractId(contractId);
+                contractDetail.setEmpServiceId(empServiceId);
                 contractDetail.setServiceAddress(serviceAddress);
                 contractDetail.setServicePhone(servicePhone);
                 contractDetail.setStartDate(LocalDate.parse(startDate).atStartOfDay());
                 contractDetail.setEndDate(LocalDate.parse(endDate).atStartOfDay());
                 contractDetail.setHoursWorked(hoursWorked);
-                contractDetail.setStatus(0); // Set trạng thái ban đầu
+                contractDetail.setStatus(0);
+                contractDetail.setTotalPrice(servicePrice);
 
                 // Gọi API để tạo chi tiết hợp đồng
                 ResponseEntity<ContractDetails> response = contractDetailService.createContractDetail(contractDetail);
                 if (response.getStatusCode().is2xxSuccessful()) {
-                    return "contract/success"; // Chuyển đến trang thành công
+                	
+
+                	logger.info("Contract detail created successfully.");
+
+                    return "customer/contract/success"; // Chuyển đến trang thành công
+                }else {
+                    logger.error("Failed to create contract detail. Response status: {}", response.getStatusCode());
                 }
+            } else {
+                logger.warn("No contractId found. Cannot finalize contract.");
             }
+            
             return "redirect:/error"; // Chuyển đến trang lỗi nếu không tìm thấy contractId
         }
 
-     
+        @GetMapping
+        public String showContractList(Model model) {
+            List<Contracts> contracts = contractService.getAllContracts(); // Giả sử bạn đã có phương thức này trong ContractService
+            model.addAttribute("contracts", contracts);
+            return "customer/contract/list"; // Trả về view để hiển thị danh sách hợp đồng
+        }
+
 
 
     @GetMapping("/{id}")
     public String getContract(@PathVariable int id, Model model) {
         Contracts contract = contractService.getContractById(id);
-        List<ContractDetails> details = contractDetailService.getContractDetailsByContractId(id);
+        List<ContractDetails> details = contractDetailService.getContractDetailsByContractId(id); 
+
         model.addAttribute("contract", contract);
         model.addAttribute("details", details);
-        return "contract/details";
+        logger.info("Number of contract details found: {}", details.size());
+
+        return "customer/contract/detail";
     }
 
     @GetMapping("/details/create")

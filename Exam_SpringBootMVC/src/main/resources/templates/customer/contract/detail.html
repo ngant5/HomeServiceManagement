@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chi Tiết Hợp Đồng</title>
+</head>
+<body>
+    <h1>Chi Tiết Hợp Đồng</h1>
+    <h2>Thông Tin Hợp Đồng</h2>
+    <p>ID Hợp Đồng: <span th:text="${contract.contractId}"></span></p>
+    <p>ID Khách Hàng: <span th:text="${contract.customerId}"></span></p>
+    <p>Trạng Thái: <span th:text="${contract.contractStatus}"></span></p>
+    <p>Tổng Giá: <span th:text="${contract.totalPrice}"></span></p>
+    <p>Ngày Tạo: <span th:text="${contract.createdAt}"></span></p>
+
+    <h2>Chi Tiết Hợp Đồng</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID Chi Tiết</th>
+                <th>ID Dịch Vụ Nhân Viên</th>
+                <th>Địa Chỉ Dịch Vụ</th>
+                <th>Điện Thoại Dịch Vụ</th>
+                <th>Ngày Bắt Đầu</th>
+                <th>Ngày Kết Thúc</th>
+                <th>Giờ Làm</th>
+                <th>Tổng Giá</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="detail : ${details}">
+                <td th:text="${detail.contractDetailId}"></td>
+                <td th:text="${detail.empServiceId}"></td>
+                <td th:text="${detail.serviceAddress}"></td>
+                <td th:text="${detail.servicePhone}"></td>
+                <td th:text="${#dates.format(detail.startDate, 'yyyy-MM-dd HH:mm')}"></td>
+                <td th:text="${#dates.format(detail.endDate, 'yyyy-MM-dd HH:mm')}"></td>
+                <td th:text="${detail.hoursWorked}"></td>
+                <td th:text="${detail.totalPrice}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(details)}">
+                <td colspan="8">Không có chi tiết nào.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="/contracts">Quay Lại Danh Sách Hợp Đồng</a>
+</body>
+</html>
