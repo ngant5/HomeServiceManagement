@@ -37,7 +37,7 @@ public class CustomerProfileController {
             return "redirect:/customer/auth/login";
         }
         model.addAttribute("customer", customer);
-        return "customer/cus_mypage";
+        return "customer/cus_mypage_";
     }
 
     @GetMapping("/info")
