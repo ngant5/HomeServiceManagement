@@ -1,6 +1,8 @@
 package net.codejava.service;
 
 import net.codejava.model.ContractDetails;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.codejava.repository.ContractDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,8 @@ public class ContractDetailService {
 
     @Autowired
     private ContractDetailsRepository contractDetailsRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ContractDetailService.class);
+
 
     // Tạo danh sách chi tiết hợp đồng
     public void createContractDetails(List<ContractDetails> contractDetails) {
@@ -47,6 +51,11 @@ public class ContractDetailService {
 
     // Lấy chi tiết hợp đồng theo contractId
     public List<ContractDetails> getContractDetailsByContractId(int contractId) {
-        return contractDetailsRepository.findByContractId(contractId);
+        List<ContractDetails> details = contractDetailsRepository.findByContractId(contractId);
+        if (details.isEmpty()) {
+            logger.warn("No contract details found for contract_id: {}", contractId);
+        }
+        return details;
     }
+
 }

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chi Tiết Hợp Đồng</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Chi Tiết Hợp Đồng</h1>
+
+        <h2>Thông Tin Hợp Đồng</h2>
+        <div th:if="${contractDetails != null}">
+            <ul>
+                <li th:each="detail : ${contractDetails}">
+                    <p>ID Hợp Đồng: <span th:text="${detail.contractId}"></span></p>
+                    <p>ID Nhân Viên Dịch Vụ: <span th:text="${detail.empServiceId}"></span></p>
+                    <p>Địa Chỉ Dịch Vụ: <span th:text="${detail.serviceAddress}"></span></p>
+                    <p>Số Điện Thoại: <span th:text="${detail.servicePhone}"></span></p>
+                    <p>Ngày Bắt Đầu: <span th:text="${detail.startDate}"></span></p>
+                    <p>Ngày Kết Thúc: <span th:text="${detail.endDate}"></span></p>
+                    <p>Trạng Thái: <span th:text="${detail.status}"></span></p>
+                    <p>Số Giờ Làm Việc: <span th:text="${detail.hoursWorked}"></span></p>
+                    <p>Tổng Giá: <span th:text="${detail.totalPrice}"></span></p>
+                </li>
+            </ul>
+        </div>
+
+        <div th:if="${error != null}">
+            <p th:text="${error}"></p>
+        </div>
+
+        <a href="/contracts">Trở Về Danh Sách Hợp Đồng</a>
+    </div>
+</body>
+</html>

@@ -41,7 +41,7 @@ public class CustomerAuthController {
             if (customerService.checkPassword(password, customer.getPassword())) {
                 session.setAttribute("customer", customer);
                 session.setAttribute("customerId", customer.getCustomerId());
-                return "redirect:/customer/services";
+                return "redirect:/customer/profile/cus_mypage";
                 
             } else {
                 return "redirect:/customer/auth/login?error=wrongPassword";

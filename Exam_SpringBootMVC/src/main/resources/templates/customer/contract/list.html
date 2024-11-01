@@ -2,11 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Danh Sách Hợp Đồng</title>
-    <link rel="stylesheet" href="path/to/your/styles.css"> <!-- Đường dẫn đến tệp CSS nếu cần -->
 </head>
 <body>
     <div class="container">
         <h1>Danh Sách Hợp Đồng</h1>
+		
         
         <table>
             <thead>
@@ -27,10 +27,7 @@
                     <td th:text="${contract.totalPrice}"></td>
                     <td th:text="${contract.createdAt}"></td>
                     <td>
-                        <a th:href="@{/contracts/{id}(id=${contract.contractId})}">View Contract Detail</a>
-                        <form th:action="@{/contracts/{id}/delete(id=${contract.contractId})}" method="post" style="display:inline;">
-                            <button type="submit">Xóa</button>
-                        </form>
+                        <a th:href="@{/contractDetails/{id}(id=${contract.contractId})}">View Contract Detail</a>
                     </td>
                 </tr>
             </tbody>
