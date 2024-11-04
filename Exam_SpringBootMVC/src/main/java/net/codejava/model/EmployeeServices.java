@@ -6,6 +6,7 @@ public class EmployeeServices {
     private int serviceId;
     private String details;
     private Employees employee;
+    private Services service;
 
     // Getters and Setters
     public int getEmpServiceId() {
@@ -46,6 +47,14 @@ public class EmployeeServices {
     
     public void setEmployee(Employees employee) {
         this.employee = employee; 
+    }
+    
+    public Services getService() {
+        return service; 
+    }
+
+    public void setService(Services service) {
+        this.service = service; 
     }
 
 }

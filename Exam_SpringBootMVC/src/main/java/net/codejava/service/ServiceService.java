@@ -19,8 +19,15 @@ public class ServiceService {
     }
 
     public Services getServiceById(int id) {
-        return serviceRepository.findById(id).orElse(null);
+        Services service = serviceRepository.findById(id).orElse(null);
+        if (service == null) {
+            System.out.println("No service found with ID: " + id);
+        } else {
+            System.out.println("Service found: " + service.getServiceName());
+        }
+        return service;
     }
+
 
     public void addService(Services service) {
         serviceRepository.save(service);
@@ -33,4 +40,6 @@ public class ServiceService {
     public void deleteService(int id) {
         serviceRepository.deleteById(id);
     }
+    
+    
 }

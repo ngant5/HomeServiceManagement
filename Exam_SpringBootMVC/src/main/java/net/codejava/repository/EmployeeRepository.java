@@ -196,5 +196,12 @@ public class EmployeeRepository {
             new BeanPropertyRowMapper<>(Employees.class)
         );
     }
+    
+ // Find all employees with user_type = 'EMPLOYEE'
+    public List<Employees> findAllEmployees() {
+        String sql = "SELECT * FROM Employees WHERE user_type = 'EMPLOYEE'";
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Employees.class));
+    }
 
+    
 }

@@ -9,13 +9,17 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Repository
 public class EmployeeServicesRepository {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeServices.class);
 
     // RowMapper to map database rows to EmployeeServices model
     private RowMapper<EmployeeServices> rowMapper = new RowMapper<EmployeeServices>() {
@@ -29,6 +33,15 @@ public class EmployeeServicesRepository {
             return employeeService;
         }
     };
+
+    public List<EmployeeServices> findByEmployeeId(int employeeId) {
+    	logger.info("Executing query to find services for employee ID: {}", employeeId);
+        String sql = "SELECT * FROM Employee_Services WHERE employee_id = ?";
+        return jdbcTemplate.query(sql, new Object[]{employeeId}, rowMapper);
+    }
+
+
+    
 
     // RowMapper to map database rows to Employees model
     private RowMapper<Employees> employeeRowMapper = new RowMapper<Employees>() {

@@ -37,7 +37,7 @@
             <p th:text="${service.serviceDescription}"></p>
             <p th:text="${service.servicePrice}"></p>
             <p th:text="${service.serviceStatus}"></p>
-            <a th:href="@{/customer/services/{id}(id=${service.serviceId})}">Choose Employee</a>
+            <a th:href="@{/service/{id}(id=${service.serviceId})}">Choose Employee</a>
         </div>
     </div>
 </body>

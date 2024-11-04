@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
-@RequestMapping("/customer/services")
+@RequestMapping("service")
 public class CustomerServiceController {
 
     @Autowired

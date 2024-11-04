@@ -1,4 +1,4 @@
-<body>
+
     <span class="fade"></span>
     <main>
         <section class="hero-banner">
@@ -35,13 +35,17 @@
                     <span class="fs-h2">Roundazzle</span>
                 </a>
                 <div class="navigation-container">
-                    <a href="index">Home</a>
-                    <a href="about">About</a>
-                    <a href="service">Service</a>
-                    <a href="industries">Industries</a>
-                    <a href="blog">Blog</a>
-                    <a href="career">Career</a>
+                    <a th:href="@{/index}">Home</a>
+                    <a th:href="@{/about}">About</a>
+                    <a th:href="@{/services}">Service</a>
+                    <a th:href="@{/employees}">Employee</a>
+                    <!--<a href="blog">Blog</a>-->
+                    <a th:href="@{/career}">Career</a>
                     <a href="contact" class="btn-bg1 border-round">Contact Us</a>
                 </div>
             </div>
         </nav>
+		<a href="#" class="btn-back-to-top" aria-label="Back to top button">
+		  	<i class="bi bi-chevron-up"></i>
+		</a>
+		<!-- NAVIGATION END -->

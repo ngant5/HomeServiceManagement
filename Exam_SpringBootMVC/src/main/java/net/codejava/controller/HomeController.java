@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("")
 public class HomeController {
-	@GetMapping("index")
+	@GetMapping("index/draft")
 	public String index() {
-		return "home/index";
+		return "home/index_draft";
 	}
 	
 	@GetMapping("about")
@@ -20,11 +20,6 @@ public class HomeController {
 	@GetMapping("contact")
 	public String contact() {
 		return "home/contact";
-	}
-	
-	@GetMapping("service")
-	public String service() {
-		return "home/service";
 	}
 	
 	@GetMapping("industries")

@@ -135,7 +135,7 @@ public class EmployeesController {
     @GetMapping("/dashboard")
     public String dashboard(Model model, HttpSession session) {
         
-        model.addAttribute("products", employeeService.getAllEmployees());
+        model.addAttribute("products", employeeService.findAllEmployees());
         Employees employee = (Employees) session.getAttribute("employee");
         model.addAttribute("employee", employee);
         model.addAttribute("session", session);

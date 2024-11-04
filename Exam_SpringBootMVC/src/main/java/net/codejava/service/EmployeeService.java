@@ -32,9 +32,8 @@ public class EmployeeService {
     
     
 
-    public List<Employees> getAllEmployees() {
-        String sql = "SELECT * FROM Employees";
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Employees.class));
+    public List<Employees> findAllEmployees() {
+    	 return employeeRepository.findAllEmployees();
     }
     
     public Employees getEmployee(int employeeId) {

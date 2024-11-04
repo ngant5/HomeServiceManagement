@@ -7,20 +7,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class EmployeeServicesService {
+	private static final Logger logger = LoggerFactory.getLogger(EmployeeServices.class);
 
     @Autowired
     private EmployeeServicesRepository employeeServicesRepository; 
+    
 
     public void save(EmployeeServices employeeService) {
         employeeServicesRepository.save(employeeService);
     }
-
-    public EmployeeServices findById(int empServiceId) {
-        return employeeServicesRepository.findById(empServiceId);
+    
+    public List<EmployeeServices> findByEmployeeId(int employeeId) {
+        return employeeServicesRepository.findByEmployeeId(employeeId);
     }
+    
+    public EmployeeServices findById(int empServiceId) {
+        EmployeeServices employeeService = employeeServicesRepository.findById(empServiceId);
+        if (employeeService == null) {
+            logger.error("EmployeeService not found with ID: {}", empServiceId);
+            throw new RuntimeException("EmployeeService not found with ID: " + empServiceId);
+        }
+        logger.info("Found EmployeeService: {}", employeeService.getEmpServiceId());
+        return employeeService;
+    }
+
 
     public List<EmployeeServices> findAll() {
         return employeeServicesRepository.findAll();
