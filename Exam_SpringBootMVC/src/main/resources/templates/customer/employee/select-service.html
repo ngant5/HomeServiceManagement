@@ -21,18 +21,22 @@
                 </tr>
             </thead>
             <tbody>
-                <th:block th:each="empService : ${employeeServices}">
-                    <tr>
-                        <td th:text="${empService.service.serviceName}">Service Name</td>
-                        <td th:text="${empService.service.serviceDescription}">Description</td>
-                        <td th:text="${empService.service.servicePrice}">Price</td>
-						<td>
-							<form th:action="@{/selectService(id=${empService.service.serviceId})}" method="post">
-								<button type="submit" class="btn btn-primary">Select</button>
-							</form>
-						</td>
-					</tr>
-                </th:block>
+                <!-- Duyệt qua các dịch vụ của nhân viên -->
+                <tr th:each="empService : ${employeeServices}">
+                    <td th:text="${empService.service.serviceName}">Service Name</td>
+                    <td th:text="${empService.service.serviceDescription}">Description</td>
+                    <td th:text="${empService.service.servicePrice}">Price</td>
+                    <td>
+                        <!-- Form gửi thông tin serviceId của dịch vụ để chọn dịch vụ cho hợp đồng -->
+                        <form th:action="@{/contracts/create}" method="POST">
+                            <input type="hidden" name="serviceId" th:value="${empService.service.serviceId}"/>
+                            <input type="hidden" name="servicePrice" th:value="${empService.service.servicePrice}"/>
+                            <input type="hidden" name="serviceName" th:value="${empService.service.serviceName}"/>
+                            <input type="hidden" name="empServiceId" th:value="${empService.empServiceId}"/>
+                            <button type="submit" class="btn btn-primary">Chọn dịch vụ</button>
+                        </form>
+                    </td>
+                </tr>
             </tbody>
         </table>
         

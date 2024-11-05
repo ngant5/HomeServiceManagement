@@ -62,7 +62,7 @@ public class ContractController {
 
         @PostMapping("/create")
         public String createContract(@ModelAttribute Contracts contract, 
-        							@RequestParam double servicePrice, 
+        							@RequestParam(required = false) Double servicePrice, 
         							@RequestParam int empServiceId,
         							HttpSession session) {
             Integer customerId = (Integer) session.getAttribute("customerId");
@@ -76,6 +76,16 @@ public class ContractController {
             if (empServiceId <= 0) {
                 System.err.println("Error: empServiceId is invalid: " + empServiceId);
                 return "redirect:/error"; // Chuyển đến trang lỗi
+            }
+
+            if (servicePrice == null) {
+                servicePrice = (Double) session.getAttribute("servicePrice");  // Lấy từ session nếu không có trong request
+            }
+            
+            if (servicePrice == null) {
+                // Nếu không có servicePrice trong session, trả về lỗi
+                System.err.println("Error: servicePrice not found in session or request.");
+                return "redirect:/error";
             }
 
 
@@ -102,6 +112,7 @@ public class ContractController {
                 // Bước 4: Lưu contractId vào session
                 session.setAttribute("contractId", contractId);
                 session.setAttribute("empServiceId", empServiceId);
+                session.setAttribute("servicePrice", servicePrice);
                 return "redirect:/contracts/checkout"; // Chuyển đến trang checkout
             } catch (Exception e) {
                 // Bước 5: Xử lý lỗi và log thông tin chi tiết
