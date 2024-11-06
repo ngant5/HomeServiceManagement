@@ -52,7 +52,24 @@ public class ContractController {
     
     private static final Logger logger = LoggerFactory.getLogger(ContractController.class);
 
-    
+    @GetMapping
+    public String showContractList(HttpSession session, Model model) {
+        // Lấy customerId từ session
+        Integer customerId = (Integer) session.getAttribute("customerId");
+
+        // Kiểm tra nếu customerId không tồn tại trong session
+        if (customerId == null) {
+            logger.error("Error: customerId is not found in session.");
+            return "redirect:/error";  // Chuyển đến trang lỗi nếu không tìm thấy customerId
+        }
+
+        // Lấy danh sách hợp đồng theo customerId
+        List<Contracts> contracts = contractService.getContractsByCustomerId(customerId);
+
+        // Thêm danh sách hợp đồng vào model
+        model.addAttribute("contracts", contracts);
+        return "customer/contract/list"; // Trả về view để hiển thị danh sách hợp đồng
+    }
 
         @GetMapping("/create")
         public String showCreateContractForm(Model model) {
@@ -206,13 +223,7 @@ public class ContractController {
             return "redirect:/error"; // Chuyển đến trang lỗi nếu không tìm thấy contractId
         }
 
-        @GetMapping
-        public String showContractList(Model model) {
-            List<Contracts> contracts = contractService.getAllContracts(); // Giả sử bạn đã có phương thức này trong ContractService
-            model.addAttribute("contracts", contracts);
-            return "customer/contract/list"; // Trả về view để hiển thị danh sách hợp đồng
-        }
-
+       
 
 
     @GetMapping("/{id}")

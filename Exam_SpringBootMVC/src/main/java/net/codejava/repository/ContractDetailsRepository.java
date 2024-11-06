@@ -4,7 +4,7 @@ import net.codejava.controller.ContractController;
 import net.codejava.model.ContractDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -64,7 +64,12 @@ public class ContractDetailsRepository {
     
     public ContractDetails getContractDetailById(int id) {
         String sql = "SELECT * FROM Contract_Details WHERE contract_detail_id = ?";
-        return jdbcTemplate.queryForObject(sql, this::mapRowToContractDetail, id);
+        try {
+            return jdbcTemplate.queryForObject(sql, this::mapRowToContractDetail, id);
+        } catch (EmptyResultDataAccessException e) {
+            logger.warn("No contract details found for contract_detail_id: {}", id);
+            return null; 
+        }
     }
 
     public void updateContractDetail(ContractDetails contractDetail) {

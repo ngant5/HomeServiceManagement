@@ -21,6 +21,10 @@ public class ContractService {
     public List<Contracts> getAllContracts() {
         return contractRepository.getAllContracts();
     }
+    
+    public List<Contracts> getContractsByCustomerId(int customerId) {
+        return contractRepository.findContractsByCustomerId(customerId);
+    }
 
     public Contracts getContractById(int contractId) {
         return contractRepository.getContractById(contractId);

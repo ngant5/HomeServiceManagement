@@ -1,34 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách nhân viên</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Service</title>
+	<th:block th:insert="~{common/home_head_tag}"></th:block>
 </head>
 <body>
-    <div class="container mt-5">
-        <h2>Danh sách nhân viên</h2>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Họ tên</th>
-                    <th>Hành động</th>
-                </tr>
-            </thead>
-            <tbody>
-                <th:block th:each="employee : ${employees}">
-                    <tr>
-                        <td th:text="${employee.employeeId}"></td>
-                        <td th:text="${employee.fullname}"></td>
-                        <td>
-                            <a th:href="@{/employee/{id}(id=${employee.employeeId})}" class="btn btn-primary">Chọn</a>
-                        </td>
-                    </tr>
-                </th:block>
-            </tbody>
-        </table>
+	<th:block th:insert="~{common/home_content_first}"></th:block>
+	
+
+        <!-- TEAM SECTION START -->
+        <section class="contained">
+            <h2 class="section-title ff-damion">Our Team</h2>
+            <p class="col-wide mlmr-a ta-center">
+                At Happy Clean, our team consists of highly skilled and dedicated cleaning professionals who are passionate about delivering the best results for our clients. We hire only the most reliable and trustworthy individuals to ensure your satisfaction.
+            </p>
+            <div class="row flex-just-center">
+		        <!-- Lặp qua danh sách nhân viên -->
+		        <th:block th:each="employee : ${employees}">
+		            <div class="col-tri">
+		               
+                <!-- Tên nhân viên -->
+                <h3 class="title ff-damion" th:text="${employee.fullname}"></h3>
+
+                <!-- Chức danh -->
+               <!-- <h4 class="ff-damion" th:text="${employee.jobTitle}"></h4>-->
+
+                <!-- Mô tả ngắn về nhân viên -->
+                <!--<p>
+                    <span th:text="${employee.description}"></span>
+                </p>-->
+
+                <!-- Liên kết để chọn nhân viên -->
+                <a th:href="@{/employee/{id}(id=${employee.employeeId})}" class="btn btn-primary">
+                    Chọn
+                </a>
+            </div>
+        </th:block>
     </div>
-</body>
-</html>
+        </section>
+        <!-- TEAM SECTION END -->
+
+
+        <!-- SUBSCRIBE TO NEWS LETTERS START -->
+        <section class="subscribe bg-primary-foot" style="background-image: url('../assets/art/overlay.webp');">
+            <div class="contained row ta-center">
+                <div class="col-balance fc-white">
+                    <h3 class="mb-a ff-damion mt-a">Subscribe to our newsletter:</h3>
+                </div>
+                <div class="col-balance">
+                    <form action="#">
+                        <input type="email" id="subscribe-email" aria-label="Subscribe to our email news" placeholder="Email" required>
+                        <button class="btn-bg2">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+        <!-- SUBSCRIBE TO NEWS LETTERS ENS -->
+
+        <section class="contained ta-center">
+            <h2 class="section-title ff-damion">Reach us</h2>
+            <p class="col-wide mlmr-a">
+                If you have any questions or need more information about our cleaning services, don't hesitate to reach out. We’re here to help you create a cleaner, healthier environment for your home or office. Let us take care of the mess so you don’t have to!
+            </p>
+            <a href="contact" class="btn-bg1 border-round mt-25">
+                Get in touch
+            </a>
+        </section>
+
+    </main>
+	 <!-- ========== section end ========== -->
+
+		<th:block th:insert="~{common/home_content_footer}"></th:block>
+
+	</body>
+	</html>

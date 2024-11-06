@@ -33,8 +33,21 @@ public class ContractDetailController {
             return "error"; // Trả về view lỗi
         }
         model.addAttribute("contractDetails", details);
-        return "customer/contractDetail/view"; // Trả về view chi tiết hợp đồng
+        return "customer/contractDetail/edit"; // Trả về view chi tiết hợp đồng
     }
     
     
+    
+    // Cập nhật chi tiết hợp đồng
+    @PostMapping("/update")
+    public String updateContractDetail(@ModelAttribute ContractDetails contractDetail, Model model) {
+        try {
+            contractDetailService.updateContractDetail(contractDetail); // Cập nhật thông tin trong service
+            model.addAttribute("message", "Cập nhật thành công!");
+            return "redirect:/contractDetails/" + contractDetail.getContractId(); // Quay lại trang chi tiết hợp đồng
+        } catch (Exception e) {
+            model.addAttribute("error", "Đã xảy ra lỗi khi cập nhật thông tin.");
+            return "customer/contractDetail/edit"; // Trở lại trang chỉnh sửa
+        }
+    }
 }

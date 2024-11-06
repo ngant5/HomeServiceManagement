@@ -18,6 +18,11 @@ public class ContractRepository {
     public ContractRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+    
+    public List<Contracts> findContractsByCustomerId(int customerId) {
+        String sql = "SELECT * FROM Contracts WHERE customer_id = ?";
+        return jdbcTemplate.query(sql, new Object[]{customerId}, this::mapRowToContract);
+    }
 
     public int createContract(Contracts contract, double servicePrice) {
         System.out.println("Creating contract with customerId: " + contract.getCustomerId());

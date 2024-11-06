@@ -1,44 +1,84 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.w3.org/1999/xhtml">
+<html>
 <head>
-    <title>Available Services</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h2 {
-            text-align: center;
-        }
-        .service-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); /* Hai cột */
-            gap: 20px; /* Khoảng cách giữa các ô */
-        }
-        .service-card {
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            text-align: center;
-        }
-        .service-card img {
-            width: 100px; /* Kích thước hình ảnh */
-            height: 100px; /* Kích thước hình ảnh */
-        }
-    </style>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Service</title>
+	<th:block th:insert="~{common/home_head_tag}"></th:block>
+	
 </head>
 <body>
-    <h2>Available Services</h2>
-    <div class="service-grid">
-        <div th:each="service : ${services}" class="service-card">
-            <img th:src="${service.serviceImage}" alt="Service Image">
-            <h3 th:text="${service.serviceName}"></h3>
-            <p th:text="${service.serviceDescription}"></p>
-            <p th:text="${service.servicePrice}"></p>
-            <p th:text="${service.serviceStatus}"></p>
-            <a th:href="@{/service/{id}(id=${service.serviceId})}">Choose Employee</a>
-        </div>
-    </div>
-</body>
-</html>
+	<th:block th:insert="~{common/home_content_first}"></th:block>
+	
+
+        <!-- PREVIEW SERVICE SECTION START -->
+        <section class="bg-primary-foot ta-center">
+            <h2 class="section-title ff-damion bg-primary-foot">Service</h2>
+            <div class="contained">
+                <p class="col-wide mlmr-a">
+                    We offer a wide range of exceptional cleaning services designed to meet your needs. Whether it's residential cleaning, office cleaning, or deep cleaning after construction, we have you covered. Let us help you create a cleaner, healthier environment today!
+                </p>
+            </div>
+            <div class="contained row flex-just-center">
+                <div class="col-full">
+                    <hr>
+                </div>
+                <div class="col-tri" th:each="service : ${services}">
+                    <i class="bi bi-stars fs-h2"></i>
+                    <h3 class="mt-10 ff-damion" th:text="${service.serviceName}"></h3>
+					<div class="service-image-container">
+					  	<img th:src="@{'/uploads/' + ${service.serviceImage}}" alt="Service Image" class="service-image">
+					</div>
+					<p th:text="${service.serviceDescription}"></p>
+					<p class="service-price" th:text="${service.servicePrice}"></p>
+					            
+					<!-- Liên kết tới trang chi tiết dịch vụ -->
+					<a th:href="@{/service/{id}(id=${service.serviceId})}" class="btn-bg2 border-round mt-15">
+						Choose Employee
+					</a>
+
+                </div>
+                
+            </div>
+          <!--  <a href="service" class="btn-bg2 border-round mt-25">
+                View our services
+            </a>-->
+        </section>
+        <!-- PREVIEW SERVICE SECTION END -->
+
+       
+
+        <!-- SUBSCRIBE TO NEWS LETTERS START -->
+        <section class="subscribe bg-primary-foot" style="background-image: url('../assets/art/overlay.webp');">
+            <div class="contained row ta-center">
+                <div class="col-balance fc-white">
+                    <h3 class="mb-a ff-damion mt-a">Subscribe to our newsletter:</h3>
+                </div>
+                <div class="col-balance">
+                    <form action="#">
+                        <input type="email" id="subscribe-email" aria-label="Subscribe to our email news" placeholder="Email" required>
+                        <button class="btn-bg2">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+        <!-- SUBSCRIBE TO NEWS LETTERS ENS -->
+
+        <section class="contained ta-center">
+            <h2 class="section-title ff-damion">Reach us</h2>
+            <p class="col-wide mlmr-a">
+                If you have any questions or need more information about our cleaning services, don't hesitate to reach out. We’re here to help you create a cleaner, healthier environment for your home or office. Let us take care of the mess so you don’t have to!
+            </p>
+            <a href="contact" class="btn-bg1 border-round mt-25">
+                Get in touch
+            </a>
+        </section>
+
+    </main>
+	 <!-- ========== section end ========== -->
+
+		<th:block th:insert="~{common/home_content_footer}"></th:block>
+
+	</body>
+	</html>
