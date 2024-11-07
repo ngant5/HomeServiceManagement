@@ -19,6 +19,10 @@ public class CustomerAuthController {
 
     @Autowired
     private CustomerService customerService;
+    
+    private boolean isCustomerLoggedIn(HttpSession session) {
+        return session.getAttribute("customerId") != null;
+    }
 
     @GetMapping("/login")
     public String loginForm() {
@@ -41,7 +45,7 @@ public class CustomerAuthController {
             if (customerService.checkPassword(password, customer.getPassword())) {
                 session.setAttribute("customer", customer);
                 session.setAttribute("customerId", customer.getCustomerId());
-                return "redirect:/customer/profile/cus_mypage";
+                return "redirect:/index";
                 
             } else {
                 return "redirect:/customer/auth/login?error=wrongPassword";

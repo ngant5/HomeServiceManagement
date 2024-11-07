@@ -60,7 +60,7 @@ public class ContractController {
         // Kiểm tra nếu customerId không tồn tại trong session
         if (customerId == null) {
             logger.error("Error: customerId is not found in session.");
-            return "redirect:/error";  // Chuyển đến trang lỗi nếu không tìm thấy customerId
+            return "redirect:/customer/login";
         }
 
         // Lấy danh sách hợp đồng theo customerId
