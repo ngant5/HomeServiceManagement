@@ -30,16 +30,12 @@
 					<div class="service-image-container">
 					  	<img th:src="@{'/uploads/' + ${service.serviceImage}}" alt="Service Image" class="service-image">
 					</div>
-					<p th:text="${service.serviceDescription}"></p>
-					<p class="service-price" th:text="${service.servicePrice}"></p>
-					            
-					<!-- Liên kết tới trang chi tiết dịch vụ -->
+					<p class="service-price" th:text="'$' + ${service.servicePrice}"></p>
 					<a th:href="@{/service/{id}(id=${service.serviceId})}" class="btn-bg2 border-round mt-15">
 						Choose Employee
 					</a>
-
+					<p th:text="${service.serviceDescription}"></p>
                 </div>
-                
             </div>
           <!--  <a href="service" class="btn-bg2 border-round mt-25">
                 View our services

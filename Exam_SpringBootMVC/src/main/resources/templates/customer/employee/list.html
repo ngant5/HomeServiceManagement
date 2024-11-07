@@ -11,37 +11,34 @@
 	<th:block th:insert="~{common/home_content_first}"></th:block>
 	
 
-        <!-- TEAM SECTION START -->
-        <section class="contained">
-            <h2 class="section-title ff-damion">Our Team</h2>
-            <p class="col-wide mlmr-a ta-center">
-                At Happy Clean, our team consists of highly skilled and dedicated cleaning professionals who are passionate about delivering the best results for our clients. We hire only the most reliable and trustworthy individuals to ensure your satisfaction.
-            </p>
-            <div class="row flex-just-center">
-		        <!-- Lặp qua danh sách nhân viên -->
-		        <th:block th:each="employee : ${employees}">
-		            <div class="col-tri">
-		               
-                <!-- Tên nhân viên -->
-                <h3 class="title ff-damion" th:text="${employee.fullname}"></h3>
-
-                <!-- Chức danh -->
-               <!-- <h4 class="ff-damion" th:text="${employee.jobTitle}"></h4>-->
-
-                <!-- Mô tả ngắn về nhân viên -->
-                <!--<p>
-                    <span th:text="${employee.description}"></span>
-                </p>-->
-
-                <!-- Liên kết để chọn nhân viên -->
-                <a th:href="@{/employee/{id}(id=${employee.employeeId})}" class="btn btn-primary">
-                    Chọn
-                </a>
-            </div>
-        </th:block>
-    </div>
-        </section>
-        <!-- TEAM SECTION END -->
+	<!-- TEAM SECTION START -->
+	        <section class="contained">
+	            <h2 class="section-title ff-damion">Our Team</h2>
+	            <p class="col-wide mlmr-a ta-center">
+	                At Happy Clean, our team consists of highly skilled and dedicated cleaning professionals who are passionate about delivering the best results for our clients. We hire only the most reliable and trustworthy individuals to ensure your satisfaction.
+	            </p>
+	            <div class="row flex-just-center">
+					<th:block th:each="employee : ${employees}">
+	                <div class="col-tri">
+	                    <article class="card-team">
+							<input type="hidden" th:value="${employee.employeeId}" th:id="'employeeId_' + ${employee.employeeId}" />
+	                        <img th:src="@{'/uploads/' + ${employee.profileImage}}" alt="Profile image of {employee.fullname}">
+	                        <h3 class="title ff-damion" th:text="${employee.fullname}"></h3>
+	                        <div class="info">
+								<h3 class="title ff-damion" th:text="${employee.fullname}"></h3>
+								<h3 class="ff-damion" th:text="${employee.birthday}"></h3>
+	                            <h3 class="ff-damion" th:text="${employee.bio}"></h3>
+	                            <p>
+	                               <a th:href="@{/employee/{id}(id=${employee.employeeId})}" class="btn-bg2 border-round mt-25">Select</a>
+	                            </p>
+	                        </div>
+	                    </article>
+	                </div>
+	                
+	            </div>
+	            <br>
+	        </section>
+	        <!-- TEAM SECTION END -->
 
 
         <!-- SUBSCRIBE TO NEWS LETTERS START -->

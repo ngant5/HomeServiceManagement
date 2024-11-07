@@ -1,44 +1,90 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
-    <title>Employee List</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Service</title>
+	<th:block th:insert="~{common/home_head_tag}"></th:block>
 </head>
 <body>
-    <h1 th:text="${service.serviceName}">Service Name</h1>
-    <p><strong>Description:</strong> <span th:text="${service.serviceDescription}"></span></p>
-    <p><strong>Price:</strong> <span th:text="${service.servicePrice}"></span></p>
-    <p><strong>Status:</strong> <span th:text="${service.serviceStatus}"></span></p>
-    <img th:src="${service.serviceImage}" alt="Service Image"/>
+	<th:block th:insert="~{common/home_content_first}"></th:block>
+	
+	<section class="contained">
+		<h2 class="section-title ff-damion">List of Employees for <span th:text="${service.serviceName}"></span></h2>
+			 <p class="ta-center col-wide mlmr-a">
+					At CleanPro, we provide a team of highly skilled and dedicated employees to ensure perfect cleaning results for you. Browse through the list of available employees below and choose the one who best matches your cleaning needs.	
+				</p>
+	            <div class="row flex-just-center">
+	                <div class="col-tri">
+	                    <div class="card-career">
+	                        <span class="fs-h4 mb-5 mt-15">Web designer - Entry Level</span>
+	                        <p>
+	                            <i class="bi bi-calendar"></i>
+	                            09/26/23
+	                        </p>
+	                        <p>
+	                            <i class="bi bi-geo-alt"></i>
+	                            Philippines - NCR
+	                        </p>
+	                        <p>
+	                            <i class="bi bi-briefcase"></i>
+	                            Min 3 years of experience lol!
+	                        </p>
+	                        <hr>
+	                        <div class="ta-center mt-15">
+	                            <a href="career-1" class="btn-bg1">Apply now</a>
+	                        </div>
+	                    </div>
+	                </div>
+	                <div class="col-tri">
+	                    <div class="card-career">
+	                        <span class="fs-h4 mb-5 mt-15">Jr Data Analyst</span>
+	                        <p>
+	                            <i class="bi bi-calendar"></i>
+	                            09/26/23
+	                        </p>
+	                        <p>
+	                            <i class="bi bi-geo-alt"></i>
+	                            Philippines - NCR
+	                        </p>
+	                        <p>
+	                            <i class="bi bi-briefcase"></i>
+	                            Min 5 years of experience lol!
+	                        </p>
+	                        <hr>
+	                        <div class="ta-center mt-15">
+	                            <a href="career-1" class="btn-bg1">Apply now</a>
+	                        </div>
+	                    </div>
+	                </div>
+	                <div class="col-tri">
+	                    <div class="card-career">
+	                        <span class="fs-h4 mb-5 mt-15">Web developer - Entry Level</span>
+	                        <p>
+	                            <i class="bi bi-calendar"></i>
+	                            09/26/23
+	                        </p>
+	                        <p>
+	                            <i class="bi bi-geo-alt"></i>
+	                            Philippines - NCR
+	                        </p>
+	                        <p>
+	                            <i class="bi bi-briefcase"></i>
+	                            Min 3 years of experience lol!
+	                        </p>
+	                        <hr>
+	                        <div class="ta-center mt-15">
+	                            <a href="career-1" class="btn-bg1">Apply now</a>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </section>
+			</main>
+				 <!-- ========== section end ========== -->
 
-	<h2>Employee List by Service</h2>
-    <form th:action="@{/contracts/create}" method="POST">
-		<input type="hidden" name="serviceId" th:value="${service.serviceId}"/> 
-		<input type="hidden" name="servicePrice" th:value="${service.servicePrice}"/> 
-		<input type="hidden" name="serviceName" th:value="${service.serviceName}"/>
-        <table>
-            <thead>
-                <tr>
-                    <th>Full Name</th>
-                    <th>Profile Image</th>
-                    <th>Experience Years</th>
-                    <th>Details</th>
-                    <th>Select</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="employeeService : ${employeeServices}">
-                    <td th:text="${employeeService.employee.fullname}"></td> 
+					<th:block th:insert="~{common/home_content_footer}"></th:block>
 
-                    <td th:text="${employeeService.employee.experienceYears}"></td> 
-                    <td th:text="${employeeService.details}"></td>
-					<td>
-					    <input type="radio" name="empServiceId" th:value="${employeeService.empServiceId}" required/>
-					</td>
-
-                </tr>
-            </tbody>
-        </table>
-        <button type="submit">Proceed to Create Contract</button>
-    </form>
-</body>
-</html>
+				</body>
+				</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Employee List</title>
+</head>
+<body>
+    <h1 th:text="${service.serviceName}">Service Name</h1>
+    <p><strong>Description:</strong> <span th:text="${service.serviceDescription}"></span></p>
+    <p><strong>Price:</strong> <span th:text="${service.servicePrice}"></span></p>
+    <p><strong>Status:</strong> <span th:text="${service.serviceStatus}"></span></p>
+    <img th:src="${service.serviceImage}" alt="Service Image"/>
+
+	<h2>Employee List by Service</h2>
+    <form th:action="@{/contracts/create}" method="POST">
+		<input type="hidden" name="serviceId" th:value="${service.serviceId}"/> 
+		<input type="hidden" name="servicePrice" th:value="${service.servicePrice}"/> 
+		<input type="hidden" name="serviceName" th:value="${service.serviceName}"/>
+        <table>
+            <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Profile Image</th>
+                    <th>Experience Years</th>
+                    <th>Details</th>
+                    <th>Select</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="employeeService : ${employeeServices}">
+                    <td th:text="${employeeService.employee.fullname}"></td> 
+
+                    <td th:text="${employeeService.employee.experienceYears}"></td> 
+                    <td th:text="${employeeService.details}"></td>
+					<td>
+					    <input type="radio" name="empServiceId" th:value="${employeeService.empServiceId}" required/>
+					</td>
+
+                </tr>
+            </tbody>
+        </table>
+        <button type="submit">Proceed to Create Contract</button>
+    </form>
+</body>
+</html>
