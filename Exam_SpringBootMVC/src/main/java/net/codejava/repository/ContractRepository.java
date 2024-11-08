@@ -20,7 +20,7 @@ public class ContractRepository {
     }
     
     public List<Contracts> findContractsByCustomerId(int customerId) {
-        String sql = "SELECT * FROM Contracts WHERE customer_id = ?";
+        String sql = "SELECT * FROM Contracts WHERE customer_id = ? ORDER BY created_at DESC";
         return jdbcTemplate.query(sql, new Object[]{customerId}, this::mapRowToContract);
     }
 
@@ -68,7 +68,8 @@ public class ContractRepository {
 
     
     public List<Contracts> getAllContracts() {
-        String sql = "SELECT * FROM Contracts";
+		/* String sql = "SELECT * FROM Contracts"; */
+        String sql = "SELECT * FROM Contracts ORDER BY created_at DESC";
         return jdbcTemplate.query(sql, this::mapRowToContract);
     }
 
@@ -85,6 +86,11 @@ public class ContractRepository {
                             contract.getContractFile(), contract.getContractId());
     }
 
+    public void updateContractStatus(int contractId, int contractStatus) {
+        String sql = "UPDATE Contracts SET contract_status = ? WHERE contract_id = ?";
+        jdbcTemplate.update(sql, contractStatus, contractId);
+    }
+    
     public void deleteContract(int contractId) {
         String sql = "DELETE FROM Contracts WHERE contract_id = ?";
         jdbcTemplate.update(sql, contractId);

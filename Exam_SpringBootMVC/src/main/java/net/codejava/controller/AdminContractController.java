@@ -40,6 +40,15 @@ public class AdminContractController {
         model.addAttribute("contracts", contracts);
         return "admin/contracts/con_list"; 
     }
+    
+    @PostMapping("/updateStatus/{contractId}")
+    public String updateContractStatus(@PathVariable("contractId") int contractId,
+                                       @RequestParam("status") int status) {
+        contractService.updateContractStatus(contractId, status);
+        return "redirect:/admin/contracts/list";
+    }
+
+
 
     @GetMapping("/{contractId}")
     public String getContractById(@PathVariable int contractId, Model model) {

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Contract</title>
+    <script>
+        function calculateTotalHours() {
+            const hoursPerDay = document.getElementById('hoursPerDay').value;
+            const daysPerWeek = document.getElementById('daysPerWeek').value;
+            const totalHours = hoursPerDay * daysPerWeek;
+            document.getElementById('totalHours').value = totalHours;
+        }
+    </script>
+</head>
+<body>
+	<h2>Thông Tin Hợp Đồng</h2>
+	<table>
+	    <thead>
+	        <tr>
+	            <th>Tên Nhân Viên</th>
+	            <th>Tên Dịch Vụ</th>
+	            <th>Số Tiền</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <tr th:each="employee : ${selectedEmployees}">
+	            <td th:text="${employee.fullname}"></td>
+	            <td th:text="${service.serviceName}"></td>
+	            <td th:text="${totalPrice}"></td>
+				<input type="hidden" name="empServiceId" value="yourEmpServiceIdValue"/>
+
+	        </tr>
+	    </tbody>
+	</table>
+
+	<h3>Tổng Số Tiền: <span th:text="${totalPrice}"></span></h3>
+    <form th:action="@{/contracts/checkout}" method="post">
+		<p th:text="${session.customerId}"></p>
+		
+
+		<!-- Thêm trường totalPrice -->
+		<input type="hidden" name="empServiceId" value="${session.empServiceId}"/>
+		<input type="hidden" name="contractId" value="${contractId}"/>
+		<input type="hidden" name="totalPrice" value="${session.servicePrice}"/>
+
+
+
+        <input type="hidden" name="contractStatus" value="0"/> <!-- Trạng thái mặc định -->
+        <input type="hidden" name="paymentStatus" value="0"/> <!-- Trạng thái mặc định -->
+
+        <input type="text" name="serviceAddress" placeholder="Địa Chỉ Dịch Vụ" required/>
+        <input type="text" name="servicePhone" placeholder="Số Điện Thoại Dịch Vụ" required/>
+        <input type="date" name="startDate" required/>
+        <input type="date" name="endDate" required/>
+
+        <label for="hoursPerDay">Giờ Làm Việc:</label>
+        <select id="hoursPerDay" name="hoursPerDay" onchange="calculateTotalHours()" required>
+            <option value="" disabled selected>Chọn giờ làm việc</option>
+            <option value="1">1 giờ/ngày</option>
+            <option value="2">2 giờ/ngày</option>
+            <option value="3">3 giờ/ngày</option>
+            <option value="4">4 giờ/ngày</option>
+            <option value="5">5 giờ/ngày</option>
+            <option value="6">6 giờ/ngày</option>
+            <option value="7">7 giờ/ngày</option>
+            <option value="8">8 giờ/ngày</option>
+        </select>
+
+        <label for="daysPerWeek">Ngày Làm Việc:</label>
+        <select id="daysPerWeek" name="daysPerWeek" onchange="calculateTotalHours()" required>
+            <option value="" disabled selected>Chọn ngày làm việc</option>
+            <option value="1">1 ngày/tuần</option>
+            <option value="2">2 ngày/tuần</option>
+            <option value="3">3 ngày/tuần</option>
+            <option value="4">4 ngày/tuần</option>
+            <option value="5">5 ngày/tuần</option>
+            <option value="6">6 ngày/tuần</option>
+            <option value="7">7 ngày/tuần</option>
+        </select>
+
+        <input type="hidden" id="totalHours" name="hoursWorked" required/>
+
+        <button type="submit">Tạo Hợp Đồng</button>
+    </form>
+	
+	
+</body>
+</html>

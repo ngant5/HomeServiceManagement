@@ -1,39 +1,58 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi">
 <head>
-    <title>Danh Sách Hợp Đồng</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Clean</title>
+	
+    <!-- Insert common head tags (e.g., CSS, JS, etc.) -->
+    <th:block th:insert="~{common/home_head_tag}"></th:block>
 </head>
 <body>
-    <div class="container">
-        <h1>Danh Sách Hợp Đồng</h1>
-		
-		<a href="/customer/services">Tạo Hợp Đồng Mới</a>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID Hợp Đồng</th>
-                    <th>ID Khách Hàng</th>
-                    <th>Trạng Thái</th>
-                    <th>Tổng Giá</th>
-                    <th>Ngày Tạo</th>
-                    <th>Hành Động</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="contract : ${contracts}">
-                    <td th:text="${contract.contractId}"></td>
-                    <td th:text="${contract.customerId}"></td>
-                    <td th:text="${contract.contractStatus}"></td>
-                    <td th:text="${contract.totalPrice}"></td>
-                    <td th:text="${contract.createdAt}"></td>
-                    <td>
-                        <a th:href="@{/contractDetails/{id}(id=${contract.contractId})}">View Contract Detail</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
 
-    
-    </div>
+    <!-- Insert common content at the start of the page -->
+    <th:block th:insert="~{common/home_content_first}"></th:block>
+
+	
+	    <section>
+			<table>
+				        <thead>
+				            <tr>
+				                <th>No.</th>
+				                <th>Date</th>
+								<th>Price</th>
+								<th>Status</th>
+				                <th>Action</th>
+				            </tr>
+				        </thead>
+				        <tbody>
+				            <!-- Lặp qua danh sách hợp đồng -->
+				            <tr th:each="contract, iterStat : ${contracts}">
+				                <td th:text="${iterStat.index + 1}"></td>
+								<td th:text="${contract.createdAt}"></td>
+								<td th:text="'$' + ${contract.totalPrice}"></td>
+								<td>
+								            <span th:switch="${contract.contractStatus}">
+								                <span th:case="0">Requested</span>
+								                <span th:case="1">Contract Creating</span>
+								                <span th:case="2">In Payment</span>
+								                <span th:case="3">Paid</span>
+								                <span th:case="*">Undefined</span> <!-- Fallback case if status is unknown -->
+								            </span>
+								        </td>
+				                <td>
+				                    <a th:href="@{/contractDetails/{id}(id=${contract.contractId})}" class="btn-bg2 border-round">
+				                        View Detail
+				                    </a>
+				                </td>
+				            </tr>
+				        </tbody>
+				    </table>
+		</section>
+
+    <!-- Insert common footer content -->
+    <th:block th:insert="~{common/home_content_footer}"></th:block>
+
 </body>
 </html>

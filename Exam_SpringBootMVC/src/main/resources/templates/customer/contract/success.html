@@ -1,15 +1,30 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi">
 <head>
-    <title>Tạo Hợp Đồng Thành Công</title>
-    <link rel="stylesheet" href="path/to/your/styles.css"> <!-- Thêm đường dẫn tới tệp CSS nếu cần -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Clean</title>
+
+    <!-- Insert common head tags (e.g., CSS, JS, etc.) -->
+    <th:block th:insert="~{common/home_head_tag}"></th:block>
 </head>
 <body>
-    <div class="container">
-        <h1>Tạo Hợp Đồng Thành Công</h1>
-        <p>Hợp đồng của bạn đã được tạo thành công.</p>
-        
-        <a href="/contracts">Quay lại danh sách hợp đồng</a>
-    </div>
+
+    <!-- Insert common content at the start of the page -->
+    <th:block th:insert="~{common/home_content_first}"></th:block>
+
+    <section class="contained">
+        <h2 class="section-title ff-damion">Request a Service Successfully</h2>
+        <p class="col-wide ta-center mlmr-a">
+            We will confirm within 24 hours.
+        </p>
+		<a class="btn-bg1 border-round mt-20" href='/contracts'>Back to view request</a>
+    </section>
+    <!-- ========== section end ========== -->
+
+    <!-- Insert common footer content -->
+    <th:block th:insert="~{common/home_content_footer}"></th:block>
+
 </body>
 </html>

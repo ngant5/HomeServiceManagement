@@ -30,10 +30,12 @@ public class ContractService {
         return contractRepository.getContractById(contractId);
     }
 
-    public void updateContract(Contracts contract) {
-        contractRepository.updateContract(contract);
+    public void updateContractStatus(int contractId, int contractStatus) {
+        contractRepository.updateContractStatus(contractId, contractStatus);
     }
 
+
+    
     public void deleteContract(int contractId) {
         contractRepository.deleteContract(contractId);
     }

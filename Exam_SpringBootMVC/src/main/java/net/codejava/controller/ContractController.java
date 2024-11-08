@@ -65,6 +65,8 @@ public class ContractController {
 
         // Lấy danh sách hợp đồng theo customerId
         List<Contracts> contracts = contractService.getContractsByCustomerId(customerId);
+        logger.info("Number of contracts found: {}", contracts.size());
+
 
         // Thêm danh sách hợp đồng vào model
         model.addAttribute("contracts", contracts);
