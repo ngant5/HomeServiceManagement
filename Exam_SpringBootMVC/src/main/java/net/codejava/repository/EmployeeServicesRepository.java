@@ -2,6 +2,8 @@ package net.codejava.repository;
 
 import net.codejava.model.EmployeeServices;
 import net.codejava.model.Employees;
+import net.codejava.model.Services;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -106,6 +108,50 @@ public class EmployeeServicesRepository {
             }
         });
     }
+    
+    public EmployeeServices findByEmpServiceId(int empServiceId) {
+        String sql = "SELECT es.emp_service_id, es.employee_id, es.service_id, es.details, " +
+                     "e.fullname, e.profile_image, e.experience_years, " +
+                     "s.service_name, s.service_description, s.service_price, s.service_image " +
+                     "FROM Employee_Services es " +
+                     "JOIN Employees e ON es.employee_id = e.employee_id " +
+                     "JOIN Services s ON es.service_id = s.service_id " +
+                     "WHERE es.emp_service_id = ?";
+
+        try {
+            return jdbcTemplate.queryForObject(sql, new Object[]{empServiceId}, (rs, rowNum) -> {
+                // Tạo đối tượng EmployeeServices từ kết quả truy vấn
+                EmployeeServices employeeServices = new EmployeeServices();
+                employeeServices.setEmpServiceId(rs.getInt("emp_service_id"));
+                employeeServices.setEmployeeId(rs.getInt("employee_id"));
+                employeeServices.setServiceId(rs.getInt("service_id"));
+                employeeServices.setDetails(rs.getString("details"));
+                
+                // Tạo đối tượng Employees và gán vào EmployeeServices
+                Employees employee = new Employees();
+                employee.setEmployeeId(rs.getInt("employee_id"));
+                employee.setFullname(rs.getString("fullname"));
+                employee.setProfileImage(rs.getString("profile_image"));
+                employee.setExperienceYears(rs.getInt("experience_years"));
+                employeeServices.setEmployee(employee);
+
+                // Tạo đối tượng Services và gán vào EmployeeServices
+                Services service = new Services();
+                service.setServiceId(rs.getInt("service_id"));
+                service.setServiceName(rs.getString("service_name"));
+                service.setServiceDescription(rs.getString("service_description"));
+                service.setServicePrice(rs.getInt("service_price"));
+                service.setServiceImage(rs.getString("service_image"));
+                employeeServices.setService(service);
+
+                return employeeServices;
+            });
+        } catch (Exception e) {
+            logger.error("Lỗi khi tìm kiếm EmployeeServices với emp_service_id: {}", empServiceId, e);
+            return null; // Trả về null nếu có lỗi hoặc không tìm thấy
+        }
+    }
+
 
 
 }

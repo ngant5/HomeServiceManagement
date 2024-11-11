@@ -1,47 +1,61 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Contract Details</title>
-
-    <!-- Insert common head tags (e.g., CSS, JS, etc.) -->
-    <th:block th:insert="~{common/home_head_tag}"></th:block>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contract Detail</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <!-- Insert common content at the start of the page -->
-    <th:block th:insert="~{common/home_content_first}"></th:block>
+    <div class="contract-detail-container">
+        <h1>Contract Details</h1>
+        
+        <!-- Employee Information -->
+        <h2>Employee: <span th:text="${employeeFullName}"></span></h2>
+        <p>Service: <span th:text="${serviceName}"></span></p>
 
-    <!-- Thông tin hợp đồng -->
-    <section>
-        <h2>Contract Details</h2>
+        <!-- Contract Detail Information -->
+        <div class="contract-info">
+            <span class="fs-h4 mb-15 mt-25 fc-primary">Start Date:</span>
+            <div class="input-group">
+                <i class="bi bi-calendar-event"></i>
+                <input type="date" th:value="${contractDetails.startDate}" disabled />
+            </div>
 
-        <!-- Hiển thị chi tiết hợp đồng -->
-        <p><strong>Contract Detail ID:</strong> <span th:text="${contractDetails.contractDetailId}"></span></p>
-        <p><strong>Contract ID:</strong> <span th:text="${contractDetails.contractId}"></span></p>
-        <p><strong>Employee Service ID:</strong> <span th:text="${contractDetails.empServiceId}"></span></p>
-        <p><strong>Status:</strong> <span th:text="${contractDetails.status}"></span></p>
-        <p><strong>Total Price:</strong> <span th:text="${contractDetails.totalPrice}"></span></p>
-        <p><strong>Hours Worked:</strong> <span th:text="${contractDetails.hoursWorked}"></span></p>
-        <p><strong>Start Date:</strong> <span th:text="${contractDetails.startDate}"></span></p>
-        <p><strong>End Date:</strong> <span th:text="${contractDetails.endDate}"></span></p>
+            <span class="fs-h4 mb-15 mt-25 fc-primary">End Date:</span>
+            <div class="input-group">
+                <i class="bi bi-calendar-event"></i>
+                <input type="date" th:value="${contractDetails.endDate}" disabled />
+            </div>
 
-        <!-- Service Location -->
-        <p><strong>Service Location:</strong> <span th:text="${contractDetails.serviceAddress}"></span></p>
+            <span class="fs-h4 mb-15 mt-25 fc-primary">Service Location:</span>
+            <div class="input-group">
+                <i class="bi bi-geo-alt-fill"></i>
+                <input type="text" th:value="${contractDetails.serviceAddress}" disabled />
+            </div>
 
-        <!-- Contact Information -->
-        <p><strong>Service Phone:</strong> <span th:text="${contractDetails.servicePhone}"></span></p>
+            <span class="fs-h4 mb-15 mt-25 fc-primary">Phone Number:</span>
+            <div class="input-group">
+                <i class="bi bi-telephone-fill"></i>
+                <input type="text" th:value="${contractDetails.servicePhone}" disabled />
+            </div>
 
-        <!-- Action Buttons (if you want to include them) -->
-        <div class="action-buttons mt-20">
-            <button type="button" class="btn btn-secondary" onclick="window.history.back()">Back</button>
+            <span class="fs-h4 mb-15 mt-25 fc-primary">Total Price:</span>
+            <div class="input-group">
+                <input type="text" th:value="${contractDetails.totalPrice}" disabled />
+            </div>
+
+            <span class="fs-h4 mb-15 mt-25 fc-primary">Hours Worked:</span>
+            <div class="input-group">
+                <input type="text" th:value="${contractDetails.hoursWorked}" disabled />
+            </div>
+
+            <!-- Submit Button -->
+            <a href="/contracts" class="btn-bg1 border-round mt-20">Back to Contracts</a>
         </div>
-    </section>
-
-    <!-- Insert common footer content -->
-    <th:block th:insert="~{common/home_content_footer}"></th:block>
+    </div>
 
 </body>
 </html>

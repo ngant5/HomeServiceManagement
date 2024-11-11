@@ -57,4 +57,8 @@ public class EmployeeServicesService {
     public Employees getEmployeeInfo(int employeeId) {
         return employeeServicesRepository.findEmployeeByEmployeeId(employeeId);
     }
+    
+    public EmployeeServices findByEmpServiceId(int empServiceId) {
+        return employeeServicesRepository.findByEmpServiceId(empServiceId);
+    }
 }

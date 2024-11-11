@@ -36,10 +36,12 @@ public class CustomerServiceController {
         Services service = serviceService.getServiceById(id);
         if (service != null) {
             List<EmployeeServices> employeeServices = employeeServicesService.findByServiceId(id);
-            for (EmployeeServices employeeService : employeeServices) {
+
+            for (EmployeeServices employeeService : employeeServices) { 
                 Employees employee = employeeServicesService.getEmployeeInfo(employeeService.getEmployeeId());
                 employeeService.setEmployee(employee); 
             }
+
 
             Integer servicePrice = service.getServicePrice();
             session.setAttribute("serviceId", id);
