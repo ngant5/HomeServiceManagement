@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Clean</title>
+	
+    <!-- Insert common head tags (e.g., CSS, JS, etc.) -->
+    <th:block th:insert="~{common/home_head_tag}"></th:block>
+</head>
+<body>
+
+    <!-- Insert common content at the start of the page -->
+    <th:block th:insert="~{common/home_content_first}"></th:block>
+
+	
+	    <section>
+			<table>
+			    <thead>
+			        <tr>
+			            <th>Emp Service ID</th>
+			            <th>Service Address</th>
+			            <th>Service Phone</th>
+			            <th>Start Date</th>
+			            <th>End Date</th>
+			            <th>Status</th>
+			            <th>Hours Worked</th>
+			            <th>Total Price</th>
+			            <th>Actions</th>
+			        </tr>
+			    </thead>
+			    <tbody>
+			        <tr th:each="detail : ${details}">
+			            <td th:text="${detail.empServiceId}"></td>
+			            <td th:text="${detail.serviceAddress}"></td>
+			            <td th:text="${detail.servicePhone}"></td>
+			            <td th:text="${detail.startDate}"></td>
+			            <td th:text="${detail.endDate}"></td>
+			            <td th:text="${detail.status}"></td>
+			            <td th:text="${detail.hoursWorked}"></td>
+			            <td th:text="${detail.totalPrice}"></td>
+			            <td>
+			                <a th:href="@{'/contractDetails/edit/' + ${detail.contractDetailId}}" class="btn btn-warning">Edit</a>
+			                <a th:href="@{'/employee/review/' + ${detail.contractDetailId}}" class="btn btn-primary">Review Employee</a>
+			            </td>
+			        </tr>
+			    </tbody>
+			</table>
+		</section>
+
+    <!-- Insert common footer content -->
+    <th:block th:insert="~{common/home_content_footer}"></th:block>
+
+</body>
+</html>

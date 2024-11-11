@@ -113,21 +113,12 @@
                                                 
                                             </form>
 
-                                            <!-- Button Upload File -->
-                                            <!-- Nút Upload Hợp Đồng -->
+                                            
+                                            
                                             <div class="upload-btn" th:if="${contract.contractStatus == 2}">
-                                                <button class="btn btn-secondary mt-2" id="upload-btn">Upload Contract</button>
-                                            </div>
-
-                                            <!-- Form Upload File -->
-                                            <div id="upload-form" style="display:none;">
-                                                <form th:action="@{/admin/contracts/uploadFile}" method="post" enctype="multipart/form-data">
-                                                    <input type="file" name="contractFile" required />
-                                                    <button type="submit" class="btn btn-success mt-2">Upload</button>
-                                                </form>
-                                            </div>
-
-                                            <div class="action justify-content-end">
+												<a th:href="@{/admin/contracts/uploadFile/{contractId}(contractId=${contract.contractId})}" class="btn btn-secondary mt-2">Upload Contract</a>
+											</div>
+											 <div class="action justify-content-end">
                                                 <button class="more-btn ml-10 dropdown-toggle" id="moreAction1" data-bs-toggle="dropdown"
                                                        aria-expanded="false">
                                                     <i class="lni lni-more-alt"></i>
@@ -161,10 +152,3 @@
 
 </body>
 </html>
-
-<!-- JavaScript to Show Form Upload when 'Upload Contract' Button is Clicked -->
-<script>
-    document.getElementById('upload-btn')?.addEventListener('click', function() {
-        document.getElementById('upload-form').style.display = 'block';
-    });
-</script>

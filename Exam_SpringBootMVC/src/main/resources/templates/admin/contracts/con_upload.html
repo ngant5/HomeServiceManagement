@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="../assets_admin/images/favicon.svg" type="image/x-icon" />
+    <title>Admin</title>
+    <th:block th:insert="~{common/head_tag}"></th:block>
+</head>
+<body>
+    <th:block th:insert="~{common/ad_content_first}"></th:block>
+    
+    <!-- ========== section start ========== -->
+    <section class="section">
+        <div class="container-fluid">
+            <!-- ========== title-wrapper start ========== -->
+			<h2>Upload Contract for Contract ID: <span th:text="${contract.contractId}"></span></h2>
+
+			<form th:action="@{/admin/contracts/{contractId}/uploadFile(contractId=${contract.contractId})}" 
+			      method="post" enctype="multipart/form-data">
+			    <input type="hidden" name="contractId" th:value="${contract.contractId}"/>
+			    <input type="file" name="contractFile" required />
+			    <button type="submit" class="btn btn-success mt-2">Upload</button>
+			</form>
+
+            <!-- End Row -->
+        </div>
+        <!-- end container -->
+    </section>
+    <!-- ========== section end ========== -->
+
+    <th:block th:insert="~{common/ad_content_footer}"></th:block>
+
+</body>
+</html>

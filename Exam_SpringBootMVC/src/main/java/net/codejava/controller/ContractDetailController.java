@@ -1,6 +1,8 @@
 package net.codejava.controller;
 
 import net.codejava.model.ContractDetails;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.codejava.service.ContractDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,8 @@ public class ContractDetailController {
     @Autowired
     private ContractDetailService contractDetailService;
 
+    private static final Logger logger = LoggerFactory.getLogger(ContractDetailController.class);
+
     // Lấy tất cả chi tiết hợp đồng
     @GetMapping
     public String getAllContractDetails(Model model) {
@@ -24,17 +28,24 @@ public class ContractDetailController {
         return "customer/contractDetail/list"; // Trả về view danh sách hợp đồng
     }
 
-    // Lấy chi tiết hợp đồng theo ID
     @GetMapping("/{contractId}")
     public String getContractDetails(@PathVariable int contractId, Model model) {
-        List<ContractDetails> details = contractDetailService.getContractDetailsByContractId(contractId);
-        if (details == null || details.isEmpty()) {
+    	List<ContractDetails> contractDetailsList = contractDetailService.getContractDetailsByContractId(contractId);
+    	logger.debug("Contract details list size: {}", contractDetailsList.size());
+
+        if (contractDetailsList == null) {
             model.addAttribute("error", "No contract details found for contract_id: " + contractId);
-            return "error"; // Trả về view lỗi
+            return "error"; 
         }
-        model.addAttribute("contractDetails", details);
-        return "customer/contractDetail/edit"; // Trả về view chi tiết hợp đồng
+
+        ContractDetails contractDetail = contractDetailsList.get(0);
+        logger.debug("Contract Detail ID: {}", contractDetail.getContractDetailId());
+        logger.debug("Contract ID: {}", contractDetail.getContractId());
+        model.addAttribute("contractDetails", contractDetail); 
+
+        return "customer/contractDetail/view"; // Trả về view chi tiết hợp đồng
     }
+
     
     
     

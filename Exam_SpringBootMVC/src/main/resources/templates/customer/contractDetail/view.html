@@ -1,34 +1,47 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi">
 <head>
-    <title>Chi Tiết Hợp Đồng</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contract Details</title>
+
+    <!-- Insert common head tags (e.g., CSS, JS, etc.) -->
+    <th:block th:insert="~{common/home_head_tag}"></th:block>
 </head>
 <body>
-    <div class="container">
-        <h1>Chi Tiết Hợp Đồng</h1>
 
-        <h2>Thông Tin Hợp Đồng</h2>
-        <div th:if="${contractDetails != null}">
-            <ul>
-                <li th:each="detail : ${contractDetails}">
-                    <p>ID Hợp Đồng: <span th:text="${detail.contractId}"></span></p>
-                    <p>ID Nhân Viên Dịch Vụ: <span th:text="${detail.empServiceId}"></span></p>
-                    <p>Địa Chỉ Dịch Vụ: <span th:text="${detail.serviceAddress}"></span></p>
-                    <p>Số Điện Thoại: <span th:text="${detail.servicePhone}"></span></p>
-                    <p>Ngày Bắt Đầu: <span th:text="${detail.startDate}"></span></p>
-                    <p>Ngày Kết Thúc: <span th:text="${detail.endDate}"></span></p>
-                    <p>Trạng Thái: <span th:text="${detail.status}"></span></p>
-                    <p>Số Giờ Làm Việc: <span th:text="${detail.hoursWorked}"></span></p>
-                    <p>Tổng Giá: <span th:text="${detail.totalPrice}"></span></p>
-                </li>
-            </ul>
+    <!-- Insert common content at the start of the page -->
+    <th:block th:insert="~{common/home_content_first}"></th:block>
+
+    <!-- Thông tin hợp đồng -->
+    <section>
+        <h2>Contract Details</h2>
+
+        <!-- Hiển thị chi tiết hợp đồng -->
+        <p><strong>Contract Detail ID:</strong> <span th:text="${contractDetails.contractDetailId}"></span></p>
+        <p><strong>Contract ID:</strong> <span th:text="${contractDetails.contractId}"></span></p>
+        <p><strong>Employee Service ID:</strong> <span th:text="${contractDetails.empServiceId}"></span></p>
+        <p><strong>Status:</strong> <span th:text="${contractDetails.status}"></span></p>
+        <p><strong>Total Price:</strong> <span th:text="${contractDetails.totalPrice}"></span></p>
+        <p><strong>Hours Worked:</strong> <span th:text="${contractDetails.hoursWorked}"></span></p>
+        <p><strong>Start Date:</strong> <span th:text="${contractDetails.startDate}"></span></p>
+        <p><strong>End Date:</strong> <span th:text="${contractDetails.endDate}"></span></p>
+
+        <!-- Service Location -->
+        <p><strong>Service Location:</strong> <span th:text="${contractDetails.serviceAddress}"></span></p>
+
+        <!-- Contact Information -->
+        <p><strong>Service Phone:</strong> <span th:text="${contractDetails.servicePhone}"></span></p>
+
+        <!-- Action Buttons (if you want to include them) -->
+        <div class="action-buttons mt-20">
+            <button type="button" class="btn btn-secondary" onclick="window.history.back()">Back</button>
         </div>
+    </section>
 
-        <div th:if="${error != null}">
-            <p th:text="${error}"></p>
-        </div>
+    <!-- Insert common footer content -->
+    <th:block th:insert="~{common/home_content_footer}"></th:block>
 
-        <a href="/contracts">Trở Về Danh Sách Hợp Đồng</a>
-    </div>
 </body>
 </html>

@@ -1,48 +1,83 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi">
 <head>
-    <title>Chi Tiết Hợp Đồng</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contract Details</title>
+
+    <!-- Insert common head tags (e.g., CSS, JS, etc.) -->
+    <th:block th:insert="~{common/home_head_tag}"></th:block>
 </head>
 <body>
-    <h1>Chi Tiết Hợp Đồng</h1>
-    <h2>Thông Tin Hợp Đồng</h2>
-    <p>ID Hợp Đồng: <span th:text="${contract.contractId}"></span></p>
-    <p>ID Khách Hàng: <span th:text="${contract.customerId}"></span></p>
-    <p>Trạng Thái: <span th:text="${contract.contractStatus}"></span></p>
-    <p>Tổng Giá: <span th:text="${contract.totalPrice}"></span></p>
-    <p>Ngày Tạo: <span th:text="${contract.createdAt}"></span></p>
 
-    <h2>Chi Tiết Hợp Đồng</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID Chi Tiết</th>
-                <th>ID Dịch Vụ Nhân Viên</th>
-                <th>Địa Chỉ Dịch Vụ</th>
-                <th>Điện Thoại Dịch Vụ</th>
-                <th>Ngày Bắt Đầu</th>
-                <th>Ngày Kết Thúc</th>
-                <th>Giờ Làm</th>
-                <th>Tổng Giá</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="detail : ${details}">
-                <td th:text="${detail.contractDetailId}"></td>
-                <td th:text="${detail.empServiceId}"></td>
-                <td th:text="${detail.serviceAddress}"></td>
-                <td th:text="${detail.servicePhone}"></td>
-                <td th:text="${#dates.format(detail.startDate, 'yyyy-MM-dd HH:mm')}"></td>
-                <td th:text="${#dates.format(detail.endDate, 'yyyy-MM-dd HH:mm')}"></td>
-                <td th:text="${detail.hoursWorked}"></td>
-                <td th:text="${detail.totalPrice}"></td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(details)}">
-                <td colspan="8">Không có chi tiết nào.</td>
-            </tr>
-        </tbody>
-    </table>
+    <!-- Insert common content at the start of the page -->
+    <th:block th:insert="~{common/home_content_first}"></th:block>
 
-    <a href="/contracts">Quay Lại Danh Sách Hợp Đồng</a>
+    <!-- Thông tin hợp đồng -->
+    <section>
+        <h2>Contract Details</h2>
+
+        <!-- Duyệt qua danh sách các chi tiết hợp đồng -->
+        <div th:each="contractDetail : ${contractDetails}">
+            <p><strong>Contract Detail ID:</strong> <span th:text="${contractDetail.contractDetailId}"></span></p>
+            <p><strong>Contract ID:</strong> <span th:text="${contractDetail.contractId}"></span></p>
+            <p><strong>Employee Service ID:</strong> <span th:text="${contractDetail.empServiceId}"></span></p>
+            <p><strong>Status:</strong> <span th:text="${contractDetail.status}"></span></p>
+            <p><strong>Total Price:</strong> <span th:text="${contractDetail.totalPrice}"></span></p>
+            <p><strong>Hours Worked:</strong> <span th:text="${contractDetail.hoursWorked}"></span></p>
+            <p><strong>Start Date:</strong> <span th:text="${contractDetail.startDate}"></span></p>
+            <p><strong>End Date:</strong> <span th:text="${contractDetail.endDate}"></span></p>
+        </div>
+
+        <!-- Service Location -->
+        <span class="fs-h4 mb-15 mt-25 fc-primary">Where to go:</span>
+        <a class="display-inblock">
+            <i class="bi bi-geo-alt-fill"></i>
+            <input type="text" name="serviceAddress" th:value="${contractDetail.serviceAddress}" placeholder="Service location address." required />
+        </a>
+
+        <!-- Contact Information -->
+        <span class="fs-h4 mb-15 mt-25 fc-primary">Say hello:</span>
+        <a class="display-inblock">
+            <i class="bi bi-telephone-fill"></i>
+            <input type="text" name="servicePhone" th:value="${contractDetail.servicePhone}" placeholder="Your Phone Number" required />
+        </a>
+
+        <!-- Hidden Field for Total Hours -->
+        <input type="hidden" id="totalHours" name="hoursWorked" th:value="${contractDetail.hoursWorked}" required />
+
+        <!-- Action Buttons -->
+        <div class="action-buttons mt-20">
+            <!--<button type="button" class="btn btn-warning" onclick="loadEditForm(${contract.contractId})">Edit</button>-->
+            <button type="button" class="btn btn-secondary" onclick="window.history.back()">Back</button>
+            <button type="button" class="btn btn-danger" onclick="cancelEdit()">Cancel</button>
+        </div>
+    </section>
+
+    <!-- Insert common footer content -->
+    <th:block th:insert="~{common/home_content_footer}"></th:block>
+
+    <!-- Modal for edit form (will be loaded with AJAX) -->
+    <div id="editContractModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Contract Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="editContractFormContainer">
+                    <!-- Form content will be loaded via AJAX here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

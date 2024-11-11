@@ -7,6 +7,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.ResponseEntity;
 
 
 
@@ -89,7 +95,7 @@ public class ContractController {
             // Bước 1: Kiểm tra customerId
             if (customerId == null) {
                 System.err.println("Error: customerId is null. Redirecting to error page.");
-                return "redirect:/error"; // Chuyển đến trang lỗi nếu không tìm thấy customerId
+                return "redirect:/customer/login"; 
             }
             
             if (empServiceId <= 0) {
@@ -144,6 +150,14 @@ public class ContractController {
 
         @GetMapping("/checkout")
         public String showCheckoutForm(HttpSession session, Model model) {
+        	
+        	Integer customerId = (Integer) session.getAttribute("customerId");
+            if (customerId == null) {
+                logger.error("Error: customerId is not found in session.");
+                return "redirect:/customer/login"; 
+            }
+
+            
             Integer contractId = (Integer) session.getAttribute("contractId");
             logger.info("Checking out with contractId: {}", contractId);
 
@@ -183,12 +197,19 @@ public class ContractController {
                                        @RequestParam int hoursWorked,
                                        HttpSession session,
                                        Model model) {
+        	Integer customerId = (Integer) session.getAttribute("customerId");
+            if (customerId == null) {
+                logger.error("Error: customerId is not found in session.");
+                return "redirect:/customer/login";  
+            }
+            
             Integer contractId = (Integer) session.getAttribute("contractId");
             Integer empServiceId = (Integer) session.getAttribute("empServiceId"); 
             Double servicePrice = (Double) session.getAttribute("servicePrice"); 
 
             logger.info("Finalizing contract for contractId: {} with empServiceId: {}", contractId, empServiceId);
-
+            
+            
             if (servicePrice == null) {
                 logger.warn("No totalPrice found in session. Cannot finalize contract.");
                 return "redirect:/error"; // Chuyển đến trang lỗi
@@ -230,6 +251,7 @@ public class ContractController {
 
     @GetMapping("/{id}")
     public String getContract(@PathVariable int id, Model model) {
+    	
         Contracts contract = contractService.getContractById(id);
         List<ContractDetails> details = contractDetailService.getContractDetailsByContractId(id); 
 
@@ -239,6 +261,8 @@ public class ContractController {
 
         return "customer/contract/detail";
     }
+    
+
 
     @GetMapping("/details/create")
     public String showCreateContractDetailsForm(@RequestParam int contractId, Model model) {
@@ -259,4 +283,30 @@ public class ContractController {
         contractService.deleteContract(id);
         return "redirect:/contracts";
     }
+    
+    private static final String FILE_DIRECTORY = "uploads/contracts/";
+
+    // Xử lý khi người dùng yêu cầu xem file PDF của hợp đồng
+    @GetMapping("/view-file/{contractId}")
+    public ResponseEntity<Resource> viewFile(@PathVariable Long contractId) throws Exception {
+        // Giả sử bạn lưu tên file dưới dạng contractId.pdf
+        String fileName = contractId + ".pdf"; 
+
+        // Tạo đường dẫn đến file PDF
+        Path filePath = Paths.get(FILE_DIRECTORY + fileName);
+        
+        // Kiểm tra nếu file tồn tại
+        if (!Files.exists(filePath)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Trả về file PDF dưới dạng tài nguyên
+        Resource resource = new UrlResource(filePath.toUri());
+
+        return ResponseEntity.ok()
+                .header("Content-Type", "application/pdf")  // Đảm bảo kiểu là PDF
+                .header("Content-Disposition", "inline; filename=\"" + fileName + "\"")  // Mở trực tiếp trong trình duyệt
+                .body(resource);
+    }
+
 }

@@ -78,6 +78,11 @@ public class ContractRepository {
         return jdbcTemplate.queryForObject(sql, this::mapRowToContract, contractId);
     }
 
+    public void updateContractFile(Contracts contract) {
+        String sql = "UPDATE contracts SET contract_file = ? WHERE contract_id = ?";
+        jdbcTemplate.update(sql, contract.getContractFile(), contract.getContractId());
+    }
+    
     public void updateContract(Contracts contract) {
         String sql = "UPDATE Contracts SET customer_id = ?, contract_status = ?, total_price = ?, " +
                      "payment_status = ?, contract_file = ? WHERE contract_id = ?";
@@ -95,6 +100,8 @@ public class ContractRepository {
         String sql = "DELETE FROM Contracts WHERE contract_id = ?";
         jdbcTemplate.update(sql, contractId);
     }
+    
+   
 
     private Contracts mapRowToContract(ResultSet rs, int rowNum) throws SQLException {
     	
@@ -109,6 +116,8 @@ public class ContractRepository {
         contract.setContractFile(rs.getString("contract_file"));
         return contract;
     }
+    
+    
     
     
 }

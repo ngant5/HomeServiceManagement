@@ -14,42 +14,49 @@
     <!-- Insert common content at the start of the page -->
     <th:block th:insert="~{common/home_content_first}"></th:block>
 
-	
-	    <section>
-			<table>
-				        <thead>
-				            <tr>
-				                <th>No.</th>
-				                <th>Date</th>
-								<th>Price</th>
-								<th>Status</th>
-				                <th>Action</th>
-				            </tr>
-				        </thead>
-				        <tbody>
-				            <!-- Lặp qua danh sách hợp đồng -->
-				            <tr th:each="contract, iterStat : ${contracts}">
-				                <td th:text="${iterStat.index + 1}"></td>
-								<td th:text="${contract.createdAt}"></td>
-								<td th:text="'$' + ${contract.totalPrice}"></td>
-								<td>
-								            <span th:switch="${contract.contractStatus}">
-								                <span th:case="0">Requested</span>
-								                <span th:case="1">Contract Creating</span>
-								                <span th:case="2">In Payment</span>
-								                <span th:case="3">Paid</span>
-								                <span th:case="*">Undefined</span> <!-- Fallback case if status is unknown -->
-								            </span>
-								        </td>
-				                <td>
-				                    <a th:href="@{/contractDetails/{id}(id=${contract.contractId})}" class="btn-bg2 border-round">
-				                        View Detail
-				                    </a>
-				                </td>
-				            </tr>
-				        </tbody>
-				    </table>
-		</section>
+    <section>
+        <table>
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Contract</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Lặp qua danh sách hợp đồng -->
+                <tr th:each="contract, iterStat : ${contracts}">
+                    <td th:text="${iterStat.index + 1}"></td>
+                    <td th:text="'$' + ${contract.totalPrice}"></td>
+                    <td>
+                        <span th:switch="${contract.contractStatus}">
+                            <span th:case="0">Requested</span>
+                            <span th:case="1">Contract Creating</span>
+                            <span th:case="2">In Payment</span>
+                            <span th:case="3">Paid</span>
+                            <span th:case="*">Undefined</span> <!-- Fallback case if status is unknown -->
+                        </span>
+                    </td>
+                    <td th:text="${contract.createdAt.toLocalDate().toString()}"></td>
+                    
+                    <td>
+                        <!-- Nút View File chỉ hoạt động nếu contractStatus là 1, 2 hoặc 3 -->
+						<a th:href="@{/contracts/view-file/{contractId}(contractId=${contract.contractId})}"
+						                           class="btn btn-secondary"
+						   th:if="${(contract.contractStatus == 2 || contract.contractStatus == 3)}"
+ 						   target="_blank">View File
+                        </a>
+                    </td>
+                    <td>
+                        <a th:href="@{'/contractDetails/' + ${contract.contractId}}" class="btn btn-info">View Detail</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
 
     <!-- Insert common footer content -->
     <th:block th:insert="~{common/home_content_footer}"></th:block>
