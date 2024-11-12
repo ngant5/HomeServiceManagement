@@ -73,13 +73,13 @@ public class ContractDetailsRepository {
     }
 
     public void updateContractDetail(ContractDetails contractDetail) {
-        String sql = "UPDATE Contract_Details SET emp_service_id = ?, service_address = ?, service_phone = ?, start_date = ?, end_date = ?, status = ?, hours_worked = ?, total_price = ? WHERE contract_detail_id = ?";
-        jdbcTemplate.update(sql, contractDetail.getEmpServiceId(), contractDetail.getServiceAddress(),
-                            contractDetail.getServicePhone(), contractDetail.getStartDate(),
-                            contractDetail.getEndDate(), contractDetail.getStatus(),
-                            contractDetail.getHoursWorked(), contractDetail.getTotalPrice(), 
+        String sql = "UPDATE Contract_Details SET emp_service_id = ?, service_address = ?, service_phone = ? WHERE contract_detail_id = ?";
+        jdbcTemplate.update(sql, contractDetail.getEmpServiceId(), 
+                            contractDetail.getServiceAddress(), 
+                            contractDetail.getServicePhone(), 
                             contractDetail.getContractDetailId());
     }
+
 
     public void deleteContractDetail(int id) {
         String sql = "DELETE FROM Contract_Details WHERE contract_detail_id = ?";

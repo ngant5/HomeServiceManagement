@@ -39,10 +39,25 @@ public class ContractDetailService {
         return contractDetailsRepository.getContractDetailById(id);
     }
 
-    // Cập nhật chi tiết hợp đồng
-    public void updateContractDetail(ContractDetails contractDetail) {
+    public ContractDetails updateContractDetail(int contractDetailId, String servicePhone, String serviceAddress, int empServiceId) {
+        ContractDetails contractDetail = contractDetailsRepository.getContractDetailById(contractDetailId);
+
+        if (contractDetail == null) {
+            return null;  
+        }
+
+        contractDetail.setServicePhone(servicePhone);
+        contractDetail.setServiceAddress(serviceAddress);
+        contractDetail.setEmpServiceId(empServiceId);
+
         contractDetailsRepository.updateContractDetail(contractDetail);
+
+        return contractDetail;  
     }
+
+
+
+
 
     // Xóa chi tiết hợp đồng
     public void deleteContractDetail(int id) {

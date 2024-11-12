@@ -5,57 +5,174 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contract Detail</title>
-    <link rel="stylesheet" href="styles.css">
+    <th:block th:insert="~{common/home_head_tag}"></th:block>
 </head>
 <body>
+	<th:block th:insert="~{common/home_content_first}"></th:block>
+	<section class="contained">
+		<h2 class="section-title ff-damion">Contract Details</h2>
+		<p class="ta-center col-wide mlmr-a">
+			Here you can find all the details of the contract you signed, including information about the employee, 
+			    the service, the start and end dates, service location, phone number, total cost, and hours worked. 
+			    Feel free to review or refer back to this information at any time.
+		</p>
+		<p>Contract Detail ID: <span id="contractDetailId" th:text="${contractDetailId}" hidden></span></p>
 
-    <div class="contract-detail-container">
-        <h1>Contract Details</h1>
-        
-        <!-- Employee Information -->
-        <h2>Employee: <span th:text="${employeeFullName}"></span></h2>
-        <p>Service: <span th:text="${serviceName}"></span></p>
+    <div class="row flex-just-center">
+			<div class="col-tri">
+				<article class="card-team">
+				<span class="fs-h4 mb-15 mt-25 fc-primary">Service Name:</span>
+					<div class="input-group">
+						<i class="bi bi-briefcase-fill"></i> 
+						<span class="service-name" th:text="${serviceName}"></span>  <!-- Hiển thị tên dịch vụ -->
+					</div>
+							
+				<span class="fs-h4 mb-15 mt-25 fc-primary">Employee Name:</span>
+					<div class="input-group" id="employeeNameSection">
+						<i class="bi bi-person-fill"></i>
+						<span id="employeeNameDisplay" class="employee-name" th:text="${employeeFullName}"></span>
+					</div>
+				<!-- Dropdown nhân viên -->
+					<div id="employeeDropdownSection" class="hidden">
+						<select id="employeeDropdownSelect" class="form-control">
+						<!-- Các option nhân viên sẽ được chèn vào đây -->
+						</select>
+					</div>
+				
+							
+	            <span class="fs-h4 mb-15 mt-25 fc-primary">Start Date:</span>
+	            <div class="input-group">
+	                <i class="bi bi-calendar-event"></i>
+	                <input type="text" th:value="${contractDetails.startDate}" disabled />
+	            </div>
+	
+	            <span class="fs-h4 mb-15 mt-25 fc-primary">End Date:</span>
+	            <div class="input-group">
+	                <i class="bi bi-calendar-event"></i>
+	                <input type="text" th:value="${contractDetails.endDate}" disabled />
+	            </div>
+				</article>
+			</div>
+			
+			
+			<div class="col-tri">
+			<article class="card-team">
+	            <span class="fs-h4 mb-15 mt-25 fc-primary">Service Location:</span>
+	            <div class="input-group">
+	                <i class="bi bi-geo-alt-fill"></i>
+	                <input type="text" id="serviceAddress" th:value="${contractDetails.serviceAddress}" disabled />
+	            </div>
+	
+	            <span class="fs-h4 mb-15 mt-25 fc-primary">Phone Number:</span>
+	            <div class="input-group">
+	                <i class="bi bi-telephone-fill"></i>
+	                <input type="text" id="servicePhone" th:value="${contractDetails.servicePhone}" disabled />
+	            </div>
+	
+	            <span class="fs-h4 mb-15 mt-25 fc-primary">Total Price:</span>
+	            <div class="input-group">
+	                <input type="text" th:value="${contractDetails.totalPrice}" disabled />
+	            </div>
+	
+	            <span class="fs-h4 mb-15 mt-25 fc-primary">Hours Worked:</span>
+	            <div class="input-group">
+	                <input type="text" th:value="${contractDetails.hoursWorked}" disabled />
+	            </div>
+				</article>
+			</div>
+		</div>
+		<div class="ta-center">
+		 	<a href="/contracts" class="btn-bg1 border-round">Back to Contracts</a>
+			<a href="javascript:void(0)" id="editButton" class="btn-bg1 border-round">Edit</a>
+		</div>
+		<div>
+			<button id="saveButton" class="btn-bg1" style="display: none;">Save</button>
+		</div>
 
-        <!-- Contract Detail Information -->
-        <div class="contract-info">
-            <span class="fs-h4 mb-15 mt-25 fc-primary">Start Date:</span>
-            <div class="input-group">
-                <i class="bi bi-calendar-event"></i>
-                <input type="date" th:value="${contractDetails.startDate}" disabled />
-            </div>
+	</section>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			var contractDetailId = $('#contractDetailId').text().trim();  
+			            console.log(contractDetailId);
 
-            <span class="fs-h4 mb-15 mt-25 fc-primary">End Date:</span>
-            <div class="input-group">
-                <i class="bi bi-calendar-event"></i>
-                <input type="date" th:value="${contractDetails.endDate}" disabled />
-            </div>
+			$('#employeeDropdownSection').hide();
+			$('#employeeNameDisplay').show();
 
-            <span class="fs-h4 mb-15 mt-25 fc-primary">Service Location:</span>
-            <div class="input-group">
-                <i class="bi bi-geo-alt-fill"></i>
-                <input type="text" th:value="${contractDetails.serviceAddress}" disabled />
-            </div>
+		    // Khi nhấn nút "Edit", hiển thị các ô chỉnh sửa
+		    $('#editButton').click(function() {
+				$('#employeeNameDisplay').hide(); 
+				$('#employeeDropdownSection').show();
+				$('#serviceAddress').prop('disabled', false); // Cho phép chỉnh sửa địa chỉ dịch vụ
+				$('#servicePhone').prop('disabled', false);
+				$('#saveButton').show(); // Cho phép chỉnh sửa số điện thoại
+				$('#editButton').hide(); // Ẩn nút "Edit"
+		    });
 
-            <span class="fs-h4 mb-15 mt-25 fc-primary">Phone Number:</span>
-            <div class="input-group">
-                <i class="bi bi-telephone-fill"></i>
-                <input type="text" th:value="${contractDetails.servicePhone}" disabled />
-            </div>
+		    // Gọi AJAX để tải danh sách nhân viên
+		    $.ajax({
+		        url: '/contractDetails/employees/' + contractDetailId,
+		        method: 'GET',
+		        success: function(employeeServicesList) {
+		            var employeeSelect = $('#employeeDropdownSelect');
+		            employeeSelect.empty(); 
 
-            <span class="fs-h4 mb-15 mt-25 fc-primary">Total Price:</span>
-            <div class="input-group">
-                <input type="text" th:value="${contractDetails.totalPrice}" disabled />
-            </div>
+		            if (employeeServicesList.length > 0) {
+		                employeeSelect.append('<option value="">Choose an Employee</option>');
+		                employeeServicesList.forEach(function(employeeService) {
+							var empServiceId = employeeService.empServiceId; // Lấy empServiceId từ EmployeeServices
+							var fullname = employeeService.employee ? employeeService.employee.fullname : 'N/A'; // Lấy fullname từ đối tượng employee (nếu có)
+							               
+							               // Thêm option vào dropdown
+							employeeSelect.append('<option value="' + empServiceId + '">' + fullname + '</option>');
+										   
+		                });
+		            } else {
+		                employeeSelect.append('<option value="">No employees found</option>');
+		            }
+		        },
+		        error: function(xhr, status, error) {
+		            console.log('Error loading employees: ' + error);
+		            $('#employeeDropdownSelect').append('<option value="">Error loading employees</option>');
+		        }
+		    });
 
-            <span class="fs-h4 mb-15 mt-25 fc-primary">Hours Worked:</span>
-            <div class="input-group">
-                <input type="text" th:value="${contractDetails.hoursWorked}" disabled />
-            </div>
+		    // Lưu các thay đổi khi nhấn nút "Save"
+		    $('#saveButton').click(function() {
+		        var updatedServicePhone = $('#servicePhone').val();
+		        var updatedServiceAddress = $('#serviceAddress').val();
+		        var selectedEmployeeId = $('#employeeDropdownSelect').val();
 
-            <!-- Submit Button -->
-            <a href="/contracts" class="btn-bg1 border-round mt-20">Back to Contracts</a>
-        </div>
-    </div>
+		        // Gửi yêu cầu cập nhật
+		        $.ajax({
+		            url: '/contractDetails/update/' + contractDetailId,   // Đường dẫn controller để xử lý cập nhật
+		            method: 'POST',
+		            data: {
+		                contractDetailId: contractDetailId,
+		                servicePhone: updatedServicePhone,
+		                serviceAddress: updatedServiceAddress,
+		                empServiceId: selectedEmployeeId
+		            },
+		            success: function(response) {
+		                alert('Updated successfully!');
+		                // Cập nhật lại thông tin trên giao diện nếu cần
+		                $('#employeeNameDisplay').text(response.employeeFullName);  // Ví dụ cập nhật tên nhân viên
+		                $('#servicePhone').val(response.servicePhone);
+		                $('#serviceAddress').val(response.serviceAddress);
+		                $('#saveButton').hide();  // Ẩn form chỉnh sửa sau khi lưu
+		                $('#editButton').show();   // Hiển thị lại nút Edit
+		                $('#employeeNameDisplay').show();  // Hiển thị lại tên nhân viên
+		            },
+		            error: function(xhr, status, error) {
+		                alert('Error updating contract detail.');
+		            }
+		        });
+		    });
+		});
+		</script>
 
+	<!-- ========== section end ========== -->
+
+			<th:block th:insert="~{common/home_content_footer}"></th:block>
 </body>
 </html>
