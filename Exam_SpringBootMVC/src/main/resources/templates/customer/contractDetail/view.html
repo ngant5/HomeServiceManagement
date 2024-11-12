@@ -16,11 +16,11 @@
 			    the service, the start and end dates, service location, phone number, total cost, and hours worked. 
 			    Feel free to review or refer back to this information at any time.
 		</p>
-		<p>Contract Detail ID: <span id="contractDetailId" th:text="${contractDetailId}" hidden></span></p>
+		<span id="contractDetailId" th:text="${contractDetailId}" hidden></span>
 
     <div class="row flex-just-center">
 			<div class="col-tri">
-				<article class="card-team">
+				<article>
 				<span class="fs-h4 mb-15 mt-25 fc-primary">Service Name:</span>
 					<div class="input-group">
 						<i class="bi bi-briefcase-fill"></i> 
@@ -56,7 +56,7 @@
 			
 			
 			<div class="col-tri">
-			<article class="card-team">
+			<article>
 	            <span class="fs-h4 mb-15 mt-25 fc-primary">Service Location:</span>
 	            <div class="input-group">
 	                <i class="bi bi-geo-alt-fill"></i>
@@ -84,10 +84,13 @@
 		<div class="ta-center">
 		 	<a href="/contracts" class="btn-bg1 border-round">Back to Contracts</a>
 			<a href="javascript:void(0)" id="editButton" class="btn-bg1 border-round">Edit</a>
+
+			    <button id="saveButton" class="btn-bg1  border-round" style="display: none;">Save</button>
+			    <button id="cancelButton" class="btn-bg1  border-round" style="display: none;">Cancel</button> <!-- Nút Cancel -->
+
+
 		</div>
-		<div>
-			<button id="saveButton" class="btn-bg1" style="display: none;">Save</button>
-		</div>
+		
 
 	</section>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -101,14 +104,31 @@
 
 		    // Khi nhấn nút "Edit", hiển thị các ô chỉnh sửa
 		    $('#editButton').click(function() {
-				$('#employeeNameDisplay').hide(); 
 				$('#employeeDropdownSection').show();
 				$('#serviceAddress').prop('disabled', false); // Cho phép chỉnh sửa địa chỉ dịch vụ
 				$('#servicePhone').prop('disabled', false);
-				$('#saveButton').show(); // Cho phép chỉnh sửa số điện thoại
+				$('#saveButton').show();
+				$('#cancelButton').show(); 
 				$('#editButton').hide(); // Ẩn nút "Edit"
 		    });
 
+			$('#cancelButton').click(function() {
+			        // Khôi phục lại các giá trị ban đầu (có thể từ server hoặc biến lưu trữ)
+			        $('#servicePhone').val($('#servicePhone').attr('data-original-value'));
+			        $('#serviceAddress').val($('#serviceAddress').attr('data-original-value'));
+			        
+			        // Ẩn nút Save và Cancel, hiển thị lại nút Edit
+			        $('#saveButton').hide();
+			        $('#cancelButton').hide();
+			        $('#editButton').show();
+
+			        // Ẩn dropdown nhân viên và hiển thị lại tên nhân viên
+			        $('#employeeDropdownSection').hide();
+			        $('#employeeNameDisplay').show();
+			    });
+
+
+				
 		    // Gọi AJAX để tải danh sách nhân viên
 		    $.ajax({
 		        url: '/contractDetails/employees/' + contractDetailId,
@@ -155,11 +175,15 @@
 		            },
 		            success: function(response) {
 		                alert('Updated successfully!');
+						console.log(response);
+
 		                // Cập nhật lại thông tin trên giao diện nếu cần
-		                $('#employeeNameDisplay').text(response.employeeFullName);  // Ví dụ cập nhật tên nhân viên
+		                $('#employeeNameDisplay').text(response.employeeFullName);  
 		                $('#servicePhone').val(response.servicePhone);
 		                $('#serviceAddress').val(response.serviceAddress);
-		                $('#saveButton').hide();  // Ẩn form chỉnh sửa sau khi lưu
+						$('#employeeDropdownSection').hide();
+		                $('#saveButton').hide(); 
+						$('#cancelButton').hide(); 
 		                $('#editButton').show();   // Hiển thị lại nút Edit
 		                $('#employeeNameDisplay').show();  // Hiển thị lại tên nhân viên
 		            },

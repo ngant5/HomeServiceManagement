@@ -5,9 +5,104 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Happy Clean</title>
-	
+    
     <!-- Insert common head tags (e.g., CSS, JS, etc.) -->
     <th:block th:insert="~{common/home_head_tag}"></th:block>
+
+    <style>
+        /* General styling for the table */
+        table {
+            width: 80%; /* Chiều rộng bảng chiếm 80% của màn hình */
+            margin: 0 auto; /* Căn giữa bảng */
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #ffffff; /* Màu nền của bảng là trắng */
+            color: #333333; /* Chữ có màu xám tối để dễ đọc */
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Màu nền cho tiêu đề bảng */
+        th {
+            background-color: #003366; /* Màu nền xanh dương đậm */
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Styling cho các dòng bảng */
+        tr:nth-child(even) {
+            background-color: #f2f2f2; /* Dòng chẵn có màu nền xám nhẹ */
+        }
+
+        tr:nth-child(odd) {
+            background-color: #ffffff; /* Dòng lẻ có màu nền trắng */
+        }
+
+        /* Styling for the action buttons */
+        .btn {
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d; /* Màu xám cho nút "View File" */
+            color: white;
+        }
+
+        .btn-info {
+            background-color: #17a2b8; /* Màu xanh lam cho nút "View Detail" */
+            color: white;
+        }
+
+        /* Hover effect for buttons */
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        /* Styling for contract status column */
+        .status {
+            font-weight: bold;
+        }
+
+
+        .status-confirmed {
+            color: rgb(0, 0, 160); /* Màu xanh dương cho trạng thái "Confirmed" */
+        }
+
+        .status-in-payment {
+            color: #ffc107; /* Màu vàng cho trạng thái "In Payment" */
+        }
+
+        .status-paid {
+            color: #28a745; /* Màu xanh lá cho trạng thái "Paid" */
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            table {
+                width: 90%; /* Mở rộng ra 90% đối với màn hình nhỏ */
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -32,23 +127,31 @@
                     <td th:text="${iterStat.index + 1}"></td>
                     <td th:text="'$' + ${contract.totalPrice}"></td>
                     <td>
-                        <span th:switch="${contract.contractStatus}">
-                            <span th:case="0">Requested</span>
-                            <span th:case="1">Contract Creating</span>
-                            <span th:case="2">In Payment</span>
-                            <span th:case="3">Paid</span>
+                        <span class="status" th:switch="${contract.contractStatus}">
+                            <span th:case="0" class="status-requested">Requested</span>
+                            <span th:case="1" class="status-confirmed">Confirmed</span>
+                            <span th:case="2" class="status-in-payment">Pay Now</span>
+                            <span th:case="3" class="status-paid">Paid</span>
                             <span th:case="*">Undefined</span> <!-- Fallback case if status is unknown -->
                         </span>
                     </td>
                     <td th:text="${contract.createdAt.toLocalDate().toString()}"></td>
                     
                     <td>
-                        <!-- Nút View File chỉ hoạt động nếu contractStatus là 1, 2 hoặc 3 -->
-						<a th:href="@{/contracts/view-file/{contractId}(contractId=${contract.contractId})}"
-						                           class="btn btn-secondary"
-						   th:if="${(contract.contractStatus == 2 || contract.contractStatus == 3)}"
- 						   target="_blank">View File
-                        </a>
+                        <span th:switch="${contract.contractStatus}">
+                            <span th:case="0">Pending Confirmation</span> <!-- Khi đang yêu cầu -->
+                            <span th:case="1">In Process</span> <!-- Khi đã xác nhận nhưng chưa thanh toán -->
+                            <span th:case="2">
+                                <a th:href="@{/contracts/view-file/{contractId}(contractId=${contract.contractId})}"
+                                   class="btn btn-secondary"
+                                   target="_blank">View File</a>
+                            </span>
+                            <span th:case="3">
+                                <a th:href="@{/contracts/view-file/{contractId}(contractId=${contract.contractId})}"
+                                   class="btn btn-secondary"
+                                   target="_blank">View File</a>
+                            </span>
+                        </span>
                     </td>
                     <td>
                         <a th:href="@{'/contractDetails/' + ${contract.contractId}}" class="btn btn-info">View Detail</a>
