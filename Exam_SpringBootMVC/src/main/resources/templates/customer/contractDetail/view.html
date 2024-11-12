@@ -31,14 +31,15 @@
 					<div class="input-group" id="employeeNameSection">
 						<i class="bi bi-person-fill"></i>
 						<span id="employeeNameDisplay" class="employee-name" th:text="${employeeFullName}"></span>
-					</div>
+						</div>
 				<!-- Dropdown nhân viên -->
 					<div id="employeeDropdownSection" class="hidden">
 						<select id="employeeDropdownSelect" class="form-control">
 						<!-- Các option nhân viên sẽ được chèn vào đây -->
 						</select>
 					</div>
-				
+					
+					<span id="empServiceId" th:text="${contractDetails.empServiceId}" hidden></span>
 							
 	            <span class="fs-h4 mb-15 mt-25 fc-primary">Start Date:</span>
 	            <div class="input-group">
@@ -96,6 +97,10 @@
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script>
 		$(document).ready(function() {
+			
+			var selectedEmployeeId = $('#empServiceId').text().trim();
+			console.log("Selected Employee ID:", selectedEmployeeId);
+
 			var contractDetailId = $('#contractDetailId').text().trim();  
 			            console.log(contractDetailId);
 
@@ -104,6 +109,7 @@
 
 		    // Khi nhấn nút "Edit", hiển thị các ô chỉnh sửa
 		    $('#editButton').click(function() {
+				$('#employeeNameDisplay').hide();
 				$('#employeeDropdownSection').show();
 				$('#serviceAddress').prop('disabled', false); // Cho phép chỉnh sửa địa chỉ dịch vụ
 				$('#servicePhone').prop('disabled', false);
@@ -138,14 +144,24 @@
 		            employeeSelect.empty(); 
 
 		            if (employeeServicesList.length > 0) {
-		                employeeSelect.append('<option value="">Choose an Employee</option>');
 		                employeeServicesList.forEach(function(employeeService) {
-							var empServiceId = employeeService.empServiceId; // Lấy empServiceId từ EmployeeServices
+							var empServiceId = String(employeeService.empServiceId).trim();
 							var fullname = employeeService.employee ? employeeService.employee.fullname : 'N/A'; // Lấy fullname từ đối tượng employee (nếu có)
-							               
-							               // Thêm option vào dropdown
-							employeeSelect.append('<option value="' + empServiceId + '">' + fullname + '</option>');
-										   
+							              
+							var option = $('<option>')
+							                       .val(empServiceId)
+							                       .text(fullname);
+ 
+												   if (empServiceId === selectedEmployeeId) {
+												                           option.prop('selected', true);
+												                       }
+
+												                       // Thêm option vào dropdown
+												                       employeeSelect.append(option);
+
+							              
+<!--employeeSelect.append('<option value="' + empServiceId + '">' + fullname + '</option>');-->
+							   
 		                });
 		            } else {
 		                employeeSelect.append('<option value="">No employees found</option>');
@@ -161,8 +177,12 @@
 		    $('#saveButton').click(function() {
 		        var updatedServicePhone = $('#servicePhone').val();
 		        var updatedServiceAddress = $('#serviceAddress').val();
-		        var selectedEmployeeId = $('#employeeDropdownSelect').val();
-
+				
+				var selectedEmployeeId = $('#employeeDropdownSelect').val();
+				        if (!selectedEmployeeId) {
+				            // Lấy giá trị empServiceId mặc định từ hidden input nếu không chọn nhân viên
+				            selectedEmployeeId = $('#empServiceId').val();  // Lấy giá trị từ <input type="hidden" id="empServiceId">
+				        }
 		        // Gửi yêu cầu cập nhật
 		        $.ajax({
 		            url: '/contractDetails/update/' + contractDetailId,   // Đường dẫn controller để xử lý cập nhật
