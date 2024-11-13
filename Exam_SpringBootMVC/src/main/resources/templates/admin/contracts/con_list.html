@@ -118,15 +118,22 @@
 											<!-- Form Upload Contract -->
 											<div class="upload-btn" th:if="${contract.contractStatus == 2}">
 												<form id="uploadForm" enctype="multipart/form-data">
-												    <!-- Dòng 1: Button Choose File -->
-												    <label for="contractFile" class="btn btn-secondary mt-2" id="fileButton">
-												        Choose File
-												    </label>
-												    <input type="file" id="contractFile" name="contractFile" accept=".pdf" style="display: none;" />
-												    
-												    <!-- Dòng 2: Hiển thị tên file -->
-												    <span id="fileName" class="d-block mt-2">No file selected</span>
-												    
+													<span class="d-block mt-2">
+													            <span th:if="${contract.contractFile != null && contract.contractFile != ''}">
+													                <!-- Nếu file tồn tại, hiển thị tên file dưới dạng liên kết (clickable) -->
+													                <a target="_blank" th:href="@{/admin/contracts/view-file/{contractId}(contractId=${contract.contractId})}" class="text-info" th:text="${contract.contractFile}"></a>
+													            </span>
+													            <span th:if="${contract.contractFile == null || contract.contractFile == ''}">
+													                <!-- Nếu chưa có file, hiển thị "No file selected" -->
+													                No file selected
+													            </span>
+													        </span>
+
+													<label for="contractFile" class="btn btn-secondary mt-2" id="fileButton">
+													Choose File
+													</label>
+													<input type="file" id="contractFile" name="contractFile" accept=".pdf" style="display: none;" />
+																									       
 												    <!-- Dòng 3: Nút Upload -->
 												    <input type="hidden" id="contractId" name="contractId" th:value="${contract.contractId}" />
 												    <button type="submit" class="btn btn-secondary mt-2" id="uploadButton" disabled>Upload</button>
@@ -134,7 +141,7 @@
 											    <div id="uploadMessage"></div>
 											</div>
 											<div class="view-file-btn" th:if="${contract.contractStatus == 3}">
-												<a th:href="@{/admin/contracts/view-file/{contractId}(contractId=${contract.contractId})}" class="btn btn-info mt-2">View File</a>
+												<a target="_blank" th:href="@{/admin/contracts/view-file/{contractId}(contractId=${contract.contractId})}" class="btn btn-info mt-2">View File</a>
 											</div>
 												
 											<!-- <div class="action justify-content-end">
