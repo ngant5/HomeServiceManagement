@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,28 +51,34 @@ public class ContractService {
 
     // Phương thức upload file hợp đồng
     public void uploadContractFile(MultipartFile file, int contractId) {
-        // Đường dẫn thư mục lưu trữ file hợp đồng
-        String uploadDirectory = "C:/uploads/contracts"; // Đảm bảo đường dẫn này đúng
+    	String uploadDirectory = System.getProperty("user.dir") + "/uploads/contracts"; 
+    	System.out.println("Upload directory: " + uploadDirectory);
+
 
         try {
             // Kiểm tra nếu thư mục chưa tồn tại thì tạo mới
             Path uploadPath = Paths.get(uploadDirectory);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
+                System.out.println("Created upload directory: " + uploadPath);
+            }
+            
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String newFileName = contractId + "_" + timestamp + ".pdf";
+            Path filePath = uploadPath.resolve(newFileName);
+            System.out.println("Saving file to: " + filePath);
+
+            file.transferTo(filePath);
+            
+            if (Files.exists(filePath)) {
+                System.out.println("File saved successfully.");
             }
 
-            // Lưu file vào thư mục
-            Path filePath = uploadPath.resolve(file.getOriginalFilename());
-            Files.write(filePath, file.getBytes());
-
-            // Lưu thông tin vào cơ sở dữ liệu nếu cần
-            // Nếu bạn có bảng trong DB để lưu tên file, bạn có thể thực hiện tại đây.
-            // Ví dụ: cập nhật thông tin file cho hợp đồng
             Contracts contract = contractRepository.getContractById(contractId);
             if (contract != null) {
-                // Giả sử bạn có trường để lưu tên file trong bảng contracts
-                contract.setContractFile(file.getOriginalFilename()); // Ví dụ: set tên file
-                contractRepository.updateContract(contract); // Cập nhật thông tin vào DB
+                contract.setContractFile(newFileName); 
+                contractRepository.updateContract(contract); 
+                System.out.println("Contract file name updated in DB.");
             }
 
         } catch (IOException e) {

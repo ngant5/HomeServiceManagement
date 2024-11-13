@@ -92,33 +92,52 @@
                                         <td th:text="${iterStat.index + 1}"></td>
                                         <td th:text="${contract.customer.fullname}"></td> 
                                         <td th:text="${contract.totalPrice}"></td>
-                                        <td th:text="${contract.paymentStatus == 0 ? 'In Progress' : 
+                                        <td th:text="${contract.paymentStatus == 0 ? 'Requested' : 
                                                        contract.paymentStatus == 1 ? 'Confirmed' : 
                                                        contract.paymentStatus == 2 ? 'Done' : 
                                                        'Unknown'}">
                                         </td>
 
                                         <td th:text="${contract.contractStatus == 0 ? 'Requested' : 
-                                                       contract.contractStatus == 1 ? 'Confirmed' :
-                                                       contract.contractStatus == 2 ? 'In Progress' : 
+                                                       contract.contractStatus == 1 ? 'Confirmed by Employee' :
+                                                       contract.contractStatus == 2 ? 'Contract Creating' : 
+													   contract.contractStatus == 3 ? 'Contract Created' : 
+													   contract.contractStatus == 4 ? 'In progress' : 
+													   contract.contractStatus == 5 ? 'Done' : 
                                                        'Unknown'}">
                                         </td>
                                         <td>
                                             <form th:action="@{/admin/contracts/updateStatus/{contractId}(contractId=${contract.contractId})}" method="post">
                                                 <!-- Hiển thị nút Confirm nếu contractStatus == 0 -->
-                                                <button type="submit" class="btn btn-primary mt-2" name="status" value="1" th:if="${contract.contractStatus == 0}">Confirmed</button>
-                                                
-                                                <!-- Hiển thị nút In Progress nếu contractStatus == 1 -->
-                                                <button type="submit" class="btn btn-warning mt-2" name="status" value="2" th:if="${contract.contractStatus == 1}">In Progress</button>
-                                                
+												<span th:if="${contract.contractStatus == 0}" style="font-size: 0.8rem; color: #6c757d; white-space: normal;">
+												            Wait for<br>Employee<br>Confirm
+												</span>        
+												<button type="submit" class="btn btn-success mt-2" name="status" value="2" th:if="${contract.contractStatus == 1}">Approve</button>	         
                                             </form>
-
-                                            
-                                            
-                                            <div class="upload-btn" th:if="${contract.contractStatus == 2}">
-												<a th:href="@{/admin/contracts/uploadFile/{contractId}(contractId=${contract.contractId})}" class="btn btn-secondary mt-2">Upload Contract</a>
+											
+											<!-- Form Upload Contract -->
+											<div class="upload-btn" th:if="${contract.contractStatus == 2}">
+												<form id="uploadForm" enctype="multipart/form-data">
+												    <!-- Dòng 1: Button Choose File -->
+												    <label for="contractFile" class="btn btn-secondary mt-2" id="fileButton">
+												        Choose File
+												    </label>
+												    <input type="file" id="contractFile" name="contractFile" accept=".pdf" style="display: none;" />
+												    
+												    <!-- Dòng 2: Hiển thị tên file -->
+												    <span id="fileName" class="d-block mt-2">No file selected</span>
+												    
+												    <!-- Dòng 3: Nút Upload -->
+												    <input type="hidden" id="contractId" name="contractId" th:value="${contract.contractId}" />
+												    <button type="submit" class="btn btn-secondary mt-2" id="uploadButton" disabled>Upload</button>
+												</form>
+											    <div id="uploadMessage"></div>
 											</div>
-											 <div class="action justify-content-end">
+											<div class="view-file-btn" th:if="${contract.contractStatus == 3}">
+												<a th:href="@{/admin/contracts/view-file/{contractId}(contractId=${contract.contractId})}" class="btn btn-info mt-2">View File</a>
+											</div>
+												
+											<!-- <div class="action justify-content-end">
                                                 <button class="more-btn ml-10 dropdown-toggle" id="moreAction1" data-bs-toggle="dropdown"
                                                        aria-expanded="false">
                                                     <i class="lni lni-more-alt"></i>
@@ -131,7 +150,7 @@
                                                         <a href="#0" class="text-gray">Edit</a>
                                                     </li>
                                                 </ul>
-                                            </div>
+                                            </div>-->
                                         </td>
                                     </tr>
                                 </tbody>
@@ -149,6 +168,60 @@
     <!-- ========== section end ========== -->
 
     <th:block th:insert="~{common/ad_content_footer}"></th:block>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+	    $(document).ready(function() {
+			$("#contractFile").change(function() {
+			        var fileInput = $(this)[0];
+					var uploadButton = $("#uploadButton");  
+					var fileName = $("#fileName");
+
+			        // Kiểm tra nếu có tệp đã được chọn
+			        if (fileInput.files.length > 0) {
+			            fileName.text(fileInput.files[0].name);  
+			            uploadButton.prop("disabled", false);  
+						uploadButton.removeClass("btn-secondary").addClass("btn-primary");
+			        } else {
+						fileName.text("No file selected");
+			            uploadButton.prop("disabled", true);  
+						uploadButton.removeClass("btn-primary").addClass("btn-secondary");
+			        }
+			    });
+
+	        $("#uploadForm").submit(function(event) {
+	            event.preventDefault();  // Ngừng submit form mặc định
+
+	            var formData = new FormData();
+	            var fileInput = $("#contractFile")[0].files[0];
+	            formData.append("contractFile", fileInput);
+				
+				var contractId = $("#contractId").val();
+	            var uploadUrl = "/admin/contracts/" + contractId + "/uploadFile";  // URL endpoint
+
+	            // Gửi yêu cầu Ajax
+	            $.ajax({
+	                url: uploadUrl,
+	                type: "POST",
+	                data: formData,
+	                contentType: false,  
+	                processData: false,  
+	                success: function(response) {
+	                    // Nếu upload thành công, hiển thị thông báo và cập nhật trạng thái hợp đồng
+	                    $("#uploadMessage").html("<div class='alert alert-success'>"+ response + "</div>");
+	                    setTimeout(function() {
+	                        location.reload();  // Tải lại trang để cập nhật trạng thái mới
+	                    }, 2000);
+	                },
+	                error: function(xhr, status, error) {
+	                    // Nếu có lỗi, hiển thị thông báo lỗi
+	                    var errorMessage = xhr.responseText || "An error occurred";
+	                    $("#uploadMessage").html("<div class='alert alert-danger'>" + errorMessage + "</div>");
+	                }
+	            });
+	        });
+	    });
+	</script>
+
 
 </body>
 </html>

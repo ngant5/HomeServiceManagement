@@ -11,6 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -78,47 +82,55 @@ public class AdminContractController {
         
         return "admin/contracts/detail"; 
     }
+    private static final String FILE_DIRECTORY = "uploads/contracts/";
     
-    @GetMapping("/{contractId}/uploadFile")
-    public String showUploadForm(@PathVariable int contractId, Model model) {
-        Contracts contract = contractService.getContractById(contractId);
-        if (contract == null) {
-            model.addAttribute("errorMessage", "Contract Not Found with ID: " + contractId);
-            return "error";  // Nếu không tìm thấy hợp đồng
-        }
-
-        model.addAttribute("contract", contract);  // Truyền hợp đồng vào model
-        return "admin/contracts/con_upload";  // Trả về view chứa form upload
-    }
-
-    
+ 
     @PostMapping("/{contractId}/uploadFile")
-    public String uploadContractFile(@PathVariable("contractId") int contractId, 
-                                     @RequestParam("contractFile") MultipartFile file, 
-                                     Model model) {
-        if (file.isEmpty()) {
-            model.addAttribute("errorMessage", "Please select a file to upload");
-            return "redirect:/admin/contracts/" + contractId; // Quay lại trang chi tiết hợp đồng
-        }
+    public ResponseEntity<String> uploadContractFile(@PathVariable("contractId") Long contractId,  
+                                                     @RequestParam("contractFile") MultipartFile file) 
+    	throws IOException {
+    	    if (file.isEmpty()) {
+    	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+    	                             .body("Please select a file to upload");
+    	    }
 
         try {
-            // Đường dẫn thư mục lưu file trên server
-            String uploadDirectory = "C:/uploads/contracts"; // Đổi đường dẫn phù hợp với môi trường của bạn
-            Path path = Paths.get(uploadDirectory, file.getOriginalFilename());
-            Files.write(path, file.getBytes());
+        	Path path = Paths.get(FILE_DIRECTORY + contractId + ".pdf");
+            Files.createDirectories(path.getParent()); 
+            file.transferTo(path); 
 
-            // Lưu thông tin file vào cơ sở dữ liệu
-            contractService.uploadContractFile(file, contractId); // Bạn cần bổ sung logic trong service để lưu thông tin file nếu cần.
-
+            contractService.uploadContractFile(file, contractId.intValue());  
+			/* contractService.updateContractStatus(contractId.intValue(), 3); */
+            return ResponseEntity.ok("File uploaded successfully!!");
         } catch (IOException e) {
             e.printStackTrace();
-            model.addAttribute("errorMessage", "Failed to upload the file");
-            return "redirect:/admin/contracts/" + contractId; // Quay lại trang chi tiết hợp đồng nếu có lỗi
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("Error occurred while uploading the file: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("Failed to upload the file: " + e.getMessage());
         }
-
-        return "redirect:/admin/contracts/" + contractId; // Sau khi upload xong, quay lại trang chi tiết hợp đồng
     }
 
+   
+    @GetMapping("/view-file/{contractId}")
+    public ResponseEntity<Resource> viewFile(@PathVariable Long contractId) throws Exception {
+       
+        String fileName = contractId + ".pdf"; 
+        Path filePath = Paths.get(FILE_DIRECTORY + fileName);
+        
+        if (!Files.exists(filePath)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Resource resource = new UrlResource(filePath.toUri());
+
+        return ResponseEntity.ok()
+                .header("Content-Type", "application/pdf")  
+                .header("Content-Disposition", "inline; filename=\"" + fileName + "\"")  
+                .body(resource);
+    }
 
     @GetMapping("/{contractId}/payments")
     public List<Payments> getPaymentsByContract(@PathVariable int contractId) {
@@ -141,4 +153,6 @@ public class AdminContractController {
         int employeeId = employee.getEmployeeId(); 
         customerService.updateContractEmployee(contractId, employeeId);
     }
+    
+   
 }
