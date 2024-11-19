@@ -1,4 +1,4 @@
-package net.codejava.controller;
+package net.codejava.controller.Admin;
 
 import net.codejava.model.Contracts;
 import net.codejava.model.Customers;
@@ -11,6 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -20,9 +23,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Controller
@@ -39,14 +44,50 @@ public class AdminContractController {
     }
 
     @GetMapping("/list")
-    public String getAllContracts(Model model) {
-        List<Contracts> contracts = contractService.getAllContracts();
+    public String getAllContracts(@RequestParam(value = "page", defaultValue = "1") int page,
+            					  @RequestParam(value = "size", defaultValue = "10") int size,
+            			          @RequestParam(value = "startDate", required = false) String startDateStr,
+            			          @RequestParam(value = "endDate", required = false) String endDateStr,
+            			          HttpServletRequest request, Model model) {
+    	Timestamp startTimestamp = null;
+        Timestamp endTimestamp = null;
+        if (startDateStr != null && endDateStr != null) {
+            try {
+                // Chuyển đổi chuỗi ngày tháng từ form thành LocalDate
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate startDate = LocalDate.parse(startDateStr, formatter);
+                LocalDate endDate = LocalDate.parse(endDateStr, formatter);
+
+                // Chuyển đổi LocalDate thành Timestamp
+                startTimestamp = Timestamp.valueOf(startDate.atStartOfDay());
+                endTimestamp = Timestamp.valueOf(endDate.atTime(23, 59, 59));
+            } catch (Exception e) {
+                model.addAttribute("errorMessage", "Invalid date format");
+                return "error";
+            }
+        }
+        
+        List<Contracts> contracts = contractService.getContractsWithPagination(page, size, startTimestamp, endTimestamp);
+        if (contracts.isEmpty()) {
+            model.addAttribute("noResultsMessage", "No results found");
+        }
+
         for (Contracts contract : contracts) {
             Customers customer = customerService.findById(contract.getCustomerId());
             contract.setCustomer(customer);
         }
+        int totalPages = contractService.getTotalPages(size, startTimestamp, endTimestamp);
 
+        // Thêm vào model để hiển thị trên giao diện
         model.addAttribute("contracts", contracts);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("startDate", startDateStr);
+        model.addAttribute("endDate", endDateStr);
+        if (request.getHeader("X-Requested-With") != null && request.getHeader("X-Requested-With").equals("XMLHttpRequest")) {
+            return "admin/contracts/partials/contract_list_table :: contractTable"; // Partial view
+        }
+   
         return "admin/contracts/con_list"; 
     }
     
@@ -131,6 +172,7 @@ public class AdminContractController {
                 .header("Content-Disposition", "inline; filename=\"" + fileName + "\"")  
                 .body(resource);
     }
+    
 
     @GetMapping("/{contractId}/payments")
     public List<Payments> getPaymentsByContract(@PathVariable int contractId) {

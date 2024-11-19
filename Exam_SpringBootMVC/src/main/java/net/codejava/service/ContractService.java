@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.util.List;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +27,16 @@ public class ContractService {
         return contractRepository.createContract(contract, servicePrice);
     }
     
-    public List<Contracts> getAllContracts() {
-        return contractRepository.getAllContracts();
+    public List<Contracts> getContractsWithPagination(int page, int size, Timestamp startDate, Timestamp endDate) {
+        return contractRepository.getContractsWithPagination(page, size, startDate, endDate);
     }
+
+    
+    public int getTotalPages(int size, Timestamp startDate, Timestamp endDate) {
+        int totalContracts = contractRepository.countContracts(startDate, endDate);
+        return (int) Math.ceil((double) totalContracts / size);
+    }
+
     
     public List<Contracts> getContractsByCustomerId(int customerId) {
         return contractRepository.findContractsByCustomerId(customerId);
@@ -46,7 +55,6 @@ public class ContractService {
     public void deleteContract(int contractId) {
         contractRepository.deleteContract(contractId);
     }
-    
 
 
     // Phương thức upload file hợp đồng

@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
+
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +31,7 @@ import net.codejava.service.ServiceService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +60,6 @@ public class ContractController {
     private ServiceService serviceService; 
     
     private static final Logger logger = LoggerFactory.getLogger(ContractController.class);
-
     @GetMapping
     public String showContractList(HttpSession session, Model model) {
         // Lấy customerId từ session
@@ -308,5 +310,6 @@ public class ContractController {
                 .header("Content-Disposition", "inline; filename=\"" + fileName + "\"")  // Mở trực tiếp trong trình duyệt
                 .body(resource);
     }
+
 
 }

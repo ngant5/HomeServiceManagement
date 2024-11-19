@@ -1,4 +1,4 @@
-package net.codejava.controller;
+package net.codejava.controller.Customer;
 
 import net.codejava.model.Customers;
 import net.codejava.service.CustomerService;

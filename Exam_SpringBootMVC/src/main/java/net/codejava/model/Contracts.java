@@ -1,5 +1,6 @@
 package net.codejava.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.time.ZoneId;
@@ -13,7 +14,11 @@ public class Contracts {
     private int paymentStatus;
     private LocalDateTime createdAt;
     private String contractFile;
-
+    private ContractDetails contractDetail;
+    
+    private String paymentStatusText;
+    private String contractStatusText;
+    
     public Customers getCustomer() {
         return customer;
     }
@@ -81,5 +86,27 @@ public class Contracts {
     public Date getCreatedAtAsDate() {
         return Date.from(createdAt.atZone(ZoneId.systemDefault()).toInstant());
     }
+    
+    public ContractDetails getContractDetail() {
+        return contractDetail;
+    }
 
+    public void setContractDetail(ContractDetails contractDetail) {
+        this.contractDetail = contractDetail;
+    }
+    public String getPaymentStatusText() {
+        return paymentStatusText;
+    }
+
+    public void setPaymentStatusText(String paymentStatusText) {
+        this.paymentStatusText = paymentStatusText;
+    }
+
+    public String getContractStatusText() {
+        return contractStatusText;
+    }
+    
+    public void setContractStatusText(String contractStatusText) {
+        this.contractStatusText = contractStatusText;
+    }
 }

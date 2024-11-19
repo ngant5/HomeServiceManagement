@@ -1,4 +1,4 @@
-package net.codejava.controller;
+package net.codejava.controller.Admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

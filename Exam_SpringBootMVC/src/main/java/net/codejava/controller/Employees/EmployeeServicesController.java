@@ -1,4 +1,4 @@
-package net.codejava.controller;
+package net.codejava.controller.Employees;
 
 import net.codejava.model.EmployeeServices;
 import net.codejava.model.Employees;
