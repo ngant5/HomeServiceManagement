@@ -68,15 +68,13 @@ public class AdminContractController {
         }
         
         List<Contracts> contracts = contractService.getContractsWithPagination(page, size, startTimestamp, endTimestamp);
-        if (contracts.isEmpty()) {
-            model.addAttribute("noResultsMessage", "No results found");
-        }
-
+        
         for (Contracts contract : contracts) {
             Customers customer = customerService.findById(contract.getCustomerId());
             contract.setCustomer(customer);
         }
         int totalPages = contractService.getTotalPages(size, startTimestamp, endTimestamp);
+        
 
         // Thêm vào model để hiển thị trên giao diện
         model.addAttribute("contracts", contracts);
@@ -84,6 +82,8 @@ public class AdminContractController {
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("startDate", startDateStr);
         model.addAttribute("endDate", endDateStr);
+        model.addAttribute("noResultsMessage", contracts.isEmpty() ? "No results found" : null);
+
         if (request.getHeader("X-Requested-With") != null && request.getHeader("X-Requested-With").equals("XMLHttpRequest")) {
             return "admin/contracts/partials/contract_list_table :: contractTable"; // Partial view
         }
