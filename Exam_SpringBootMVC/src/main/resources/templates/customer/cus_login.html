@@ -55,6 +55,9 @@
 						<div class="form-wrapper">
 							<h6 class="mb-15">Sign In Customer</h6>
 							<p class="text-sm mb-25">Welcome to Home Services</p>
+							<div th:if="${error}" class="alert alert-danger">
+							           <p th:text="${error}"></p>
+							       </div>
 							<form action="#" th:action="@{/customer/chklogin}" method="POST">
 								<div class="row">
 									<div class="col-12">

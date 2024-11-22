@@ -24,6 +24,19 @@ public class CustomerAuthController {
         return session.getAttribute("customerId") != null;
     }
 
+    @GetMapping("/index")
+    public String showHomePage(HttpSession session, Model model) {
+        if (isCustomerLoggedIn(session)) {
+        	Customers customer = (Customers) session.getAttribute("customer");
+            
+            if (customer != null) {
+                model.addAttribute("customer", customer);  
+            }
+
+        }
+        return "home/index";  
+    }
+    
     @GetMapping("/login")
     public String loginForm() {
         return "customer/cus_login";
@@ -33,7 +46,8 @@ public class CustomerAuthController {
     public String checkLogin(@RequestParam("email") String email,
                              @RequestParam("pwd") String password,
                              HttpServletRequest request,
-                             HttpSession session) {
+                             HttpSession session,
+                             Model model) {
         logger.info("Checking login for email: {}", email);
         Customers customer = customerService.findByEmail(email);
 
@@ -45,13 +59,16 @@ public class CustomerAuthController {
             if (customerService.checkPassword(password, customer.getPassword())) {
                 session.setAttribute("customer", customer);
                 session.setAttribute("customerId", customer.getCustomerId());
-                return "redirect:/index";
-                
+               
+                logger.info("Customer logged in, session contains: {}", session.getAttribute("customer"));
+                return "redirect:/index"; 
             } else {
-                return "redirect:/customer/auth/login?error=wrongPassword";
+            	model.addAttribute("error", "Wrong password!");
+                return "customer/cus_login"; //
             }
         } else {
-            return "redirect:/customer/auth/login?error=wrongPassword";
+        	model.addAttribute("error", "Wrong email or password!"); 
+            return "customer/cus_login"; 
         }
     }
 
@@ -61,7 +78,9 @@ public class CustomerAuthController {
         if (session != null) {
             session.invalidate();
         }
-        return "redirect:/customer/auth/login";
+      
+
+        return "redirect:/index";
     }
 
     @GetMapping("/register")

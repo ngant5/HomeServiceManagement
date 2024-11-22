@@ -33,6 +33,7 @@
             <div class="contained">
                 <a href="index" class="logo fc-primary ff-damion row flex-alig-center">
                     <span class="fs-h2">Happy Clean</span>
+
                 </a>
                 <div class="navigation-container">
                     <a th:href="@{/index}">Home</a>
@@ -41,7 +42,10 @@
                     <a th:href="@{/employee}">Employee</a>
                     <!--<a href="blog">Blog</a>-->
                     <a th:href="@{/career}">Career</a>
-                    <a href="contact" class="btn-bg1 border-round">Contact Us</a>
+					<a th:href="@{/contactus}">Contact Us</a>
+					<a th:if="${session.customerId != null}" th:href="@{/customer/logout}" class="btn-bg1 border-round">Logout</a>
+					<a th:if="${session.customerId == null}" th:href="@{/customer/login}" class="btn-bg1 border-round">Login</a>
+
                 </div>
             </div>
         </nav>
