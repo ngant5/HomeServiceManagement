@@ -43,8 +43,31 @@ $(document).ready(function() {
         });
     });
 
+	$('#startDate, #endDate').on('change', function() {
+	        var startDate = $('#startDate').val();
+	        var endDate = $('#endDate').val();
+			console.log("Start Date:", startDate);  // Log giá trị của startDate
+			        console.log("End Date:", endDate);
+
+	        // If startDate is chosen, set min value for endDate to startDate
+	        if (startDate) {
+	            $('#endDate').attr('min', startDate);
+				console.log("End Date min set to:", startDate); 
+	        }
+
+	        // Enable searchButton only when both startDate and endDate are selected
+	        if (startDate && endDate) {
+	            $('#searchButton').prop('disabled', false);
+				console.log("Both startDate and endDate selected. Search button enabled.");
+
+	        } else {
+	            $('#searchButton').prop('disabled', true);
+				console.log("Either startDate or endDate is missing. Search button disabled.");
+
+	        }
+	    });
     // Search form handling
-    $('searchForm').on('submit', function(event) {
+    $('#searchForm').on('submit', function(event) {
         event.preventDefault();
         let startDate = $('#startDate').val();
         let endDate = $('#endDate').val();
@@ -56,15 +79,11 @@ $(document).ready(function() {
             type: 'GET',
             data: { startDate: startDate, endDate: endDate, page: page, size: size },
             success: function(response) {
-				let tableBody = $('#contractTableBody'); 
-				tableBody.empty(); 
-
-				if (response.indexOf("No results found") !== -1) {
-					tableBody.html('<tr><td colspan="8" class="text-center">No results found</td></tr>');
-				} else {
-					tableBody.append(response);
-				}
-            },
+				let tableBody = $('#contractTableBody');
+				tableBody.empty();  
+				tableBody.html(response);
+				            
+			},
             error: function(xhr, status, error) {
                 alert("An error occurred while fetching contracts.");
             }

@@ -83,12 +83,20 @@ public class AdminContractController {
         model.addAttribute("startDate", startDateStr);
         model.addAttribute("endDate", endDateStr);
         model.addAttribute("noResultsMessage", contracts.isEmpty() ? "No results found" : null);
+        
 
         if (request.getHeader("X-Requested-With") != null && request.getHeader("X-Requested-With").equals("XMLHttpRequest")) {
-            return "admin/contracts/partials/contract_list_table :: contractTable"; // Partial view
+            // Trả về fragment hợp đồng nếu có dữ liệu
+        	if (contracts != null && !contracts.isEmpty()) {
+        	    System.out.println("Returning fragment: contractTable");
+        	    return "admin/contracts/partials/search_have_results :: contractTable";
+        	} else {
+        	    System.out.println("Returning fragment: contractNoTable");
+        	    return "admin/contracts/partials/search_no_result :: contractNoTable";
+        	}
         }
-   
         return "admin/contracts/con_list"; 
+
     }
     
     @PostMapping("/updateStatus/{contractId}")

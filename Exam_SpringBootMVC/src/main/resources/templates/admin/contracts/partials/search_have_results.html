@@ -1,5 +1,4 @@
-<tbody th:fragment="contractTable">
-    <tr th:each="contract, iterStat : ${contracts}">
+<tr th:fragment="contractTable" th:each="contract, iterStat : ${contracts}" >
         <td th:text="${iterStat.index + 1}"></td>
         <td th:text="${contract.customer.fullname}"></td>
         <td th:text="${contract.totalPrice}"></td>
@@ -50,4 +49,4 @@
             </div>
         </td>
     </tr>
-</tbody>
+

@@ -33,7 +33,6 @@
 
             <div class="table-responsive">
                 <table class="table top-selling-table">
-					<table class="table top-selling-table">
 						<thead>
 						    <tr>
 						        <th class="text-center">
@@ -62,20 +61,23 @@
 						        </th>
 						    </tr>
 						</thead>
-						<div th:if="${noResultsMessage != null}" class="alert alert-warning">
-						    <span th:text="${noResultsMessage}"></span>
-						</div>
+						<tbody id="contractTableBody" th:if="${contracts != null && !contracts.isEmpty()}">
+						    <tr th:replace="admin/contracts/partials/search_have_results :: contractTable"></tr>
+						</tbody>
 
+						<tbody id="contractNoResultsBody" th:if="${contracts == null || contracts.isEmpty()}">
+						    <tr th:replace="admin/contracts/partials/search_no_result :: contractNoTable"></tr>
+						</tbody>
 
-					<tbody id="contractTableBody" th:replace="~{admin/contracts/partials/contract_list_table :: contractTable}"></tbody>
-
-					 </table>
+						
+					</table>
             </div>
         </div>
     </section>
 
     <th:block th:insert="~{common/ad_content_footer}"></th:block>
 
-    <script src="../static/assets/js/contracts.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="/assets_admin/js/contracts.js"></script>
 </body>
 </html>
