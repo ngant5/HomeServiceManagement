@@ -31,7 +31,7 @@ public class SalaryProposalRepository {
 
  // Get all salary proposals
     public List<SalaryProposals> getAllProposals() {
-        String sql = "SELECT * FROM SalaryProposals";
+        String sql = "SELECT * FROM Salary_Proposals";
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             SalaryProposals proposal = new SalaryProposals();
             proposal.setProposalId(rs.getInt("proposal_id"));

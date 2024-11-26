@@ -23,6 +23,14 @@ public class EmployeeServicesService {
         employeeServicesRepository.save(employeeService);
     }
     
+    public boolean addEmployeeService(EmployeeServices employeeService) {
+        if (employeeServicesRepository.existsByEmployeeIdAndServiceId(employeeService.getEmployeeId(), employeeService.getServiceId())) {
+            return false; // Duplicate found
+        }
+        employeeServicesRepository.save(employeeService);
+        return true;
+    }
+    
     public List<EmployeeServices> findByEmployeeId(int employeeId) {
         return employeeServicesRepository.findByEmployeeId(employeeId);
     }

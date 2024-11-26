@@ -38,7 +38,11 @@ public class EmployeeServicesRepository {
     };
 
 
-
+    public boolean existsByEmployeeIdAndServiceId(int employeeId, int serviceId) {
+        String sql = "SELECT COUNT(*) FROM Employee_Services WHERE employee_id = ? AND service_id = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, employeeId, serviceId);
+        return count != null && count > 0;
+    }
 
     
 
