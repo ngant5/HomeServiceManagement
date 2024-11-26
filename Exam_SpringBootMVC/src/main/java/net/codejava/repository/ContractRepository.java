@@ -52,7 +52,7 @@ public class ContractRepository {
 
 	public List<Contracts> findContractsByCustomerId(int customerId) {
 		String sql = "SELECT * FROM Contracts WHERE customer_id = ? ORDER BY created_at DESC";
-		return jdbcTemplate.query(sql, new Object[] { customerId }, this::mapRowToContract);
+		return jdbcTemplate.query(sql, new Object[] { customerId }, this::mapRowToCustomerContract);
 	}
 
 	public int createContract(Contracts contract, double servicePrice) {
@@ -163,6 +163,22 @@ public class ContractRepository {
 	    contractDetail.setEndDate(rs.getTimestamp("end_date").toLocalDateTime());
 	    
 	    contract.setContractDetail(contractDetail);
+
+		return contract;
+	}
+	
+
+
+	private Contracts mapRowToCustomerContract(ResultSet rs, int rowNum) throws SQLException {
+
+		Contracts contract = new Contracts();
+		contract.setContractId(rs.getInt("contract_id"));
+		contract.setCustomerId(rs.getInt("customer_id"));
+		contract.setContractStatus(rs.getInt("contract_status"));
+		contract.setTotalPrice(rs.getDouble("total_price"));
+		contract.setPaymentStatus(rs.getInt("payment_status"));
+		contract.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+		contract.setContractFile(rs.getString("contract_file"));
 
 		return contract;
 	}

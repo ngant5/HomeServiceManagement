@@ -1,5 +1,6 @@
 package net.codejava.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Customers {
@@ -14,6 +15,7 @@ public class Customers {
     private LocalDateTime createdAt;  
     private String verifyCode;
     private String token;
+    private LocalDate birthday;
 
    
     public int getCustomerId() {
@@ -103,4 +105,14 @@ public class Customers {
     public void setToken(String token) {
         this.token = token;
     }
+    
+    public LocalDate getBirthday() {
+        return birthday;
+    }
+    
+    public void setBirthday(LocalDate birthday) {  
+        this.birthday = birthday;
+    }
+
+
 }

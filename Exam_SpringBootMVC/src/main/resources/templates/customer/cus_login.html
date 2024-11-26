@@ -5,8 +5,36 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<link rel="shortcut icon" href="../assets_admin//images/favicon.svg" type="image/x-icon" />
-	<title>Sign In | PlainAdmin Demo</title>
+	<title>Sign In | Customer</title>
 	<th:block th:insert="~{common/head_tag}"></th:block>
+	<style>
+			/* Đảm bảo form nhỏ lại 80% và căn giữa */
+			.signin-wrapper {
+				width: 80%; /* Đặt chiều rộng của form là 80% */
+				margin: 0 auto; /* Căn giữa form */
+			}
+
+			/* Đảm bảo button và các input có chiều rộng đầy đủ trong form */
+			.input-style-1 input,
+			.main-btn {
+				width: 100%; /* Đảm bảo các input và button chiếm toàn bộ chiều rộng của form */
+			}
+
+			/* Căn giữa phần tiêu đề của form */
+			.form-wrapper h6 {
+				text-align: center;
+			}
+
+			/* Đảm bảo khoảng cách giữa các phần tử trong form */
+			.input-style-1 {
+				margin-bottom: 15px; /* Khoảng cách giữa các input */
+			}
+
+			/* Đảm bảo nút button có khoảng cách và căn giữa */
+			.button-group {
+				margin-top: 20px;
+			}
+		</style>
 </head>
 <body>
 
@@ -30,11 +58,7 @@
 			<!-- ========== title-wrapper start ========== -->
 			<div class="title-wrapper pt-30">
 				<div class="row align-items-center">
-					<div class="col-md-6">
-						<div class="title">
-							<h2>Sign in</h2>
-						</div>
-					</div>
+					
 					<!-- end col -->
 					<div class="col-md-6">
 						<div class="breadcrumb-wrapper">

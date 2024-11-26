@@ -1,26 +1,141 @@
-
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>My Page</title>
-    <link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body>
-    <header>
-        <h1>Customer Profile</h1>
-    </header>
-    <div>
-        <h2>Thông tin cá nhân</h2>
-        <p><strong>Họ tên:</strong> <span th:text="${customer.fullname}"></span></p>
-        <p><strong>Email:</strong> <span th:text="${customer.email}"></span></p>
-        <p><strong>Điện thoại:</strong> <span th:text="${customer.phone}"></span></p>
-        <p><strong>Địa chỉ:</strong> <span th:text="${customer.address}"></span></p>
-        <img th:src="${customer.profileImage}" alt="Profile Image" />
-    </div>
-	<div>
-		<a href="/contracts">View danh sách hợp đồng</a>
-	    <a th:href="@{/customer/index}" class="btn">Quay về trang chính</a>
-	  </div>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="../assets_admin/images/favicon.svg" type="image/x-icon" />
+    <style th:replace="common/head_tag"></style>
+	
+    <title>Profile</title>
+  </head>
+  <body>
+    <!-- ========== section start ========== -->
+    <section class="section">
+      <div class="container-fluid">
+        <!-- ========== title-wrapper start ========== -->
+        <div class="title-wrapper pt-30">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <div class="title">
+                <a th:href="@{/index}" class="btn btn-primary">Back</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- ========== title-wrapper end ========== -->
+
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="card-style settings-card-1 mb-30">
+              <div class="title mb-30 d-flex justify-content-between align-items-center">
+                <h6>My Profile</h6>
+              </div>
+
+              <!-- Hiển thị thông tin hồ sơ -->
+              <div class="profile-info">
+                <div class="d-flex align-items-center mb-30">
+                  <div class="profile-image" th:if="${customer != null}">
+                    <img th:src="@{'/uploads/images/' + ${customer.profileImage}}"
+                         class="card-img-top"
+                         alt="Customer Profile Image"
+                         height="75"
+                         onerror="this.src='http://via.placeholder.com/75';" />
+                    <div class="update-image">
+                      <label for="profileImage" class="lni lni-cloud-upload"></label>
+                      <input type="file" id="profileImage" name="profileImage" />
+                    </div>
+                  </div>
+                  <div class="profile-meta">
+                    <h5 class="text-bold text-dark mb-10" th:text="${customer.fullname}"></h5>
+                  </div>
+                </div>
+
+                <!-- Thông tin người dùng (Email, Full Name, Phone không cho sửa) -->
+                <div class="input-style-1">
+                  <label>Email</label>
+                  <input type="email" placeholder="customer@example.com" th:value="${customer.email}" disabled/>
+                </div>
+
+                <div class="row">
+                  <!-- Full Name không cho sửa -->
+                  <div class="col-12">
+                    <div class="input-style-1">
+                      <label for="fullname">Full Name*</label>
+                      <input type="text" id="fullname" name="fullname" th:value="${customer.fullname}" disabled required placeholder="Full Name" />
+                    </div>
+                  </div>
+
+                  <!-- Phone không cho sửa -->
+                  <div class="col-12">
+                    <div class="input-style-1">
+                      <label for="phone">Phone*</label>
+                      <input type="text" id="phone" name="phone" th:value="${customer.phone}" disabled required placeholder="Phone" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Cập nhật thông tin người dùng -->
+                <form id="updateProfileForm" enctype="multipart/form-data">
+                  <div class="col-12">
+                    <!-- Address cho phép sửa -->
+                    <div class="input-style-1">
+                      <label for="address">Address*</label>
+                      <input type="text" id="address" name="address" th:value="${customer.address}" required placeholder="Address" />
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <!-- Profile Image cho phép sửa -->
+                    <div class="input-style-1">
+                      <label for="profileImage">Profile Image</label>
+                      <input type="file" id="profileImage" name="profileImage"/>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <button type="submit" class="main-btn primary-btn btn-hover">
+                      Update Profile
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <!-- end card -->
+          </div>
+          <!-- end col -->
+        </div>
+        <!-- end row -->
+      </div>
+      <!-- end container -->
+    </section>
+    <!-- ========== section end ========== -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        // Xử lý sự kiện submit của form
+        $('#updateProfileForm').on('submit', function(e) {
+          e.preventDefault(); // Ngừng hành động submit mặc định của form
+
+          // Tạo đối tượng FormData từ form
+          var formData = new FormData(this);
+
+          // Gửi request AJAX
+          $.ajax({
+            url: '/customer/profile/update', // Đảm bảo URL khớp với controller
+            type: 'POST',
+            data: formData,
+            processData: false, // Không chuyển đổi dữ liệu của file
+            contentType: false, // Không thêm content-type vào header
+            success: function(response) {
+              alert("Profile updated successfully!");
+              location.reload(); // Tải lại trang để cập nhật thông tin mới
+            },
+            error: function(xhr, status, error) {
+              alert("Error: " + xhr.responseText);
+            }
+          });
+        });
+      });
+    </script>
+  </body>
 </html>

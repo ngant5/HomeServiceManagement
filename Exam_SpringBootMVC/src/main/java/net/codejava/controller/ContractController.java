@@ -60,6 +60,7 @@ public class ContractController {
     private ServiceService serviceService; 
     
     private static final Logger logger = LoggerFactory.getLogger(ContractController.class);
+    
     @GetMapping
     public String showContractList(HttpSession session, Model model) {
         // Lấy customerId từ session

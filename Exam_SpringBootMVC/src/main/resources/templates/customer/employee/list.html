@@ -22,7 +22,7 @@
 	                <div class="col-tri">
 	                    <article class="card-team">
 							<input type="hidden" th:value="${employee.employeeId}" th:id="'employeeId_' + ${employee.employeeId}" />
-	                        <img th:src="@{'/uploads/' + ${employee.profileImage}}" alt="Profile image of {employee.fullname}">
+	                        <img th:src="@{'/uploads/images/' + ${employee.profileImage}}" alt="Profile image of {employee.fullname}">
 	                        <h3 class="title ff-damion" th:text="${employee.fullname}"></h3>
 	                        <div class="info">
 								<h3 class="title ff-damion" th:text="${employee.fullname}"></h3>

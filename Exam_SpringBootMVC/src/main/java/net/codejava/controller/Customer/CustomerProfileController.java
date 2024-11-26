@@ -3,6 +3,8 @@ package net.codejava.controller.Customer;
 import net.codejava.model.Customers;
 import net.codejava.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,46 +26,42 @@ public class CustomerProfileController {
     @Autowired
     private CustomerService customerService;
 
-    private static final String UPLOAD_DIR = "uploads/";
+    private static final String UPLOAD_DIR = "uploads/images/";
 
     private Customers getCustomerFromSession(HttpSession session) {
         return (Customers) session.getAttribute("customer");
     }
 
-    @GetMapping("/cus_mypage")
-    public String viewMyPage(Model model, HttpSession session) {
-        Customers customer = getCustomerFromSession(session);
-        if (customer == null) {
-            return "redirect:/customer/auth/login";
-        }
-        model.addAttribute("customer", customer);
-        return "customer/cus_mypage_";
-    }
+	
+	 @GetMapping("/view") public String viewMyPage(Model model, HttpSession session) {
+		 Customers customer = getCustomerFromSession(session); 
+		 if (customer== null) { return "redirect:/customer/login"; }
+		 model.addAttribute("customer", customer); return "customer/cus_mypage"; }
+	 
 
     @GetMapping("/info")
     public String getCustomerInfo(HttpServletRequest request, Model model) {
         Customers customer = getCustomerFromSession(request.getSession());
         if (customer != null) {
             model.addAttribute("customerInfo", customerService.getCustomerInfo(customer.getCustomerId()));
-            return "customer/cus_info";
+            return "customer/cus_mypage_";
         }
-        return "redirect:/customer/auth/login";
+        return "redirect:/customer/login";
     }
 
     @PostMapping("/update")
-    public String updateProfile(@RequestParam("fullname") String fullname,
-                                @RequestParam("phone") String phone,
-                                @RequestParam("address") String address,
-                                @RequestParam("profileImage") MultipartFile profileImage,
-                                HttpServletRequest request, Model model) {
+    @ResponseBody
+    public ResponseEntity<String> updateProfileInfo(
+            @RequestParam("address") String address,
+            @RequestParam("profileImage") MultipartFile profileImage,
+            HttpServletRequest request) {
         Customers customer = getCustomerFromSession(request.getSession());
 
         if (customer == null) {
-            return "redirect:/customer/auth/login";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in.");
         }
 
-        customer.setFullname(fullname);
-        customer.setPhone(phone);
+        // Cập nhật địa chỉ
         customer.setAddress(address);
 
         // Xử lý hình ảnh đại diện
@@ -74,21 +72,25 @@ public class CustomerProfileController {
                 uploadDir.mkdirs();
             }
 
+            // Lấy tên file mới
             String newFileName = profileImage.getOriginalFilename();
             Path uploadPath = Paths.get(UPLOAD_DIR + newFileName);
+            
             try {
                 Files.write(uploadPath, profileImage.getBytes());
-                customer.setProfileImage(newFileName);
+                customer.setProfileImage(newFileName); // Lưu tên file vào database
             } catch (IOException e) {
-                model.addAttribute("error", "Failed to upload image.");
-                return "customer/cus_info";
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image.");
             }
         }
 
+        // Cập nhật thông tin khách hàng
         customerService.updateCustomerInfo(customer);
         request.getSession().setAttribute("customer", customer);
-        return "redirect:/customer/index";
+
+        return ResponseEntity.ok("Profile updated successfully");
     }
+
 
     @GetMapping("/change-password")
     public String changePasswordForm(Model model, HttpSession session) {

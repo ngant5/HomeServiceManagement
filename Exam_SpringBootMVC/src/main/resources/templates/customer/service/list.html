@@ -28,7 +28,7 @@
                     <i class="bi bi-stars fs-h2"></i>
                     <h3 class="mt-10 ff-damion" th:text="${service.serviceName}"></h3>
 					<div class="service-image-container">
-					  	<img th:src="@{'/uploads/' + ${service.serviceImage}}" alt="Service Image" class="service-image">
+					  	<img th:src="@{'/uploads/images/' + ${service.serviceImage}}" alt="Service Image" class="service-image">
 					</div>
 					<p class="service-price" th:text="'$' + ${service.servicePrice}"></p>
 					<a th:href="@{/service/{id}(id=${service.serviceId})}" class="btn-bg2 border-round mt-15">
