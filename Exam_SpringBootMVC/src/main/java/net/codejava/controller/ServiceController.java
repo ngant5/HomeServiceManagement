@@ -1,4 +1,4 @@
-package net.codejava.controller.Admin;
+package net.codejava.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,12 +24,12 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/admin/services")
-public class AdminServiceController {
+public class ServiceController {
 
     @Autowired
     private ServiceService serviceService;
 
-    private static final String UPLOAD_DIR = "uploads/";
+    private static final String UPLOAD_DIR = "uploads/images/";
 
     @GetMapping
     public String listServices(Model model) {
@@ -66,8 +66,8 @@ public class AdminServiceController {
         return "redirect:/admin/services?success=add";
     }
 
-    @GetMapping("/edit")
-    public String editServiceForm(@RequestParam int id, Model model) {
+    @GetMapping("/edit/{id}")
+    public String editServiceForm(@PathVariable int id, Model model) {
         Services service = serviceService.getServiceById(id);
         model.addAttribute("service", service);
         return "admin/service/service_edit";
@@ -137,9 +137,4 @@ public class AdminServiceController {
         }
     }
     
-    @GetMapping("/delete/{id}")
-    public String deleteService(@PathVariable int id) {
-        serviceService.deleteService(id);
-        return "redirect:/admin/services?success=delete";
-    }
 }

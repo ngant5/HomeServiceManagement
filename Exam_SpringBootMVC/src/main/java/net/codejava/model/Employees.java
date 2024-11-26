@@ -1,6 +1,6 @@
 package net.codejava.model;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Employees {
@@ -18,7 +18,7 @@ public class Employees {
 	private String verifyCode;
 	private String token;
 	private LocalDateTime createdAt;
-	private Date birthday;  
+	private LocalDate birthday;  
     private String bio;
 
 	// Default constructor
@@ -26,7 +26,7 @@ public class Employees {
 
 	public Employees(int employeeId, String fullname, String password, String userType, String email, String phone,
 			String address, String profileImage, int experienceYears, int salary, int status, String verifyCode,
-			String token, LocalDateTime createdAt, Date birthday, String bio) {
+			String token, LocalDateTime createdAt, LocalDate birthday, String bio) {
 		super();
 		this.employeeId = employeeId;
 		this.fullname = fullname;
@@ -164,11 +164,11 @@ public class Employees {
 		this.createdAt = createdAt;
 	}
 	
-	public Date getBirthday() {
+	public LocalDate getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Service List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style th:replace="common/head_tag"></style>
+</head>
+<body>
+	<div th:replace="common/ad_content_first"></div>
+	<div id="toast-container" class="toast-container"></div>
+ <!-- ========== table components start ========== -->
+      <section class="table-components">
+        <div class="container-fluid pt-10">
+
+
+          <!-- ========== tables-wrapper start ========== -->
+          <div class="tables-wrapper pt-25">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="card-style mb-30">
+
+                	<div class="row">
+					    <div class="col-sm-8 mt-2">
+		                  <h2 class="mb-10">Data Table Services</h2>
+	<!-- 			                  <p class="text-sm mb-20">
+			                    For basic styling—light padding and only horizontal
+			                    dividers—use the class table.
+			                  </p> -->
+					    </div>
+					    <div class="col-sm-4 d-inline-flex pb-3">
+                			<a href="/admin/services/add" class="main-btn primary-btn-outline rounded-full btn-hover ml-auto">Add New Service</a>
+					   	</div>
+					 </div>
+
+                  <div class="table-wrapper table-responsive">
+                   <table class="table top-selling-table">
+                    <thead>
+                      <tr >
+                        <th>
+                          <h6 class="text-sm text-medium">Services</h6>
+                        </th>
+                        <th class="min-width">
+                          <h6 class="text-sm text-medium ">
+                            Description
+                          </h6>
+                        </th>
+                        <th class="min-width">
+                          <h6 class="text-sm text-medium">
+                            Price
+                          </h6>
+                        </th>
+                        <th class="min-width">
+                          <h6 class="text-sm text-medium">
+                            Status
+                          </h6>
+                        </th>
+                        <th>
+                          <h6 class="text-sm text-medium text-center">
+                            Actions
+                          </h6>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="service : ${services}">
+                        <td>
+                          <div class="product">
+                            <div class="image">
+                              <img th:src="@{'/uploads/images/' + ${service.serviceImage}}" 
+							         class="card-img-top" 
+							         alt="Employee Profile Image"  
+							         onerror="this.src='http://via.placeholder.com/75';" />
+                            </div>
+                            <p class="text-sm" th:text="${service.serviceName}"></p>
+                          </div>
+                        </td>
+                        <td>
+                          <p class="text-sm" th:text="${service.serviceDescription}"></p>
+                        </td>
+                        <td>
+                          <p class="text-sm" th:text="${service.servicePrice} + '$'"></p>
+                        </td>
+                        <td>
+                          <span class="status-btn close-btn" th:text="${service.serviceStatus == 1 ? 'Active' : 'Inactive'}"></span>
+                        </td>
+                        <td class="text-center">
+                          <div class="action justify-content-center">
+                            <a  class="btn text-info" th:href="@{/admin/services/{id}(id=${service.serviceId})}">
+                              <i class="lni lni-eye text-info"></i>
+                            </a>
+                            <a th:href="@{/admin/services/edit/{id}(id=${service.serviceId})}" class="text-primary btn">
+                            	<i class="lni lni-pencil"></i>
+                            </a>
+                          </div>
+                        </td>
+                      
+                    </tbody>
+                  </table>
+                    <!-- end table -->
+                  </div>
+                </div>
+                <!-- end card -->
+              </div>
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+          <!-- ========== tables-wrapper end ========== -->
+        </div>
+        <!-- end container -->
+      </section>
+      <!-- ========== table components end ========== -->
+   	<div th:replace="common/ad_content_footer"></div>
+</body>
+</html>

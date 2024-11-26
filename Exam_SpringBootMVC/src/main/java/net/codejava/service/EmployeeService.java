@@ -30,7 +30,10 @@ public class EmployeeService {
     @Autowired
     private EmployeeServicesRepository employeeServicesRepository;
     
-    
+    public List<Employees> getAllEmployees() {
+        String sql = "SELECT * FROM Employees";
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Employees.class));
+    }
 
     public List<Employees> findAllEmployees() {
     	 return employeeRepository.findAllEmployees();
@@ -147,11 +150,13 @@ public class EmployeeService {
     
     public int updateEmployeeInfo(Employees employee) {
         return jdbcTemplate.update(
-            "UPDATE Employees SET fullname=?, phone=?, address=?, profile_image=? WHERE employee_id=?",
+            "UPDATE Employees SET fullname=?, phone=?, address=?, profile_image=?, birthday=?, bio=? WHERE employee_id=?",
             employee.getFullname(),
             employee.getPhone(),
             employee.getAddress(),
             employee.getProfileImage(),
+            employee.getBirthday(),
+            employee.getBio(),
             employee.getEmployeeId()
         );
     }
@@ -160,7 +165,7 @@ public class EmployeeService {
     // Cập nhật nhân viên
     public int updateUser(Employees employee) {
         return jdbcTemplate.update(
-            "UPDATE Employees SET fullname=?, password=?, user_type=?, email=?, phone=?, address=?, profile_image=?, experience_years=?, salary=?, status=?, verify_code=?, token=?, created_at=? WHERE employee_id=?",
+            "UPDATE Employees SET fullname=?, password=?, user_type=?, email=?, phone=?, address=?, profile_image=?, experience_years=?, salary=?, status=?, verify_code=?, token=?, created_at=?, birthday=?, bio=? WHERE employee_id=?",
             employee.getFullname(),
             employee.getPassword(),
             employee.getUserType(),
@@ -174,7 +179,9 @@ public class EmployeeService {
             employee.getVerifyCode(),
             employee.getToken(),
             employee.getCreatedAt(),
-            employee.getEmployeeId()
+            employee.getEmployeeId(),
+            employee.getBirthday(),
+            employee.getBio()
         );
     }
 

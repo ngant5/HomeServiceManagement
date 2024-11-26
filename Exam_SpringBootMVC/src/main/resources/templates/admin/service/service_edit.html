@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
     <title>Edit Service</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style th:replace="common/head_tag"></style>
 </head>
 <body>
+	<div th:replace="common/ad_content_first"></div>
     <div class="container mt-5">
         <h2>Edit Service</h2>
-        <form th:action="@{/admin/services/edit/{id}(id=${service.serviceId})}" method="post">
+        <form th:action="@{/admin/services/edit/{id}(id=${service.serviceId})}" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="serviceName">Service Name</label>
                 <input type="text" id="serviceName" name="serviceName" class="form-control" th:value="${service.serviceName}" required>
@@ -29,12 +34,19 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="serviceImage">Image URL</label>
-                <input type="text" id="serviceImage" name="serviceImage" class="form-control" th:value="${service.serviceImage}">
+                <label for="serviceImage">Image</label>
+                <div class="row">
+                    <img th:src="@{'/uploads/images/' + ${service.serviceImage}}" 
+                         class="card-img-top col-sm-2" 
+                         alt="Service Image" width="100" height="160" 
+                         onerror="this.src='http://via.placeholder.com/100';" />
+                </div>
+                <input type="file" id="imageFile" name="imageFile" class="form-control">
             </div>
             <button type="submit" class="btn btn-primary">Update Service</button>
             <a href="/admin/services" class="btn btn-secondary">Cancel</a>
         </form>
     </div>
+    <div th:replace="common/ad_content_footer"></div>
 </body>
 </html>

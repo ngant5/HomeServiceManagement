@@ -1,11 +1,14 @@
 package net.codejava.controller.Employees;
 
+import net.codejava.helper.EmployeeValidation;
 import net.codejava.model.EmployeeServices;
 import net.codejava.model.Employees;
 import net.codejava.model.Services;
+import net.codejava.model.SalaryProposals;
 import net.codejava.service.EmailService;
 import net.codejava.service.EmployeeService;
 import net.codejava.service.EmployeeServicesService;
+import net.codejava.service.SalaryProposalService;
 import net.codejava.service.ServiceService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -45,7 +49,12 @@ public class EmployeesController {
     @Autowired
     private EmployeeServicesService employeeServicesService;
     
+    @Autowired
+    private SalaryProposalService salaryProposalService;
+    
     private static final String UPLOAD_DIR = "uploads/";
+    
+    
     
     @GetMapping("/updateInfo")
     public String showUpdateInfoForm(HttpSession session, Model model) {
@@ -59,6 +68,8 @@ public class EmployeesController {
         List<EmployeeServices> employeeServices = employeeServicesService.findAll();
         model.addAttribute("employeeServices", employeeServices);
         model.addAttribute("employee", employee);  
+        List<SalaryProposals> proposals = salaryProposalService.listAllProposals();
+        model.addAttribute("proposals", proposals);  
         return "employees/emp_update_info";
     }
 
@@ -69,7 +80,30 @@ public class EmployeesController {
                                 @RequestParam("phone") String phone,
                                 @RequestParam("address") String address,
                                 @RequestParam("profileImage") MultipartFile profileImage,
+                                @RequestParam("birthday") LocalDate birthday,
+                                @RequestParam("bio") String bio,
                                 HttpServletRequest request, Model model) {
+    	
+        if (!EmployeeValidation.isFullnameValid(fullname)) {
+            model.addAttribute("error", "Fullname is invalid. It should be 2-50 alphabetic characters.");
+            return "employees/emp_update_info";
+        }
+
+        if (!EmployeeValidation.isPhoneValid(phone)) {
+            model.addAttribute("error", "Phone number is invalid. It should be 10 digits.");
+            return "employees/emp_update_info";
+        }
+
+        if (!EmployeeValidation.isAddressValid(address)) {
+            model.addAttribute("error", "Address is invalid. It should be between 1 and 100 characters.");
+            return "employees/emp_update_info";
+        }
+
+        if (!EmployeeValidation.isBioValid(bio)) {
+            model.addAttribute("error", "Bio must be less than 255 characters.");
+            return "employees/emp_update_info";
+        }
+    	
         HttpSession session = request.getSession();
         Employees employee = (Employees) session.getAttribute("employee");
 
@@ -80,7 +114,7 @@ public class EmployeesController {
         // Ensure the upload directory exists
         File uploadDir = new File(UPLOAD_DIR);
         if (!uploadDir.exists()) {
-            uploadDir.mkdirs(); // Create the directory if it doesn't exist
+            uploadDir.mkdirs(); 
         }
 
         // Update employee details
@@ -91,18 +125,14 @@ public class EmployeesController {
         // Handle profile image upload
         if (!profileImage.isEmpty()) {
             try {
-                // Check for existing profile image
-                String existingImageName = employee.getProfileImage(); // Get the old image name
+                String existingImageName = employee.getProfileImage(); 
                 if (existingImageName != null && !existingImageName.isEmpty()) {
-                    // Create a File object for the existing image
                     File existingImageFile = new File(UPLOAD_DIR + existingImageName);
-                    
-                    // Delete the existing image file if it exists
                     if (existingImageFile.exists()) {
                         boolean deleted = existingImageFile.delete();
                         if (!deleted) {
                             model.addAttribute("error", "Failed to delete old image.");
-                            return "employees/emp_update_info"; // Return to the update form on error
+                            return "employees/emp_update_info"; 
                         }
                     }
                 }
@@ -115,18 +145,21 @@ public class EmployeesController {
                 Files.write(uploadPath, profileImage.getBytes());
 
                 // Save only the new filename in the database
-                employee.setProfileImage(newFileName); // Save only the new filename, not the path
+                employee.setProfileImage(newFileName); 
             } catch (IOException e) {
                 model.addAttribute("error", "Failed to upload image.");
-                return "employees/emp_update_info"; // Return to the update form on error
+                return "employees/emp_update_info"; 
             }
         }
-
+        employee.setBirthday(birthday);
+        employee.setBio(bio);
+        
         // Update the employee information in the database
         employeeService.updateEmployeeInfo(employee);
+        
         // Update session
         session.setAttribute("employee", employee);
-        return "redirect:/employees/updateInfo?success=update"; // Redirect to the dashboard after successful update
+        return "redirect:/employees/updateInfo?success=update"; 
     }
     
 
@@ -135,7 +168,7 @@ public class EmployeesController {
     @GetMapping("/dashboard")
     public String dashboard(Model model, HttpSession session) {
         
-        model.addAttribute("products", employeeService.findAllEmployees());
+        model.addAttribute("products", employeeService.getAllEmployees());
         Employees employee = (Employees) session.getAttribute("employee");
         model.addAttribute("employee", employee);
         model.addAttribute("session", session);
