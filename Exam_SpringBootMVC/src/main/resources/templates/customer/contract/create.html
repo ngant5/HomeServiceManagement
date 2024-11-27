@@ -45,8 +45,9 @@
                         <span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Time:</span>
                         <div class="input-group">
                             <i class="bi bi-clock"></i>
-                            <input type="time" name="startTime" id="startTime" min="08:00" max="20:00" required /> to
-                            <input type="time" name="endTime" id="endTime" min="08:00" max="20:00" required />
+                            <input type="time" name="startTime" id="startTime" min="08:00" max="20:00" required onchange="setEndTimeMin()" />
+							 to
+                            <input type="time" name="endTime" id="endTime" min="09:00" max="20:00" required />
                         </div>
 
                         <span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Date:</span>
@@ -61,8 +62,9 @@
                         <span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Time:</span>
                         <div class="input-group">
                             <i class="bi bi-clock"></i>
-                            <input type="time" name="startTime" id="startTime" min="08:00" max="20:00" required /> to
-                            <input type="time" name="endTime" id="endTime" min="08:00" max="20:00" required />
+                            <input type="time" name="startTime" id="startTime" min="08:00" max="20:00" required onchange="setEndTimeMin()" />
+							to
+                            <input type="time" name="endTime" id="endTime" min="09:00" max="20:00" required />
                         </div>
 
                         <span class="fs-h4 mb-15 mt-25 fc-primary">Start Date:</span>
@@ -191,6 +193,44 @@
                 monthlyFields.style.display = 'block';  // Hiển thị các trường theo tháng
             }
         }
+		
+		function setEndTimeMin() {
+			const startTime = document.getElementById('startTime').value;
+			if (startTime) {
+			const startTimeDate = new Date('1970-01-01T' + startTime + 'Z');
+			startTimeDate.setHours(startTimeDate.getHours() + 1); // Thêm 1 giờ
+
+			const endTime = document.getElementById('endTime');
+			const hours = String(startTimeDate.getHours()).padStart(2, '0');
+			const minutes = String(startTimeDate.getMinutes()).padStart(2, '0');
+			const newMinTime = hours + ':' + minutes;
+
+			endTime.setAttribute('min', newMinTime);
+			endTime.value = newMinTime; // Đặt giá trị ban đầu cho thời gian kết thúc
+			}
+		}
+				
+		function setDateRestrictions() {
+			const today = new Date();
+			const tomorrow = new Date(today);
+			tomorrow.setDate(today.getDate() + 1);
+
+			const startDateInputs = document.querySelectorAll('input[name="startDate"], input[name="serviceDate"]');
+			startDateInputs.forEach(input => {
+			input.setAttribute('min', tomorrow.toISOString().split('T')[0]);
+			});
+
+			const endDateInputs = document.querySelectorAll('input[name="endDate"]');
+			endDateInputs.forEach(input => {
+			input.setAttribute('min', tomorrow.toISOString().split('T')[0]);
+			});
+		}
+						
+			window.onload = function() {
+			setDateRestrictions();
+		};
+
+
     </script>
 
 </body>

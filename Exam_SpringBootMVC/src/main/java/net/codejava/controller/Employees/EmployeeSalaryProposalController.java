@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/employee/salary-proposal")
+@RequestMapping("/employees/salary-proposal")
 public class EmployeeSalaryProposalController {
     private final SalaryProposalService salaryProposalService;
 
@@ -36,6 +36,6 @@ public class EmployeeSalaryProposalController {
 
         int result = salaryProposalService.createProposal(proposal);
         model.addAttribute("message", result > 0 ? "Proposal submitted successfully" : "Failed to submit proposal");
-        return "employee/salary-proposal-result";
+        return "employees/emp_update_info";
     }
 }
