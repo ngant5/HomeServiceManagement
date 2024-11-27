@@ -24,7 +24,7 @@
 	                	<div class="col-tri" th:each="employeeService : ${employeeServices}">
 	                    <div class="card-career">
 	                        <span class="fs-h4 mb-5 mt-15" th:text="${employeeService.employee.fullname}"></span>
-							<img th:src="@{'/uploads/' + ${employeeService.employee.profileImage}}" alt="Profile image of {employee.fullname}">
+							<img th:src="@{'/uploads/images/' + ${employeeService.employee.profileImage}}" alt="Profile image of {employee.fullname}">
 								                       
 	                        <!--<p>
 	                            <i class="bi bi-calendar"></i>
