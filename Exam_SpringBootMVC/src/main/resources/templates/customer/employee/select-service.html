@@ -20,22 +20,20 @@
 			<div class="row flex-just-center">
 				<div class="col-tri" th:each="empService : ${employeeServices}">
 					<div class="card-career">
-
-						<span class="fs-h4 mb-5 mt-15" th:text="${empService.service.serviceName}"></span>
-						<span class="fs-h4 mb-5 mt-15">Price:</span>
-
-						<span class="fs-h4 mb-5 mt-15" th:text="${empService.service.servicePrice}"></span>
-						
-						<span class="fs-h4 mb-5 mt-15" th:text="${empService.service.serviceDescription}"></span>
-						
-						<hr>
 						<div class="ta-center mt-15">
 							<input type="radio" name="empServiceId" th:value="${empService.empServiceId}" required/>
+							<!-- Removed duplicate input field -->
+							<input type="hidden" name="serviceId" th:value="${empService.service.serviceId}"/>
+							<input type="hidden" name="servicePrice" th:value="${empService.service.servicePrice}"/>
+							<input type="hidden" name="serviceName" th:value="${empService.service.serviceName}"/>
 						</div>
+						<span class="fs-h4 mb-5 mt-15" th:text="${empService.service.serviceName}"></span>
+						<span class="fs-h4 mb-5 mt-15">Price: <span th:text="${empService.service.servicePrice}"></span></span>
+						<span class="fs-h4 mb-5 mt-15" th:text="${empService.service.serviceDescription}"></span>
 					</div>
 				</div>
 			</div>
-			<button type="submit" class="ta-center mt-15 btn-bg1">Request Service</button>
+			<button  type="submit" class="ta-center mt-15 btn-bg1">Request Service</button>
 		</form>
 
 	</section>

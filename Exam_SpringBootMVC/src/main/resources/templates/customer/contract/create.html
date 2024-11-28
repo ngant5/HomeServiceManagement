@@ -40,106 +40,95 @@
                         </select>
                     </div>
 
-                    <!-- One Time Duration Fields -->
-                    <div id="oneTimeDurationFields" style="display:none;">
-                        <span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Time:</span>
-                        <div class="input-group">
-                            <i class="bi bi-clock"></i>
-                            <input type="time" name="startTime" id="startTime" min="08:00" max="20:00" required onchange="setEndTimeMin()" />
-							 to
-                            <input type="time" name="endTime" id="endTime" min="09:00" max="20:00" required />
-                        </div>
+                
+					    <span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Time:</span>
+					    <div class="input-group">
+					        <i class="bi bi-clock"></i>
+					        <select name="startTime" id="startTime" required onchange="setEndTimeMin()">
+					            <option value="" disabled selected>Select Start Time</option>
+					            <option value="08:00">08:00</option>
+					            <option value="09:00">09:00</option>
+					            <option value="10:00">10:00</option>
+					            <option value="11:00">11:00</option>
+					            <option value="12:00">12:00</option>
+					            <option value="13:00">13:00</option>
+					            <option value="14:00">14:00</option>
+					            <option value="15:00">15:00</option>
+					            <option value="16:00">16:00</option>
+					            <option value="17:00">17:00</option>
+					            <option value="18:00">18:00</option>
+					            <option value="19:00">19:00</option>
+					        </select>
+					        to
+					        <select name="endTime" id="endTime" required>
+					            <option value="" disabled selected>Select End Time</option>
+					            <option value="09:00">09:00</option>
+					            <option value="10:00">10:00</option>
+					            <option value="11:00">11:00</option>
+					            <option value="12:00">12:00</option>
+					            <option value="13:00">13:00</option>
+					            <option value="14:00">14:00</option>
+					            <option value="15:00">15:00</option>
+					            <option value="16:00">16:00</option>
+					            <option value="17:00">17:00</option>
+					            <option value="18:00">18:00</option>
+					            <option value="19:00">19:00</option>
+					            <option value="20:00">20:00</option>
+					        </select>
+					    </div>
+                  
+					
+						<!-- One Time Duration Fields -->
+						<div id="durationFields">
+							<span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Date:</span>
+							<div class="input-group">
+								<i class="bi bi-calendar-event"></i>
+								<input type="date" name="serviceDate" id="serviceDate" required />
+							</div>
+						</div>
+			
+					<!-- Monthly Duration Fields -->
+					<div id="monthlyDurationFields" style="display:none;">
+						<span class="fs-h4 mb-15 mt-25 fc-primary">Start Date:</span>
+					    <div class="input-group">
+					        <i class="bi bi-calendar-event"></i>
+					        <input type="date" name="startDate" id="startDate" required />
+					    </div>
 
-                        <span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Date:</span>
-                        <div class="input-group">
-                            <i class="bi bi-calendar-event"></i>
-                            <input type="date" name="serviceDate" id="serviceDate" required />
-                        </div>
-                    </div>
+					    <span class="fs-h4 mb-15 mt-25 fc-primary">End Date:</span>
+					    <div class="input-group">
+					        <i class="bi bi-calendar-event"></i>
+					        <input type="date" name="endDate" id="endDate" required />
+					    </div>
 
-                    <!-- By Day Duration Fields -->
-                    <div id="dayDurationFields" style="display:none;">
-                        <span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Time:</span>
-                        <div class="input-group">
-                            <i class="bi bi-clock"></i>
-                            <input type="time" name="startTime" id="startTime" min="08:00" max="20:00" required onchange="setEndTimeMin()" />
-							to
-                            <input type="time" name="endTime" id="endTime" min="09:00" max="20:00" required />
-                        </div>
+					    <span class="fs-h4 mb-15 mt-25 fc-primary">Working Hours Per Day:</span>
+					    <div class="input-group">
+					        <i class="bi bi-clock"></i>
+					        <select id="workingHoursPerDay" name="workingHoursPerDay" required>
+					            <option value="" disabled selected>Select working hours per day</option>
+					            <option value="1">1 hour/day</option>
+					            <option value="2">2 hours/day</option>
+					            <option value="4">4 hours/day</option>
+					            <option value="8">8 hours/day</option>
+					        </select>
+					    </div>
 
-                        <span class="fs-h4 mb-15 mt-25 fc-primary">Start Date:</span>
-                        <div class="input-group">
-                            <i class="bi bi-calendar-event"></i>
-                            <input type="date" name="startDate" id="startDate" required />
-                        </div>
+					    <span class="fs-h4 mb-15 mt-25 fc-primary">Number of Working Days Per Week:</span>
+					    <div class="input-group">
+					        <i class="bi bi-calendar-week"></i>
+					        <select id="workingDaysPerWeek" name="workingDaysPerWeek" required>
+					            <option value="" disabled selected>Select working days per week</option>
+					            <option value="1">1 day/week</option>
+					            <option value="2">2 days/week</option>
+					            <option value="3">3 days/week</option>
+					            <option value="4">4 days/week</option>
+					            <option value="5">5 days/week</option>
+					            <option value="6">6 days/week</option>
+					            <option value="7">7 days/week</option>
+					        </select>
+					    </div>
+					</div>
 
-                        <span class="fs-h4 mb-15 mt-25 fc-primary">End Date:</span>
-                        <div class="input-group">
-                            <i class="bi bi-calendar-event"></i>
-                            <input type="date" name="endDate" id="endDate" required />
-                        </div>
-
-                        <span class="fs-h4 mb-15 mt-25 fc-primary">Working Hours Per Day:</span>
-                        <div class="input-group">
-                            <i class="bi bi-clock"></i>
-                            <select id="workingHoursPerDay" name="workingHoursPerDay" required>
-                                <option value="" disabled selected>Select working hours per day</option>
-                                <option value="1">1 hour/day</option>
-                                <option value="2">2 hours/day</option>
-                                <option value="4">4 hours/day</option>
-                                <option value="8">8 hours/day</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Monthly Duration Fields -->
-                    <div id="monthlyDurationFields" style="display:none;">
-                        <span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Time:</span>
-                        <div class="input-group">
-                            <i class="bi bi-clock"></i>
-                            <input type="time" name="startTime" id="startTime" min="08:00" max="20:00" required /> to
-                            <input type="time" name="endTime" id="endTime" min="08:00" max="20:00" required />
-                        </div>
-
-                        <span class="fs-h4 mb-15 mt-25 fc-primary">Start Date:</span>
-                        <div class="input-group">
-                            <i class="bi bi-calendar-event"></i>
-                            <input type="date" name="startDate" id="startDate" required />
-                        </div>
-
-                        <span class="fs-h4 mb-15 mt-25 fc-primary">End Date:</span>
-                        <div class="input-group">
-                            <i class="bi bi-calendar-event"></i>
-                            <input type="date" name="endDate" id="endDate" required />
-                        </div>
-
-                        <span class="fs-h4 mb-15 mt-25 fc-primary">Working Hours Per Day:</span>
-                        <div class="input-group">
-                            <i class="bi bi-clock"></i>
-                            <select id="workingHoursPerDay" name="workingHoursPerDay" required>
-                                <option value="" disabled selected>Select working hours per day</option>
-                                <option value="1">1 hour/day</option>
-                                <option value="2">2 hours/day</option>
-                                <option value="4">4 hours/day</option>
-                                <option value="8">8 hours/day</option>
-                            </select>
-                        </div>
-
-                        <span class="fs-h4 mb-15 mt-25 fc-primary">Number of Working Days Per Week:</span>
-                        <div class="input-group">
-                            <i class="bi bi-calendar-week"></i>
-                            <select id="workingDaysPerWeek" name="workingDaysPerWeek" required>
-                                <option value="" disabled selected>Select working days per week</option>
-                                <option value="1">1 day/week</option>
-                                <option value="2">2 days/week</option>
-                                <option value="3">3 days/week</option>
-                                <option value="4">4 days/week</option>
-                                <option value="5">5 days/week</option>
-                                <option value="6">6 days/week</option>
-                                <option value="7">7 days/week</option>
-                            </select>
-                        </div>
-                    </div>
 
                     <!-- Service Location -->
                     <span class="fs-h4 mb-15 mt-25 fc-primary">Where to go:</span>
@@ -174,60 +163,139 @@
         // Hàm để ẩn/hiện các trường theo loại thời gian đã chọn
         function toggleDurationFields() {
             const durationType = document.getElementById('durationType').value; // Lấy giá trị loại thời gian
-            const oneTimeFields = document.getElementById('oneTimeDurationFields'); // Trường thời gian theo "One Time"
-            const dayFields = document.getElementById('dayDurationFields'); // Trường thời gian theo ngày
+            const oneTimeFields = document.getElementById('durationFields'); // Trường thời gian theo "One Time"
             const monthlyFields = document.getElementById('monthlyDurationFields'); // Trường thời gian theo tháng
 
             // Điều chỉnh hiển thị các trường theo loại thời gian đã chọn
             if (durationType === 'one_time') {
                 oneTimeFields.style.display = 'block';  // Hiển thị trường "One Time"
-                dayFields.style.display = 'none';  // Ẩn các trường theo ngày
-                monthlyFields.style.display = 'none';  // Ẩn các trường theo tháng
-            } else if (durationType === 'by_day') {
+                monthlyFields.style.display = 'none'; 
+				
+				const today = new Date();
+				const tomorrow = new Date(today);
+				tomorrow.setDate(today.getDate() + 1);  // Ngày mai
+				const minDate = tomorrow.toISOString().split('T')[0];  // Định dạng "yyyy-mm-dd"
+				document.getElementById('serviceDate').setAttribute('min', minDate);  // Ẩn các trường theo tháng
+            } else if (durationType === 'by_day' || durationType === 'by_month') {
                 oneTimeFields.style.display = 'none';  // Ẩn "One Time"
-                dayFields.style.display = 'block';  // Hiển thị trường theo ngày
-                monthlyFields.style.display = 'none';  // Ẩn các trường theo tháng
-            } else if (durationType === 'by_month') {
-                oneTimeFields.style.display = 'none';  // Ẩn "One Time"
-                dayFields.style.display = 'none';  // Ẩn các trường theo ngày
                 monthlyFields.style.display = 'block';  // Hiển thị các trường theo tháng
             }
         }
 		
 		function setEndTimeMin() {
-			const startTime = document.getElementById('startTime').value;
-			if (startTime) {
-			const startTimeDate = new Date('1970-01-01T' + startTime + 'Z');
-			startTimeDate.setHours(startTimeDate.getHours() + 1); // Thêm 1 giờ
+		    const startTime = document.getElementById("startTime").value;
+		    const endTime = document.getElementById("endTime");
 
-			const endTime = document.getElementById('endTime');
-			const hours = String(startTimeDate.getHours()).padStart(2, '0');
-			const minutes = String(startTimeDate.getMinutes()).padStart(2, '0');
-			const newMinTime = hours + ':' + minutes;
+		    // Clear current options in endTime dropdown
+		    endTime.innerHTML = '<option value="" disabled selected>Select End Time</option>';
 
-			endTime.setAttribute('min', newMinTime);
-			endTime.value = newMinTime; // Đặt giá trị ban đầu cho thời gian kết thúc
-			}
+		    // Define available end times based on selected start time
+		    const timeSlots = [
+		        "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"
+		    ];
+
+		    let startIndex = timeSlots.indexOf(startTime);
+		    if (startIndex !== -1) {
+		        // Add the available times starting from the hour after the selected start time
+		        for (let i = startIndex + 1; i < timeSlots.length; i++) {
+		            const option = document.createElement("option");
+		            option.value = timeSlots[i];
+		            option.textContent = timeSlots[i];
+		            endTime.appendChild(option);
+		        }
+		    }
 		}
 				
-		function setDateRestrictions() {
-			const today = new Date();
-			const tomorrow = new Date(today);
-			tomorrow.setDate(today.getDate() + 1);
+		// Ngăn không cho người dùng nhập dữ liệu vào ô thời gian
+		document.getElementById('startTime').addEventListener('keydown', function(event) {
+		    event.preventDefault();  // Ngăn không cho nhập vào ô
+		});
 
-			const startDateInputs = document.querySelectorAll('input[name="startDate"], input[name="serviceDate"]');
-			startDateInputs.forEach(input => {
-			input.setAttribute('min', tomorrow.toISOString().split('T')[0]);
-			});
 
-			const endDateInputs = document.querySelectorAll('input[name="endDate"]');
-			endDateInputs.forEach(input => {
-			input.setAttribute('min', tomorrow.toISOString().split('T')[0]);
-			});
+		// Đảm bảo giá trị vẫn được lưu lại khi người dùng chọn giờ
+		document.getElementById('startTime').addEventListener('change', function(event) {
+		    // Đảm bảo giá trị được lấy đúng khi người dùng chọn giờ
+		    let startTimeValue = event.target.value;
+		    console.log('Start Time:', startTimeValue); // Kiểm tra giá trị được chọn
+		});
+
+		document.getElementById('endTime').addEventListener('change', function(event) {
+		    // Đảm bảo giá trị được lấy đúng khi người dùng chọn giờ
+		    let endTimeValue = event.target.value;
+		    console.log('End Time:', endTimeValue); // Kiểm tra giá trị được chọn
+		});
+		function setStartAndEndDate() {
+		    var today = new Date();
+		    
+		    // Ngày mai (Start Date)
+		    var tomorrow = new Date(today);
+		    tomorrow.setDate(today.getDate() + 1); // Ngày mai
+
+		    // Thiết lập giá trị cho Start Date
+		    var startDate = document.getElementById('startDate');
+		    var startDateString = tomorrow.toISOString().split('T')[0]; // Định dạng ngày "yyyy-mm-dd"
+		    startDate.value = startDateString; // Đặt giá trị cho Start Date
+		    startDate.setAttribute('min', startDateString); // Chỉ cho phép chọn ngày mai hoặc ngày sau
+
+		    // Thiết lập giá trị cho End Date (Ngày sau Start Date)
+		    var endDate = document.getElementById('endDate');
+		    tomorrow.setDate(tomorrow.getDate() + 1); // Ngày kết thúc là ngày sau Start Date
+		    var endDateString = tomorrow.toISOString().split('T')[0]; // Định dạng ngày "yyyy-mm-dd"
+		    endDate.value = endDateString; // Đặt giá trị cho End Date
+		    endDate.setAttribute('min', endDateString); // Đảm bảo End Date luôn lớn hơn Start Date
+
+			startDate.addEventListener('change', function() {
+			        updateEndDateMin(); 
+			    });
+
+		    // Gắn sự kiện thay đổi cho End Date
+		    endDate.addEventListener('change', validateEndDate);
 		}
-						
-			window.onload = function() {
-			setDateRestrictions();
+
+		// Hàm cập nhật min của End Date sau khi chọn Start Date
+		function updateEndDateMin() {
+		    var startDate = document.getElementById('startDate').value;
+		    var endDate = document.getElementById('endDate');
+		    
+		    if (startDate) {
+		        var start = new Date(startDate);
+				var durationType = document.getElementById('durationType').value;
+				if (durationType === 'by_month') {
+					start.setDate(start.getDate() + 31); // End Date phải lớn hơn Start Date 30 ngày
+				} else {
+					start.setDate(start.getDate() + 1); // Nếu không, chỉ cần End Date sau Start Date 1 ngày
+				}
+
+				var endDateValue = start.toISOString().split('T')[0]; // Định dạng ngày "yyyy-mm-dd"
+				endDate.setAttribute('min', endDateValue);
+		        if (new Date(endDate.value) < new Date(endDateValue)) {
+		            endDate.value = endDateValue; // Cập nhật End Date nếu người dùng chọn nhỏ hơn min
+		        }
+		    }
+		}
+
+		// Hàm kiểm tra End Date để đảm bảo nó không nhỏ hơn Start Date + 1 ngày
+		function validateEndDate() {
+		    const startDate = document.getElementById('startDate').value;
+		    const endDate = document.getElementById('endDate').value;
+		    
+		    if (startDate && endDate) {
+		        const start = new Date(startDate);
+		        const end = new Date(endDate);
+
+		        // Đảm bảo End Date không nhỏ hơn Start Date + 1
+		        start.setDate(start.getDate() + 1); // Tính ngày sau Start Date
+
+		        if (end < start) {
+		            alert('End Date must be at least one day after Start Date.');
+		            document.getElementById('endDate').value = ''; // Xóa giá trị End Date nếu không hợp lệ
+		        }
+		    }
+		}
+
+		window.onload = function() {
+		    // Thiết lập Start Date và End Date khi trang tải
+		    setStartAndEndDate();
 		};
 
 
