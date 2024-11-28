@@ -37,15 +37,16 @@ public class ContractDetailsRepository {
             throw new IllegalArgumentException("empServiceId không hợp lệ: " + contractDetail.getEmpServiceId());
         }
     	
-        String sql = "INSERT INTO Contract_Details (contract_id, emp_service_id, service_address, service_phone, start_date, end_date, status, hours_worked, total_price) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Contract_Details (contract_id, emp_service_id, service_address, service_phone, start_date, end_date, status, hours_worked, total_price, contract_type) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         logger.info("Trying to insert contract detail with emp_service_id: {}", contractDetail.getEmpServiceId());
 
         jdbcTemplate.update(sql, contractDetail.getContractId(), contractDetail.getEmpServiceId(), 
                             contractDetail.getServiceAddress(), contractDetail.getServicePhone(),
                             contractDetail.getStartDate(), contractDetail.getEndDate(),
                             contractDetail.getStatus(), contractDetail.getHoursWorked(),
-                            contractDetail.getTotalPrice());
+                            contractDetail.getTotalPrice(), 
+        					contractDetail.getContractType());;
     }
 
     // Tạo danh sách chi tiết hợp đồng
@@ -99,8 +100,8 @@ public class ContractDetailsRepository {
         detail.setEmpServiceId(rs.getInt("emp_service_id"));
         detail.setServiceAddress(rs.getString("service_address"));
         detail.setServicePhone(rs.getString("service_phone"));
-        detail.setStartDate(rs.getTimestamp("start_date").toLocalDateTime());
-        detail.setEndDate(rs.getTimestamp("end_date").toLocalDateTime());
+        detail.setStartDate(rs.getTimestamp("start_date").toLocalDateTime().toLocalDate());
+        detail.setEndDate(rs.getTimestamp("end_date").toLocalDateTime().toLocalDate());
         detail.setStatus(rs.getInt("status"));
         detail.setHoursWorked(rs.getInt("hours_worked"));
         detail.setTotalPrice(rs.getDouble("total_price"));

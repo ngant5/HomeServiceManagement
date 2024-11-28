@@ -159,8 +159,9 @@ public class ContractRepository {
 		contract.setContractFile(rs.getString("contract_file"));
 
 		ContractDetails contractDetail = new ContractDetails();
-	    contractDetail.setStartDate(rs.getTimestamp("start_date").toLocalDateTime());
-	    contractDetail.setEndDate(rs.getTimestamp("end_date").toLocalDateTime());
+	    contractDetail.setStartDate(rs.getTimestamp("start_date").toLocalDateTime().toLocalDate());
+	    contractDetail.setEndDate(rs.getTimestamp("end_date").toLocalDateTime().toLocalDate());
+	    
 	    
 	    contract.setContractDetail(contractDetail);
 

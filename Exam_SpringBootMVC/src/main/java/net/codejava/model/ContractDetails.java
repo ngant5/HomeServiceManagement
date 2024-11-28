@@ -1,6 +1,6 @@
 package net.codejava.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class ContractDetails {
     private int contractDetailId;
@@ -8,12 +8,12 @@ public class ContractDetails {
     private int empServiceId; 
     private String serviceAddress;
     private String servicePhone;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private int status;
     private int hoursWorked;
     private double totalPrice;
-    private int contractType;
+    private String contractType;
 
     
     public int getContractDetailId() { 
@@ -48,16 +48,16 @@ public class ContractDetails {
     public void setServicePhone(String servicePhone) { 
     	this.servicePhone = servicePhone; 
     	}
-    public LocalDateTime getStartDate() { 
+    public LocalDate getStartDate() { 
     	return startDate; 
     	}
-    public void setStartDate(LocalDateTime startDate) { 
+    public void setStartDate(LocalDate startDate) { 
     	this.startDate = startDate;
     	}
-    public LocalDateTime getEndDate() {
+    public LocalDate getEndDate() {
     	return endDate; 
     	}
-    public void setEndDate(LocalDateTime endDate) { 
+    public void setEndDate(LocalDate endDate) { 
     	this.endDate = endDate;
     	}
     public int getStatus() { 
@@ -79,11 +79,11 @@ public class ContractDetails {
     	this.totalPrice = totalPrice;
     	}
     
-    public int getContractType() {
+    public String getContractType() {
         return contractType;
     }
 
-    public void setContractType(int contractType) {
+    public void setContractType(String contractType) {
         this.contractType = contractType;
     }
 }

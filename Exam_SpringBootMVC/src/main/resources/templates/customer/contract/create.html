@@ -15,8 +15,9 @@
         <p class="col-wide ta-center mlmr-a">
             Please fill out the form below to request more information or book a service.
         </p>
+
         <!-- FORM START -->
-        <form th:action="@{/contracts/checkout}" method="post" class="message-form mt-50 mb-25">
+        <form id="contractForm" th:action="@{/contracts/checkout}" method="post" class="message-form mt-50 mb-25">
             <input type="hidden" th:value="${session.customerId}">
             <div class="row">
                 <!-- CONTACT INFO START -->
@@ -28,67 +29,60 @@
 
                     <h2 class="fs-h4 fc-primary mb-15">Request Information</h2>
 
+
                     <!-- Select Time Type -->
+					
                     <span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Duration Type:</span>
                     <div class="input-group">
                         <i class="bi bi-calendar-range"></i>
-                        <select name="durationType" id="durationType" onchange="toggleDurationFields()" required>
+                        <select name="contractType" id="contractType" onchange="toggleDurationFields()" required>
                             <option value="" disabled selected>Select Duration Type</option>
                             <option value="one_time">One Time</option>
                             <option value="by_day">By Day</option>
                             <option value="by_month">Monthly</option>
                         </select>
+						<input type="hidden" id="hoursWorked" name="hoursWorked">
                     </div>
 
                 
 					    <span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Time:</span>
 					    <div class="input-group">
 					        <i class="bi bi-clock"></i>
-					        <select name="startTime" id="startTime" required onchange="setEndTimeMin()">
+					        <select name="startTime" id="startTime"  onchange="setEndTimeMin()" required>
 					            <option value="" disabled selected>Select Start Time</option>
-					            <option value="08:00">08:00</option>
-					            <option value="09:00">09:00</option>
-					            <option value="10:00">10:00</option>
-					            <option value="11:00">11:00</option>
-					            <option value="12:00">12:00</option>
-					            <option value="13:00">13:00</option>
-					            <option value="14:00">14:00</option>
-					            <option value="15:00">15:00</option>
-					            <option value="16:00">16:00</option>
-					            <option value="17:00">17:00</option>
-					            <option value="18:00">18:00</option>
-					            <option value="19:00">19:00</option>
+								<option value="8">08:00</option>
+								<option value="9">09:00</option>
+								<option value="10">10:00</option>
+								<option value="11">11:00</option>
+								<option value="12">12:00</option>
+								<option value="13">13:00</option>
+								<option value="14">14:00</option>
+								<option value="15">15:00</option>
+								<option value="16">16:00</option>
+								<option value="17">17:00</option>
+								<option value="18">18:00</option>
+					            <option value="19">19:00</option>
 					        </select>
 					        to
 					        <select name="endTime" id="endTime" required>
 					            <option value="" disabled selected>Select End Time</option>
-					            <option value="09:00">09:00</option>
-					            <option value="10:00">10:00</option>
-					            <option value="11:00">11:00</option>
-					            <option value="12:00">12:00</option>
-					            <option value="13:00">13:00</option>
-					            <option value="14:00">14:00</option>
-					            <option value="15:00">15:00</option>
-					            <option value="16:00">16:00</option>
-					            <option value="17:00">17:00</option>
-					            <option value="18:00">18:00</option>
-					            <option value="19:00">19:00</option>
-					            <option value="20:00">20:00</option>
+					            <option value="9">09:00</option>
+					            <option value="10">10:00</option>
+					            <option value="11">11:00</option>
+					            <option value="12">12:00</option>
+					            <option value="13">13:00</option>
+					            <option value="14">14:00</option>
+					            <option value="15">15:00</option>
+					            <option value="16">16:00</option>
+					            <option value="17">17:00</option>
+					            <option value="18">18:00</option>
+					            <option value="19">19:00</option>
+					            <option value="20">20:00</option>
 					        </select>
 					    </div>
-                  
-					
-						<!-- One Time Duration Fields -->
-						<div id="durationFields">
-							<span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Date:</span>
-							<div class="input-group">
-								<i class="bi bi-calendar-event"></i>
-								<input type="date" name="serviceDate" id="serviceDate" required />
-							</div>
-						</div>
-			
+                 
 					<!-- Monthly Duration Fields -->
-					<div id="monthlyDurationFields" style="display:none;">
+					<div id="durationFields">
 						<span class="fs-h4 mb-15 mt-25 fc-primary">Start Date:</span>
 					    <div class="input-group">
 					        <i class="bi bi-calendar-event"></i>
@@ -98,23 +92,11 @@
 					    <span class="fs-h4 mb-15 mt-25 fc-primary">End Date:</span>
 					    <div class="input-group">
 					        <i class="bi bi-calendar-event"></i>
-					        <input type="date" name="endDate" id="endDate" required />
+							<input type="date" id="endDate" name="endDate" required />
 					    </div>
 
-					    <span class="fs-h4 mb-15 mt-25 fc-primary">Working Hours Per Day:</span>
-					    <div class="input-group">
-					        <i class="bi bi-clock"></i>
-					        <select id="workingHoursPerDay" name="workingHoursPerDay" required>
-					            <option value="" disabled selected>Select working hours per day</option>
-					            <option value="1">1 hour/day</option>
-					            <option value="2">2 hours/day</option>
-					            <option value="4">4 hours/day</option>
-					            <option value="8">8 hours/day</option>
-					        </select>
-					    </div>
-
-					    <span class="fs-h4 mb-15 mt-25 fc-primary">Number of Working Days Per Week:</span>
-					    <div class="input-group">
+					   <!-- <span class="fs-h4 mb-15 mt-25 fc-primary">Number of Working Days Per Week:</span>
+					    <div class="input-group" id="workingDaysPerWeekGroup">
 					        <i class="bi bi-calendar-week"></i>
 					        <select id="workingDaysPerWeek" name="workingDaysPerWeek" required>
 					            <option value="" disabled selected>Select working days per week</option>
@@ -126,7 +108,7 @@
 					            <option value="6">6 days/week</option>
 					            <option value="7">7 days/week</option>
 					        </select>
-					    </div>
+					    </div>-->
 					</div>
 
 
@@ -162,25 +144,37 @@
     <script>
         // Hàm để ẩn/hiện các trường theo loại thời gian đã chọn
         function toggleDurationFields() {
-            const durationType = document.getElementById('durationType').value; // Lấy giá trị loại thời gian
-            const oneTimeFields = document.getElementById('durationFields'); // Trường thời gian theo "One Time"
-            const monthlyFields = document.getElementById('monthlyDurationFields'); // Trường thời gian theo tháng
-
-            // Điều chỉnh hiển thị các trường theo loại thời gian đã chọn
-            if (durationType === 'one_time') {
-                oneTimeFields.style.display = 'block';  // Hiển thị trường "One Time"
-                monthlyFields.style.display = 'none'; 
-				
-				const today = new Date();
-				const tomorrow = new Date(today);
-				tomorrow.setDate(today.getDate() + 1);  // Ngày mai
-				const minDate = tomorrow.toISOString().split('T')[0];  // Định dạng "yyyy-mm-dd"
-				document.getElementById('serviceDate').setAttribute('min', minDate);  // Ẩn các trường theo tháng
-            } else if (durationType === 'by_day' || durationType === 'by_month') {
-                oneTimeFields.style.display = 'none';  // Ẩn "One Time"
-                monthlyFields.style.display = 'block';  // Hiển thị các trường theo tháng
-            }
+            const contractType = document.getElementById('contractType').value; 
+            const monthlyFields = document.getElementById('monthlyDurationFields'); 
+			const startDate = document.getElementById('startDate'); 
+			const endDate = document.getElementById('endDate'); 
+			
+            if (contractType === 'one_time') {
+                monthlyFields.style.display = 'none';
+			    } else if (contractType === 'by_month') {
+			        monthlyFields.style.display = 'block'; 
+			    }
         }
+		
+
+
+		function updateEndDateForOneTime() {
+		    const startDateValue = document.getElementById('oneTimeStartDate').value;
+		    const endDateInput = document.getElementById('oneTimeEndDate');
+		    
+		    if (startDateValue) {
+		        endDateInput.value = startDateValue; 
+				endDateInput.disabled = true;
+		    }
+		}
+		
+		function getFormattedDate(date) {
+		    let year = date.getFullYear();
+		    let month = (date.getMonth() + 1).toString().padStart(2, '0');
+		    let day = date.getDate().toString().padStart(2, '0');
+		    return `${year}-${month}-${day}`;
+		}
+
 		
 		function setEndTimeMin() {
 		    const startTime = document.getElementById("startTime").value;
@@ -190,26 +184,22 @@
 		    endTime.innerHTML = '<option value="" disabled selected>Select End Time</option>';
 
 		    // Define available end times based on selected start time
-		    const timeSlots = [
-		        "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"
-		    ];
-
+			const timeSlots = [
+			        "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"
+			    ];
+				
 		    let startIndex = timeSlots.indexOf(startTime);
 		    if (startIndex !== -1) {
 		        // Add the available times starting from the hour after the selected start time
 		        for (let i = startIndex + 1; i < timeSlots.length; i++) {
 		            const option = document.createElement("option");
 		            option.value = timeSlots[i];
-		            option.textContent = timeSlots[i];
+		            option.textContent = timeSlots[i] + ":00";
 		            endTime.appendChild(option);
 		        }
 		    }
 		}
 				
-		// Ngăn không cho người dùng nhập dữ liệu vào ô thời gian
-		document.getElementById('startTime').addEventListener('keydown', function(event) {
-		    event.preventDefault();  // Ngăn không cho nhập vào ô
-		});
 
 
 		// Đảm bảo giá trị vẫn được lưu lại khi người dùng chọn giờ
@@ -224,6 +214,8 @@
 		    let endTimeValue = event.target.value;
 		    console.log('End Time:', endTimeValue); // Kiểm tra giá trị được chọn
 		});
+		
+		
 		function setStartAndEndDate() {
 		    var today = new Date();
 		    
@@ -259,11 +251,16 @@
 		    
 		    if (startDate) {
 		        var start = new Date(startDate);
-				var durationType = document.getElementById('durationType').value;
-				if (durationType === 'by_month') {
-					start.setDate(start.getDate() + 31); // End Date phải lớn hơn Start Date 30 ngày
+				var contractType = document.getElementById('contractType').value;
+				if (contractType === 'one_time')				{
+				    endDate.value = startDate;
+					endDate.setAttribute('readonly', true);
+				} else if (contractType === 'by_month') {
+					start.setDate(start.getDate() + 31);
+					endDate.removeAttribute('readonly'); 
 				} else {
-					start.setDate(start.getDate() + 1); // Nếu không, chỉ cần End Date sau Start Date 1 ngày
+					start.setDate(start.getDate() + 1);
+					endDate.removeAttribute('readonly');
 				}
 
 				var endDateValue = start.toISOString().split('T')[0]; // Định dạng ngày "yyyy-mm-dd"
@@ -292,12 +289,61 @@
 		        }
 		    }
 		}
+		
+		function calculateHoursWorked() {
+		            const startTime = parseInt(document.getElementById('startTime').value);
+		            const endTime = parseInt(document.getElementById('endTime').value);
+		            const contractType = document.getElementById('contractType').value;
+		            const hoursWorked = endTime - startTime;
+
+		            if (hoursWorked <= 0) {
+		                alert("Please select valid times.");
+		                return;
+		            }
+
+		            if (contractType === "one_time") {
+		                return hoursWorked;  // Hours for one-time
+		            } else if (contractType === "by_day") {
+		                const startDate = new Date(document.getElementById('startDate').value);
+		                const endDate = new Date(document.getElementById('endDate').value);
+		                const timeDiff = endDate - startDate;
+		                const daysBetween = timeDiff / (1000 * 3600 * 24);
+		                return hoursWorked * daysBetween;  // Multiply by days for by_day
+		            } else if (contractType === "by_month") {
+		                const startDate = new Date(document.getElementById('startDate').value);
+		                const daysInMonth = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0).getDate();
+		                return hoursWorked * daysInMonth;  // Multiply by days in month for by_month
+		            }
+		        }
+					
+				
+		// Lắng nghe sự kiện khi form thay đổi (nếu bạn có form với input cho contractType, startDate, endDate)
+		document.getElementById('contractForm').addEventListener('submit', function(event) {
+		    event.preventDefault(); // Ngừng submit form để xử lý tính toán giờ
+
+		    // Lấy các giá trị từ form
+			const contractType = document.getElementById('contractType').value;
+			const startDate = document.getElementById('startDate').value;
+			const endDate = document.getElementById('endDate').value;
+			const startTime = document.getElementById('startTime').value;
+			const endTime = document.getElementById('endTime').value;
+
+		    // Tính hoursWorked
+			const hoursWorked = calculateHoursWorked(contractType, startDate, endDate, startTime, endTime);
+
+		    // Gửi giá trị hoursWorked vào một hidden input hoặc làm gì đó với giá trị tính toán
+		    document.getElementById('hoursWorked').value = hoursWorked;
+
+		    // Sau khi tính toán xong, có thể tiếp tục submit form
+		    this.submit();
+		});
+
 
 		window.onload = function() {
 		    // Thiết lập Start Date và End Date khi trang tải
 		    setStartAndEndDate();
 		};
-
+		
 
     </script>
 

@@ -29,9 +29,11 @@ import net.codejava.service.ContractService;
 import net.codejava.service.EmployeeServicesService;
 import net.codejava.service.ServiceService;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -198,6 +200,7 @@ public class ContractController {
                                        @RequestParam String startDate,
                                        @RequestParam String endDate,
                                        @RequestParam int hoursWorked,
+                                       @RequestParam String contractType,
                                        HttpSession session,
                                        Model model) {
         	Integer customerId = (Integer) session.getAttribute("customerId");
@@ -209,6 +212,7 @@ public class ContractController {
             Integer contractId = (Integer) session.getAttribute("contractId");
             Integer empServiceId = (Integer) session.getAttribute("empServiceId"); 
             Double servicePrice = (Double) session.getAttribute("servicePrice"); 
+            Double totalPrice = servicePrice * hoursWorked;
 
             logger.info("Finalizing contract for contractId: {} with empServiceId: {}", contractId, empServiceId);
             
@@ -225,19 +229,17 @@ public class ContractController {
                 contractDetail.setEmpServiceId(empServiceId);
                 contractDetail.setServiceAddress(serviceAddress);
                 contractDetail.setServicePhone(servicePhone);
-                contractDetail.setStartDate(LocalDate.parse(startDate).atStartOfDay());
-                contractDetail.setEndDate(LocalDate.parse(endDate).atStartOfDay());
+                contractDetail.setStartDate(LocalDate.parse(startDate)); 
+                contractDetail.setEndDate(LocalDate.parse(endDate)); 
                 contractDetail.setHoursWorked(hoursWorked);
                 contractDetail.setStatus(0);
-                contractDetail.setTotalPrice(servicePrice);
+                contractDetail.setTotalPrice(totalPrice);
+                contractDetail.setContractType(contractType);
 
                 // Gọi API để tạo chi tiết hợp đồng
                 ResponseEntity<ContractDetails> response = contractDetailService.createContractDetail(contractDetail);
                 if (response.getStatusCode().is2xxSuccessful()) {
-                	
-
                 	logger.info("Contract detail created successfully.");
-
                     return "customer/contract/success"; // Chuyển đến trang thành công
                 }else {
                     logger.error("Failed to create contract detail. Response status: {}", response.getStatusCode());
@@ -245,12 +247,8 @@ public class ContractController {
             } else {
                 logger.warn("No contractId found. Cannot finalize contract.");
             }
-            
             return "redirect:/error"; // Chuyển đến trang lỗi nếu không tìm thấy contractId
         }
-
-       
-
 
     @GetMapping("/{id}")
     public String getContract(@PathVariable int id, Model model) {
