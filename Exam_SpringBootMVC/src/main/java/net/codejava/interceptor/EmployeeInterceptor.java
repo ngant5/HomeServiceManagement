@@ -19,7 +19,7 @@ public class EmployeeInterceptor implements HandlerInterceptor {
         }
         
         // Chuyển hướng đến trang đăng nhập nếu không phải admin
-        response.sendRedirect("/employee/login");
+        response.sendRedirect("/employees/login");
         return false;
     }
     

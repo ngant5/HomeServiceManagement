@@ -309,6 +309,16 @@ public class ContractController {
                 .header("Content-Disposition", "inline; filename=\"" + fileName + "\"")  // Mở trực tiếp trong trình duyệt
                 .body(resource);
     }
+    
+    @GetMapping("/{contractId}/payment")
+    public String showPaymentPage(@PathVariable("contractId") int contractId, Model model) {
+        // Lấy thông tin hợp đồng từ cơ sở dữ liệu
+        Contracts contract = contractService.getContractById(contractId);
+        model.addAttribute("contract", contract);  // Truyền thông tin hợp đồng vào model
+
+        // Trả về trang payment
+        return "customer/payment/create";
+    }
 
 
 }

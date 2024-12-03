@@ -4,44 +4,60 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Payments {
-    private int paymentId;
-    private int contractId;
+    private int payment_id;
+    private int contract_id;
     private BigDecimal amount;
-    private LocalDateTime paymentDate;
+    private LocalDateTime payment_date;
     private String status;
+    private String payment_method;  
+    private String transaction_id;
+    
+    public Payments() {
+    }
+    
+    public Payments(int paymentId, int contractId, BigDecimal  amount, LocalDateTime paymentDate, 
+            String status, String paymentMethod, String transactionId) {
+			this.payment_id = paymentId;
+			this.contract_id = contractId;
+			this.amount = amount;
+			this.payment_date = paymentDate;
+			this.status = status;
+			this.payment_method = paymentMethod;
+			this.transaction_id = transactionId;
+			}
 
     // Getters and Setters
 
     public int getPaymentId() {
-        return paymentId;
+        return payment_id;
     }
 
     public void setPaymentId(int paymentId) {
-        this.paymentId = paymentId;
+        this.payment_id = paymentId;
     }
 
     public int getContractId() {
-        return contractId;
+        return contract_id;
     }
 
     public void setContractId(int contractId) {
-        this.contractId = contractId;
+        this.contract_id = contractId;
     }
 
-    public BigDecimal getAmount() {
+    public BigDecimal  getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(BigDecimal  amount) {
         this.amount = amount;
     }
 
     public LocalDateTime getPaymentDate() {
-        return paymentDate;
+        return payment_date;
     }
 
     public void setPaymentDate(LocalDateTime paymentDate) {
-        this.paymentDate = paymentDate;
+        this.payment_date = paymentDate;
     }
 
     public String getStatus() {
@@ -50,5 +66,21 @@ public class Payments {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+    
+    public String getPaymentMethod() {
+        return payment_method;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.payment_method = paymentMethod;
+    }
+
+    public String getTransactionId() {
+        return transaction_id;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transaction_id = transactionId;
     }
 }
