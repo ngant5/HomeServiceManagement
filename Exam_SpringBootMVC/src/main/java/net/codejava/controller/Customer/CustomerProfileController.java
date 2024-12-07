@@ -32,7 +32,6 @@ public class CustomerProfileController {
         return (Customers) session.getAttribute("customer");
     }
 
-	
 	 @GetMapping("/view") public String viewMyPage(Model model, HttpSession session) {
 		 Customers customer = getCustomerFromSession(session); 
 		 if (customer== null) { return "redirect:/customer/login"; }
@@ -135,7 +134,7 @@ public class CustomerProfileController {
     @PostMapping("/forgot-password")
     public String handleForgotPassword(@RequestParam("email") String email, HttpServletRequest request) {
         customerService.generateResetToken(email, request.getRequestURL().toString());
-        return "redirect:/customer/forgot-password?sent=true";
+        return "redirect:/customer/profile/forgot-password?sent=true";
     }
 
     @GetMapping("/reset-password")
@@ -145,7 +144,7 @@ public class CustomerProfileController {
             return "customer/cus_reset_password";
         }
         model.addAttribute("token", token);
-        return "customer/cus_reset_password";
+        return "customer/profile/cus_reset_password";
     }
 
     @PostMapping("/reset-password")

@@ -8,11 +8,13 @@
                 </a>
 				<div class="navigation-container">
 				                   <a th:href="@{/index}">Home</a>
-				                   <a th:href="@{/about}">About</a>
+				                   <a th:if="${session.customerId != null}" th:href="@{/about}">About</a>
 				                   <a th:href="@{/service}">Service</a>
 				                   <a th:href="@{/employee}">Employee</a>
-				                   <a th:href="@{/career}">Career</a>
-								<a th:href="@{/contactus}">Contact Us</a>
+				                   <a th:if="${session.customerId != null}"th:href="@{/career}">Career</a>
+								<a th:if="${session.customerId != null}"th:href="@{/contactus}">Contact Us</a>
+								<a th:if="${session.customerId == null}" th:href="@{/contracts}">History</a>
+								<a th:if="${session.customerId == null}" th:href="@{/customer/profile/info}">Profile</a>
 								<a th:if="${session.customerId != null}" th:href="@{/customer/logout}" class="btn-bg1 border-round">Logout</a>
 								<a th:if="${session.customerId == null}" th:href="@{/customer/login}" class="btn-bg1 border-round">Login</a>
 				               </div>
