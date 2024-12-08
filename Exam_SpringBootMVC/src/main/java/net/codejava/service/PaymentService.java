@@ -19,14 +19,14 @@ public class PaymentService {
         this.paymentRepository = paymentRepository;
     }
 
-    public void createPayment(int contractId, BigDecimal amount, String paymentMethod, String transactionId) {
-        Payments payment = new Payments();
-        payment.setContractId(contractId);
-        payment.setAmount(amount);
-        payment.setPaymentDate(LocalDateTime.now());
-        payment.setStatus("PENDING");  // Set status as pending initially
-        payment.setPaymentMethod(paymentMethod);
-        payment.setTransactionId(transactionId);
+    public void createPayment(Payments payment) {
+    	if (payment.getPaymentDate() == null) {
+            payment.setPaymentDate(LocalDateTime.now());  
+        }
+        if (payment.getStatus() == null) {
+            payment.setStatus("PENDING");  
+        }
+
 
         paymentRepository.createPayment(payment);  // Call repository to save the payment
     }

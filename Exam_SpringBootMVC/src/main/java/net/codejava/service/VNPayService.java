@@ -37,8 +37,8 @@ public class VNPayService {
         String locate = "vn";
         vnp_Params.put("vnp_Locale", locate);
 
-        urlReturn += VNPayConfig.vnp_Returnurl;
-        vnp_Params.put("vnp_ReturnUrl", urlReturn);
+        String returnUrl = VNPayConfig.vnp_Returnurl.replace("{contractId}", orderInfor.split(" ")[orderInfor.split(" ").length - 1]);
+        vnp_Params.put("vnp_ReturnUrl", urlReturn + returnUrl);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));

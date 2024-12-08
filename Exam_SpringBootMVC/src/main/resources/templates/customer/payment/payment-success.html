@@ -1,14 +1,32 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Success</title>
+    <title>Payment Successful</title>
 </head>
 <body>
-    <h1>Thanh toán thành công!</h1>
-    <p>Cảm ơn bạn đã thực hiện thanh toán. 
-    <a href="/contracts">Quay lại danh sách hợp đồng</a>
+    <h1>Payment Successful!</h1>
+    <p>Thank you for making the payment. Below are the details:</p>
+    <table>
+        <tr>
+            <td><strong>Transaction ID:</strong></td>
+            <td th:text="${transactionId}"></td> <!-- Display transactionId -->
+        </tr>
+        <tr>
+            <td><strong>Contract Number:</strong></td>
+            <td th:text="${orderId}"></td> <!-- Display orderId -->
+        </tr>
+        <tr>
+            <td><strong>Amount Paid:</strong></td>
+            <td th:text="${totalPrice} + ' VND'"></td> <!-- Display total price with 'VND' -->
+        </tr>
+        <tr>
+            <td><strong>Payment Time:</strong></td>
+            <td th:text="${paymentTime}"></td> <!-- Display paymentTime -->
+        </tr>
+    </table>
+    <br>
+    <a href="/contracts">Back to contract list</a>
 </body>
 </html>
