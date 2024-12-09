@@ -179,9 +179,9 @@ public class EmployeeService {
             employee.getVerifyCode(),
             employee.getToken(),
             employee.getCreatedAt(),
-            employee.getEmployeeId(),
             employee.getBirthday(),
-            employee.getBio()
+            employee.getBio(),
+            employee.getEmployeeId()
         );
     }
 

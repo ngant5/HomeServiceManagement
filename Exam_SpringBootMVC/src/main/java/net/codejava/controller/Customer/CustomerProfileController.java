@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -133,7 +134,12 @@ public class CustomerProfileController {
 
     @PostMapping("/forgot-password")
     public String handleForgotPassword(@RequestParam("email") String email, HttpServletRequest request) {
-        customerService.generateResetToken(email, request.getRequestURL().toString());
+    	String siteURL = ServletUriComponentsBuilder.fromRequestUri(request)
+                .replacePath(null)
+                .build()
+                .toUriString();
+        
+        customerService.generateResetToken(email, siteURL);
         return "redirect:/customer/profile/forgot-password?sent=true";
     }
 
@@ -144,7 +150,7 @@ public class CustomerProfileController {
             return "customer/cus_reset_password";
         }
         model.addAttribute("token", token);
-        return "customer/profile/cus_reset_password";
+        return "customer/cus_reset_password";
     }
 
     @PostMapping("/reset-password")

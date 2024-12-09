@@ -57,10 +57,11 @@ public class CustomerService {
             String token = UUID.randomUUID().toString();
             customer.setToken(token);
             updateUser(customer); // Save the token to the database
-            
+            //http://localhost:8080/customer/profile/forgot-password?sent=true
             // Send reset email
-            String resetURL = siteURL + "/customer/reset-password?token=" + token;
+            String resetURL = siteURL + "/customer/profile/reset-password?token=" + token;
             emailService.sendResetPasswordEmailforCustomers(customer, resetURL);
+            
         }
     }
 
