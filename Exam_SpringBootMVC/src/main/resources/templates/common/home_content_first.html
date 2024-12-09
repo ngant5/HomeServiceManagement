@@ -1,23 +1,51 @@
 
     <span class="fade"></span>
     <main>
+		<section th:if="${session.customerId == null}" class="hero-banner">
+		            <div class="hero-contained">
+		                <div class="hero-title fc-white">
+		                    <h1 class="ff-damion">Happy Clean</h1>
+		                    <p class="fs-h4 fw-normal">
+		                        Discover top-tier cleaning solutions for your home, office, and commercial spaces. We provide reliable, eco-friendly cleaning services that create healthier environments for everyone.
+		                    </p>
+		                    <a href="#about" class="btn-bg2 border-round mt-20">
+		                        Learn More <i class="bi bi-chevron-compact-right"></i>
+		                    </a>
+		                </div>
+		            </div>
+		            <div class="hero-socials">
+		                <a href="#" class="mt-a icon-link" aria-label="Follow us on facebook">
+		                    <i class="bi bi-facebook"></i>
+		                </a>
+		                <a href="#" class="icon-link mt-10" aria-label="Follow us on instagram">
+		                    <i class="bi bi-instagram"></i>
+		                </a>
+		                <a href="#" class="icon-link mt-10" aria-label="Follow us on twitter">
+		                    <i class="bi bi-twitter"></i>
+		                </a>
+		                <a href="#" class="icon-link mt-10" aria-label="Follow us on youtube">
+		                    <i class="bi bi-youtube"></i>
+		                </a>
+		            </div>
+		        </section>
+				
         <nav>
             <div class="contained">
                 <a href="index" class="logo fc-primary ff-damion row flex-alig-center">
                     <span class="fs-h2">Happy Clean</span>
                 </a>
 				<div class="navigation-container">
-				                   <a th:href="@{/index}">Home</a>
-				                   <a th:if="${session.customerId != null}" th:href="@{/about}">About</a>
-				                   <a th:href="@{/service}">Service</a>
-				                   <a th:href="@{/employee}">Employee</a>
-				                   <a th:if="${session.customerId != null}"th:href="@{/career}">Career</a>
-								<a th:if="${session.customerId != null}"th:href="@{/contactus}">Contact Us</a>
-								<a th:if="${session.customerId == null}" th:href="@{/contracts}">History</a>
-								<a th:if="${session.customerId == null}" th:href="@{/customer/profile/info}">Profile</a>
-								<a th:if="${session.customerId != null}" th:href="@{/customer/logout}" class="btn-bg1 border-round">Logout</a>
-								<a th:if="${session.customerId == null}" th:href="@{/customer/login}" class="btn-bg1 border-round">Login</a>
-				               </div>
+					<a th:href="@{/index}">Home</a>
+				 	<a th:href="@{/service}">Service</a>
+				  	<a th:href="@{/employee}">Employee</a>
+					<a th:if="${session.customerId == null}" th:href="@{/about}">About</a>
+					<a th:if="${session.customerId != null}" th:href="@{/contracts}">History</a>
+				 	<a th:if="${session.customerId == null}"th:href="@{/career}">Career</a>
+					<a th:if="${session.customerId != null}" th:href="@{/customer/profile/view}">Profile</a>
+					<a th:if="${session.customerId == null}"th:href="@{/contactus}">Contact Us</a>
+					<a th:if="${session.customerId != null}" th:href="@{/customer/logout}" class="btn-bg1 border-round">Logout</a>
+					<a th:if="${session.customerId == null}" th:href="@{/customer/login}" class="btn-bg1 border-round">Login</a>
+				</div>
             </div>
         </nav>
 		<a href="#" class="btn-back-to-top" aria-label="Back to top button">
