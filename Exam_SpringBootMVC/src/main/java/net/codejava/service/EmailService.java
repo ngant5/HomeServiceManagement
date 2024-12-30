@@ -1,6 +1,7 @@
 package net.codejava.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,27 @@ public class EmailService {
 
     @Autowired
     private JavaMailSender mailSender;
+    
+    @Value("${email.from}")
+    private String fromAddress;
+
+    
+    public void sendEmail(String toAddress, String subject, String content) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromAddress);  // Lấy từ cấu hình
+        message.setTo(toAddress);
+        message.setSubject(subject);
+        message.setText(content);
+
+        mailSender.send(message);
+    }
+
+    // Phương thức gửi nhắc nhở
+    public void sendEmailReminder(String toAddress, String subject, String content) {
+        sendEmail(toAddress, subject, content);  // Gọi phương thức chung
+    }
+
+
 
     public void sendVerificationEmailforEmployees(Employees employee, String siteURL) {
         String toAddress = employee.getEmail();
@@ -123,4 +145,6 @@ public class EmailService {
 
         mailSender.send(message);
     }
+    
+    
 }

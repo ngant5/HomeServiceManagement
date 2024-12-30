@@ -120,6 +120,20 @@ public class ContractRepository {
 	}
 
 
+	public List<Contracts> findContractsByType(String type) {
+	    String sql = "SELECT * FROM Contracts WHERE type = ? ORDER BY created_at DESC";
+	    return jdbcTemplate.query(sql, new Object[] { type }, this::mapRowToContract);
+	}
+	
+	public String getCustomerEmailById(int customerId) {
+        String sql = "SELECT email FROM Customers WHERE customer_id = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new Object[]{customerId}, String.class);
+        } catch (Exception e) {
+            // Nếu không tìm thấy email, có thể trả về null
+            return null;
+        }
+    }
 
 
 	public void updateContractFile(Contracts contract) {

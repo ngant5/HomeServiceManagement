@@ -227,6 +227,12 @@ public class CustomerService {
         return jdbcTemplate.query(sql, new Object[]{duration}, new BeanPropertyRowMapper<>(Contracts.class));
     }
 
-    
+    public String getCustomerEmail(int customerId) {
+        // Tìm khách hàng bằng ID
+        Customers customer = findById(customerId); 
+        // Nếu tìm thấy khách hàng, trả về email, nếu không trả về null
+        return (customer != null) ? customer.getEmail() : null;
+    }
+
 
 }

@@ -50,6 +50,19 @@ public class ContractService {
         contractRepository.updateContractStatus(contractId, contractStatus);
     }
 
+    public List<Contracts> getAllContractsByType(String type) {
+        return contractRepository.findContractsByType(type);
+    }
+    
+    public String getCustomerEmailByContractId(int contractId) {
+        // Lấy thông tin hợp đồng
+        Contracts contract = contractRepository.getContractById(contractId);
+        if (contract != null) {
+            // Lấy customerId từ hợp đồng và lấy email từ bảng Customers
+            return contractRepository.getCustomerEmailById(contract.getCustomerId());
+        }
+        return null;
+    }
 
     
     public void deleteContract(int contractId) {
