@@ -12,11 +12,11 @@
 
     <!-- OG IMAGE IS THE IMAGE SHOWN WHEN YOUR WEBSITE LINK IS SHARED ON SOCIAL MEDIA -->
     <meta property="og:image" content="art/og-card.png">
-    <meta property="og:title" content="Roundazzle - Free corporate web template">
+    <meta property="og:title" content="Happy Clean - Cleaning Services">
     <meta name="twitter:card" content="summary_large_image">
 
     <!-- THE TITLE OF THE PAGE -->
-    <title>Roundazzle | Careers</title>
+    <title>Happy Clean | Careers</title>
 
     <link rel="preload" href="assets/icons/bootstrap-icons.css" as="style">
     <link rel="preload" href="assets/css/fontstyle.css" as="style">
@@ -39,7 +39,7 @@
         <section class="sub-hero-banner" style="background-image: url('assets/art/overlay.webp');">
             <div class="hero-contained">
                 <div class="hero-title fc-white">
-                    <h1 class="ff-damion">Roundazzle | Careers</h1>
+                    <h1 class="ff-damion">Happy Clean | Careers</h1>
                     <a href="index" class="fc-white">
                         Home
                     </a>
@@ -50,16 +50,16 @@
                 </div>
             </div>
             <div class="hero-socials">
-                <a href="#" class="mt-a icon-link" aria-label="Follow us on facebook">
+                <a href="https://www.facebook.com" class="mt-a icon-link" aria-label="Follow us on facebook">
                     <i class="bi bi-facebook"></i>
                 </a>
-                <a href="#" class="icon-link mt-10" aria-label="Follow us on instagram">
+                <a href="https://www.instagram.com" class="icon-link mt-10" aria-label="Follow us on instagram">
                     <i class="bi bi-instagram"></i>
                 </a>
-                <a href="#" class="icon-link mt-10" aria-label="Follow us on twitter">
+                <a href="https://twitter.com" class="icon-link mt-10" aria-label="Follow us on twitter">
                     <i class="bi bi-twitter"></i>
                 </a>
-                <a href="#" class="icon-link mt-10" aria-label="Follow us on youtube">
+                <a href="https://www.youtube.com" class="icon-link mt-10" aria-label="Follow us on youtube">
                     <i class="bi bi-youtube"></i>
                 </a>
             </div>
@@ -70,18 +70,21 @@
         <nav>
             <div class="contained">
                 <a href="index" class="logo fc-primary ff-damion row flex-alig-center">
-                    <span class="fs-h2">Roundazzle</span>
+                    <span class="fs-h2">Happy Clean</span>
                 </a>
                 <input type="checkbox" name="tablet-mobile-menu" class="tab-mob-menu" aria-label="tablet and mobile menu">
                 <div class="navigation-container">
                     <a href="index">Home</a>
                     <a href="about">About</a>
                     <a href="service">Service</a>
-                    <a href="industries">Industries</a>
-                    <a href="blog">Blog</a>
-                    <a href="career">Career</a>
-                    <a href="contact" class="btn-bg1 border-round">Contact Us</a>
-                </div>
+					<a th:href="@{/employee}">Employee</a>
+					<a th:if="${session.customerId != null}" th:href="@{/contracts}">History</a>
+					<a th:if="${session.customerId == null}"th:href="@{/career}">Career</a>
+					<a th:if="${session.customerId != null}" th:href="@{/customer/profile/view}">Profile</a>
+					<a th:if="${session.customerId == null}"th:href="@{/contact}">Contact Us</a>
+					<a th:if="${session.customerId != null}" th:href="@{/customer/logout}" class="btn-bg1 border-round">Logout</a>
+					<a th:if="${session.customerId == null}" th:href="@{/customer/login}" class="btn-bg1 border-round">Login</a>
+				</div>
             </div>
         </nav>
         <a href="#" class="btn-back-to-top" aria-label="Back to top button">
@@ -97,18 +100,18 @@
             <div class="row flex-just-center">
                 <div class="col-tri">
                     <div class="card-career">
-                        <span class="fs-h4 mb-5 mt-15">Web designer - Entry Level</span>
+                        <span class="fs-h4 mb-5 mt-15">House Cleaner - Full-time</span>
                         <p>
                             <i class="bi bi-calendar"></i>
-                            09/26/23
+                            31/12/25
                         </p>
                         <p>
                             <i class="bi bi-geo-alt"></i>
-                            Philippines - NCR
+                            India - New Delhi
                         </p>
                         <p>
                             <i class="bi bi-briefcase"></i>
-                            Min 3 years of experience lol!
+                            Choose your own hours
                         </p>
                         <hr>
                         <div class="ta-center mt-15">
@@ -118,14 +121,14 @@
                 </div>
                 <div class="col-tri">
                     <div class="card-career">
-                        <span class="fs-h4 mb-5 mt-15">Jr Data Analyst</span>
+                        <span class="fs-h4 mb-5 mt-15">Housekeeper</span>
                         <p>
                             <i class="bi bi-calendar"></i>
-                            09/26/23
+                            28/02/25
                         </p>
                         <p>
                             <i class="bi bi-geo-alt"></i>
-                            Philippines - NCR
+                            United States of America - Washington
                         </p>
                         <p>
                             <i class="bi bi-briefcase"></i>
@@ -139,18 +142,18 @@
                 </div>
                 <div class="col-tri">
                     <div class="card-career">
-                        <span class="fs-h4 mb-5 mt-15">Web developer - Entry Level</span>
+                        <span class="fs-h4 mb-5 mt-15">Kitchen Hand </span>
                         <p>
                             <i class="bi bi-calendar"></i>
-                            09/26/23
+                            30/06/25
                         </p>
                         <p>
                             <i class="bi bi-geo-alt"></i>
-                            Philippines - NCR
+                            VietNam - HoChiMinh
                         </p>
                         <p>
                             <i class="bi bi-briefcase"></i>
-                            Min 3 years of experience lol!
+                            Health Department standards
                         </p>
                         <hr>
                         <div class="ta-center mt-15">
@@ -166,7 +169,7 @@
     <footer class="fc-white">
         <div class="contained row flex-just-center">
             <div class="col-quad">
-                <h3 class="ff-damion">Roundazzle</h3>
+                <h3 class="ff-damion">Happy Clean</h3>
                 <p>
                     Our mission is your vision and your mission is to tell
                     us your vision, so that what you envision will become our mission.
@@ -180,26 +183,26 @@
                 <h3 class="ff-damion">Get in touch</h3>
                 <a href="#" class="display-block fc-white icon-link mt-10 mb-10">
                     <i class="bi bi-envelope-fill"></i>
-                    nonexistentadd@gmail.com
+                    happyclean@gmail.com
                 </a>
                 <a href="#" class="display-block fc-white icon-link mt-10 mb-10">
                     <i class="bi bi-telephone-fill"></i>
-                    +639123456789
+                    +84 1800 1779
                 </a>
                 <a href="#" class="display-block fc-white icon-link mt-10 mb-10">
                     <i class="bi bi-geo-alt-fill"></i>
-                    20th street, Dreamland
+                    254 Ben Van Don Street, Ward 5, District 4, Ho Chi Minh City, Viet Nam
                 </a>
-                <a href="#" class="display-inblock fc-white icon-link mt-20" aria-label="Follow on facebook">
+                <a href="https://www.facebook.com" class="display-inblock fc-white icon-link mt-20" aria-label="Follow on facebook">
                     <i class="bi bi-facebook"></i>
                 </a>
-                <a href="#" class="display-inblock fc-white icon-link" aria-label="Follow on instagram">
+                <a href="https://www.instagram.com" class="display-inblock fc-white icon-link" aria-label="Follow on instagram">
                     <i class="bi bi-instagram"></i>
                 </a>
-                <a href="#" class="display-inblock fc-white icon-link" aria-label="Follow on twitter">
+                <a href="https://twitter.com" class="display-inblock fc-white icon-link" aria-label="Follow on twitter">
                     <i class="bi bi-twitter"></i>
                 </a>
-                <a href="#" class="display-inblock fc-white icon-link" aria-label="Follow on youtube">
+                <a href="https://www.youtube.com" class="display-inblock fc-white icon-link" aria-label="Follow on youtube">
                     <i class="bi bi-youtube"></i>
                 </a>
             </div>
@@ -207,15 +210,15 @@
                 <h3 class="ff-damion">Opening hours</h3>
                 <p class="mt-10 mb-10 fw-bold">
                     Monday - Friday:
-                    <span class="fw-normal display-block">Closed</span>
+                    <span class="fw-normal display-block">8:00 - 18:00</span>
                 </p>
                 <p class="mt-10 mb-10 fw-bold">
                     Saturday:
-                    <span class="fw-normal display-block">8:00 - 8:01</span>
+                    <span class="fw-normal display-block">8:00 - 12:00</span>
                 </p>
                 <p class="mt-10 mb-10 fw-bold">
                     Sunday:
-                    <span class="fw-normal display-block">10:00 - 10:01</span>
+                    <span class="fw-normal display-block">Closed</span>
                 </p>
             </div>
             <div class="col-quad">

@@ -14,16 +14,16 @@
 		                </div>
 		            </div>
 		            <div class="hero-socials">
-		                <a href="#" class="mt-a icon-link" aria-label="Follow us on facebook">
+		                <a href="https://www.facebook.com" class="mt-a icon-link" aria-label="Follow us on facebook">
 		                    <i class="bi bi-facebook"></i>
 		                </a>
-		                <a href="#" class="icon-link mt-10" aria-label="Follow us on instagram">
+		                <a href="https://www.instagram.com" class="icon-link mt-10" aria-label="Follow us on instagram">
 		                    <i class="bi bi-instagram"></i>
 		                </a>
-		                <a href="#" class="icon-link mt-10" aria-label="Follow us on twitter">
+		                <a href="https://twitter.com" class="icon-link mt-10" aria-label="Follow us on twitter">
 		                    <i class="bi bi-twitter"></i>
 		                </a>
-		                <a href="#" class="icon-link mt-10" aria-label="Follow us on youtube">
+		                <a href="https://www.youtube.com" class="icon-link mt-10" aria-label="Follow us on youtube">
 		                    <i class="bi bi-youtube"></i>
 		                </a>
 		            </div>
@@ -36,13 +36,13 @@
                 </a>
 				<div class="navigation-container">
 					<a th:href="@{/index}">Home</a>
+					<a th:if="${session.customerId == null}" th:href="@{/about}">About</a>
 				 	<a th:href="@{/service}">Service</a>
 				  	<a th:href="@{/employee}">Employee</a>
-					<a th:if="${session.customerId == null}" th:href="@{/about}">About</a>
 					<a th:if="${session.customerId != null}" th:href="@{/contracts}">History</a>
 				 	<a th:if="${session.customerId == null}"th:href="@{/career}">Career</a>
 					<a th:if="${session.customerId != null}" th:href="@{/customer/profile/view}">Profile</a>
-					<a th:if="${session.customerId == null}"th:href="@{/contactus}">Contact Us</a>
+					<a th:if="${session.customerId == null}"th:href="@{/contact}">Contact Us</a>
 					<a th:if="${session.customerId != null}" th:href="@{/customer/logout}" class="btn-bg1 border-round">Logout</a>
 					<a th:if="${session.customerId == null}" th:href="@{/customer/login}" class="btn-bg1 border-round">Login</a>
 				</div>

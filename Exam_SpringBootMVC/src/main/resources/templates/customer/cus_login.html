@@ -38,15 +38,7 @@
 </head>
 <body>
 
-	<div th:if="${param.registered}">
-		<p>Registration successful! Please check your email to verify your
-			account.</p>
-	</div>
-
-	<div th:if="${param.unverified}">
-		<p style="color: orange;">Your account is not verified. Please
-			check your email for the verification link.</p>
-	</div>
+	
 
 	<div th:if="${param.error}">
 		<p style="color: red;">Invalid email or password.</p>
@@ -82,6 +74,7 @@
 							<div th:if="${error}" class="alert alert-danger">
 							           <p th:text="${error}"></p>
 							       </div>
+								   <h1 th:text="${message}"></h1>
 							<form action="#" th:action="@{/customer/chklogin}" method="POST">
 								<div class="row">
 									<div class="col-12">
@@ -105,12 +98,21 @@
 									</div>
 									<!-- end col -->
 									<div class="col-xxl-6 col-lg-12 col-md-6">
-										<div
-											class="text-start text-md-end text-lg-start text-xxl-end mb-30">
-											<a th:href="@{/customer/profile/forgot-password}"  class="hover-underline"> Forgot
-												Password? </a>
+										<div class="text-start text-md-end text-lg-start text-xxl-end mb-30">
+											<a th:href="@{/customer/profile/forgot-password}" class="hover-underline">
+												Forgot Password? 
+											</a>
 										</div>
 									</div>
+									<div th:if="${param.registered}">
+											<p>Registration successful! Please check your email to verify your
+												account.</p>
+										</div>
+
+										<div th:if="${param.unverified}">
+											<p style="color: orange;">Your account is not verified. Please
+												check your email for the verification link.</p>
+										</div>
 									<!-- end col -->
 									<div class="col-12">
 										<div
@@ -118,6 +120,14 @@
 											<button type="submit"
 												class="main-btn primary-btn btn-hover w-100 text-center">
 												Sign In</button>
+										</div>
+									</div>
+									<div class="col-xxl-12 col-lg-12 col-md-12">
+										<div class="text-center">
+												Don't Have An Account Yet? 
+											<a th:href="@{/customer/register}" class="hover-underline">
+													SIGN UP
+											</a>
 										</div>
 									</div>
 								</div>

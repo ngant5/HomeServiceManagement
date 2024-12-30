@@ -10,6 +10,7 @@
     <title>Profile</title>
   </head>
   <body>
+	
     <!-- ========== section start ========== -->
     <section class="section">
       <div class="container-fluid">
@@ -24,8 +25,47 @@
           </div>
         </div>
         <!-- ========== title-wrapper end ========== -->
+		<div class="row">
+		          <div class="col-lg-4">
+		            <div class="card-style settings-card-1 mb-30">
+		              <div class="title mb-30 d-flex justify-content-between align-items-center">
+		                <h6>Change Password</h6>
+		              </div>
 
-        <div class="row">
+		              <!-- Hiển thị thông tin hồ sơ -->
+		              <div class="profile-info">
+		                <!-- Cập nhật thông tin người dùng -->
+		                <form id="changePWForm" enctype="multipart/form-data">
+		                  <div class="col-12">
+		                    <div class="input-style-1">
+		                      <label for="currentPassword">Current Password*</label>
+		                      <input type="password" id="currentPassword" name="currentPassword" required placeholder="Current Password" />
+		                    </div>
+		                  </div>
+		                  <div class="col-12">
+		                    <div class="input-style-1">
+		                      <label for="newPassword">New Password*</label>
+		                      <input type="password" id="newPassword" name="newPassword"  required placeholder="New Password"/>
+		                    </div>
+		                  </div>
+		<div class="col-12">
+		                    <div class="input-style-1">
+		                      <label for="confirmPassword">Confirm New Password*</label>
+		                      <input type="password" id="confirmPassword" name="confirmPassword"  required placeholder="Confirm New Password"/>
+		                    </div>
+		                  </div>
+
+		                  <div class="col-12">
+		                    <button type="submit" class="main-btn primary-btn btn-hover">
+		                      Change Password
+		                    </button>
+		                  </div>
+		                </form>
+		              </div>
+		            </div>
+		            <!-- end card -->
+		          </div>
+      
           <div class="col-lg-8">
             <div class="card-style settings-card-1 mb-30">
               <div class="title mb-30 d-flex justify-content-between align-items-center">

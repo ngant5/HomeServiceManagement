@@ -1,12 +1,25 @@
-<!-- src/main/resources/templates/admin/ad_verify.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Account Verification</title>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="shortcut icon" href="../assets_admin//images/favicon.svg" type="image/x-icon" />
+	<title>Verify | Customer</title>
+	<th:block th:insert="~{common/head_tag}"></th:block>
 </head>
 <body>
-    <h1 th:text="${message}">Verification Message</h1>
-    <a href="/customer/cus_login">Go to Login</a>
+	<section class="signin-section">
+		<div class="container-fluid">
+			<div class="title-wrapper pt-30">
+				<div class="row align-items-center">
+					Don't Have An Account Yet? 
+					<a th:href="@{/customer/login}" class="hover-underline">
+						LOGIN
+					</a>
+				</div>
+			</div>
+		</div>
+	</section>
 </body>
 </html>

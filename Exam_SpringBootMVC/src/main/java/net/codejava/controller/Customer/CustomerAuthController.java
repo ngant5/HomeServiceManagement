@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
@@ -53,7 +55,7 @@ public class CustomerAuthController {
 
         if (customer != null) {
             if (customer.getStatus() == 0) {
-                return "redirect:/customer/auth/login?unverified=true";
+                return "redirect:/customer/login?unverified=true";
             }
 
             if (customerService.checkPassword(password, customer.getPassword())) {
@@ -96,7 +98,7 @@ public class CustomerAuthController {
                                @RequestParam("address") String address,
                                HttpServletRequest request) {
         if (customerService.findByEmail(email) != null) {
-            return "redirect:/customer/auth/register?error=emailExists";
+            return "redirect:/customer/register?error=emailExists";
         }
 
         Customers newCustomer = new Customers();
@@ -105,9 +107,15 @@ public class CustomerAuthController {
         newCustomer.setEmail(email);
         newCustomer.setPhone(phone);
         newCustomer.setAddress(address);
-        newCustomer.setStatus(0); // Chưa xác thực
-        customerService.saveUser(newCustomer, request.getRequestURL().toString());
-        return "redirect:/customer/auth/login?registered=true";
+        newCustomer.setStatus(0); 
+        String siteURL = ServletUriComponentsBuilder.fromRequestUri(request)
+                .replacePath(null)
+                .build()
+                .toUriString();
+
+        customerService.saveUser(newCustomer, siteURL);
+        
+        return "redirect:/customer/login?registered=true";
     }
 
     @GetMapping("/verify")
@@ -122,6 +130,6 @@ public class CustomerAuthController {
         } else {
             model.addAttribute("message", "Invalid verification code.");
         }
-        return "customer/cus_verify";
+        return "redirect:/customer/login";
     }
 }

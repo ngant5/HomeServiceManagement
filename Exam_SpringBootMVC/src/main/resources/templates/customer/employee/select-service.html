@@ -17,8 +17,8 @@
 
 		<!-- Radio button option for selecting a service -->
 		<form th:action="@{/contracts/create}" method="POST">
-			<div class="row flex-just-center">
-				<div class="col-tri" th:each="empService : ${employeeServices}">
+			<div class="row flex-just-center" th:each="empService : ${employeeServices}">
+				<div class="col-tri">
 					<div class="card-career">
 						<div class="ta-center mt-15">
 							<input type="radio" name="empServiceId" th:value="${empService.empServiceId}" required/>
@@ -33,7 +33,8 @@
 					</div>
 				</div>
 			</div>
-			<button  type="submit" class="ta-center mt-15 btn-bg1">Request Service</button>
+			<button type="submit" class="ta-center mt-15 btn-bg1">Request Service</button>
+			
 		</form>
 
 	</section>
