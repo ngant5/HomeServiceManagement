@@ -1,55 +1,49 @@
 package net.codejava.repository;
 
 import net.codejava.model.EmployeeReviews;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
+@Repository
 public class EmployeeReviewsRepository {
 
-    private Connection connection;
+    private final JdbcTemplate jdbcTemplate;
 
-    public EmployeeReviewsRepository(Connection connection) {
-        this.connection = connection;
+    public EmployeeReviewsRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     // Tạo mới đánh giá
-    public EmployeeReviews createReview(int contractDetailId, int rating, String comment) {
-        String sql = "INSERT INTO employee_reviews (contract_detail_id, rating, comment, created_at) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setInt(1, contractDetailId);
-            stmt.setInt(2, rating);
-            stmt.setString(3, comment);
-            stmt.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+    public EmployeeReviews createReview(int contractDetailId, int employeeId, int rating, String comment) {
+        String sql = "INSERT INTO employee_reviews (contract_detail_id, employee_id, rating, comment, created_at) VALUES (?, ?, ?, ?, ?)";
 
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows > 0) {
-                ResultSet generatedKeys = stmt.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    int reviewId = generatedKeys.getInt(1);
-                    return new EmployeeReviews(reviewId, contractDetailId, rating, comment, LocalDateTime.now());
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        // Sử dụng JdbcTemplate để thực hiện câu lệnh INSERT
+        jdbcTemplate.update(sql, contractDetailId, employeeId, rating, comment, Timestamp.valueOf(LocalDateTime.now()));
+
+        // Lấy review_id sau khi INSERT thành công
+        String getLastInsertedIdSql = "SELECT SCOPE_IDENTITY()";
+        Integer reviewId = jdbcTemplate.queryForObject(getLastInsertedIdSql, Integer.class);
+
+        if (reviewId != null) {
+            return new EmployeeReviews(reviewId, contractDetailId, employeeId, rating, comment, LocalDateTime.now());
         }
         return null;
     }
 
     // Cập nhật đánh giá
-    public EmployeeReviews updateReview(int reviewId, int rating, String comment) {
-        String sql = "UPDATE employee_reviews SET rating = ?, comment = ? WHERE review_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, rating);
-            stmt.setString(2, comment);
-            stmt.setInt(3, reviewId);
+    public EmployeeReviews updateReview(int reviewId, int employeeId, int rating, String comment) {
+        String sql = "UPDATE employee_reviews SET rating = ?, comment = ?, employee_id = ? WHERE review_id = ?";
 
-            int rowsUpdated = stmt.executeUpdate();
-            if (rowsUpdated > 0) {
-                return getReviewById(reviewId); // Trả về đánh giá đã được cập nhật
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        // Cập nhật đánh giá
+        int rowsUpdated = jdbcTemplate.update(sql, rating, comment, employeeId, reviewId);
+        if (rowsUpdated > 0) {
+            return getReviewById(reviewId); // Trả về đánh giá đã được cập nhật
         }
         return null;
     }
@@ -57,40 +51,35 @@ public class EmployeeReviewsRepository {
     // Lấy đánh giá theo reviewId
     public EmployeeReviews getReviewById(int reviewId) {
         String sql = "SELECT * FROM employee_reviews WHERE review_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, reviewId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return mapResultSetToEmployeeReviews(rs);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+
+        // Sử dụng JdbcTemplate để lấy đánh giá từ database
+        return jdbcTemplate.queryForObject(sql, new Object[]{reviewId}, this::mapRowToEmployeeReviews);
     }
 
     // Lấy đánh giá theo contractDetailId
     public EmployeeReviews getReviewByContractDetailId(int contractDetailId) {
         String sql = "SELECT * FROM employee_reviews WHERE contract_detail_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, contractDetailId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return mapResultSetToEmployeeReviews(rs);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+
+        // Sử dụng JdbcTemplate để lấy đánh giá từ database
+        return jdbcTemplate.queryForObject(sql, new Object[]{contractDetailId}, this::mapRowToEmployeeReviews);
+    }
+
+    // Lấy tất cả các đánh giá theo contractId
+    public List<EmployeeReviews> findByContractId(int contractId) {
+        String sql = "SELECT * FROM employee_reviews WHERE contract_detail_id IN (SELECT contract_detail_id FROM contract_details WHERE contract_id = ?)";
+
+        // Sử dụng JdbcTemplate để lấy tất cả đánh giá từ database theo contractId
+        return jdbcTemplate.query(sql, new Object[]{contractId}, this::mapRowToEmployeeReviews);
     }
 
     // Chuyển đổi ResultSet thành đối tượng EmployeeReviews
-    private EmployeeReviews mapResultSetToEmployeeReviews(ResultSet rs) throws SQLException {
+    private EmployeeReviews mapRowToEmployeeReviews(ResultSet rs, int rowNum) throws SQLException {
         int reviewId = rs.getInt("review_id");
         int contractDetailId = rs.getInt("contract_detail_id");
+        int employeeId = rs.getInt("employee_id");  // Đọc thông tin employee_id
         int rating = rs.getInt("rating");
         String comment = rs.getString("comment");
         LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
-        return new EmployeeReviews(reviewId, contractDetailId, rating, comment, createdAt);
+        return new EmployeeReviews(reviewId, contractDetailId, employeeId, rating, comment, createdAt);  // Trả về đối tượng EmployeeReviews với đầy đủ thông tin
     }
 }

@@ -209,5 +209,13 @@ public class EmployeeRepository {
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Employees.class));
     }
 
+    public List<Employees> findEmployeesByContractId(int contractId) {
+        String sql = "SELECT e.* FROM Employees e " +
+                     "JOIN Contracts c ON e.employee_id = c.employee_id " +
+                     "WHERE c.contract_id = ?";
+        
+        return jdbcTemplate.query(sql, new Object[]{contractId}, new BeanPropertyRowMapper<>(Employees.class));
+    }
+
     
 }

@@ -139,12 +139,11 @@ public class ContractDetailController {
     @PostMapping("/update/{contractDetailId}")
     @ResponseBody
     public ContractDetails updateContractDetail(@PathVariable int contractDetailId, 
-                                                @RequestParam String servicePhone, 
-                                                @RequestParam String serviceAddress, 
-                                                @RequestParam int empServiceId) {
-    	ContractDetails updatedContractDetail = contractDetailService.updateContractDetail(contractDetailId, servicePhone, serviceAddress, empServiceId);
-        return updatedContractDetail;
+                                                @RequestBody ContractDetails contractDetail) {
+        // Gán contractDetailId từ URL vào đối tượng contractDetail nhận từ request body
+        contractDetail.setContractDetailId(contractDetailId);
+
+        // Gọi service để cập nhật hoặc tạo mới
+        return contractDetailService.updateContractDetail(contractDetail);  // Trả về bản ghi hợp đồng đã được cập nhật hoặc tạo mới
     }
-
-
 }

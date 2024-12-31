@@ -39,23 +39,35 @@ public class ContractDetailService {
         return contractDetailsRepository.getContractDetailById(id);
     }
 
-    public ContractDetails updateContractDetail(int contractDetailId, String servicePhone, String serviceAddress, int empServiceId) {
-        ContractDetails contractDetail = contractDetailsRepository.getContractDetailById(contractDetailId);
+    public ContractDetails updateContractDetail(ContractDetails contractDetail) {
+        // Lấy chi tiết hợp đồng hiện tại
+        ContractDetails currentContractDetail = contractDetailsRepository.getContractDetailById(contractDetail.getContractDetailId());
 
-        if (contractDetail == null) {
-            return null;  
+        // Kiểm tra nếu contractDetail không hợp lệ (null hoặc contractDetailId không tồn tại)
+        if (currentContractDetail == null) {
+            return null;  // Trả về null nếu không tìm thấy contractDetail
         }
 
-        contractDetail.setServicePhone(servicePhone);
-        contractDetail.setServiceAddress(serviceAddress);
-        contractDetail.setEmpServiceId(empServiceId);
+        // Nếu empServiceId thay đổi, xử lý tạo mới bản ghi và cập nhật trạng thái cũ
+        if (currentContractDetail.getEmpServiceId() != contractDetail.getEmpServiceId()) {
+            // Cập nhật trạng thái của bản ghi cũ thành "đã thay thế" (status = 2)
+            currentContractDetail.setStatus(2);
+            contractDetailsRepository.updateContractDetail(currentContractDetail);  // Cập nhật bản ghi cũ
 
-        contractDetailsRepository.updateContractDetail(contractDetail);
+            // Tạo bản ghi mới cho chi tiết hợp đồng với empServiceId mới
+            contractDetail.setStatus(0);  // Trạng thái của bản ghi mới (hoạt động)
+            contractDetailsRepository.createContractDetail(contractDetail);  // Lưu bản ghi mới vào cơ sở dữ liệu
 
-        return contractDetail;  
+            return contractDetail;  // Trả về bản ghi hợp đồng mới
+        } else {
+            // Nếu empServiceId không thay đổi, chỉ cần cập nhật thông tin còn lại
+            currentContractDetail.setServicePhone(contractDetail.getServicePhone());
+            currentContractDetail.setServiceAddress(contractDetail.getServiceAddress());
+            contractDetailsRepository.updateContractDetail(currentContractDetail);  // Cập nhật bản ghi hiện tại
+
+            return currentContractDetail;  // Trả về bản ghi hợp đồng đã được cập nhật
+        }
     }
-
-
 
 
 

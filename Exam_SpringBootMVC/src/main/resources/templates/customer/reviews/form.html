@@ -1,19 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reviews</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-	<form action="/reviews/saveOrUpdate/{{contractDetailId}}" method="post">
-	    <label for="rating">Rating:</label>
-	    <input type="number" id="rating" name="rating" min="1" max="5" required><br><br>
+    <h2>Reviews for Contract: ${contractId}</h2>
 
-	    <label for="comment">Comment:</label>
-	    <textarea id="comment" name="comment" required></textarea><br><br>
+    <table>
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Rating</th>
+                <th>Comment</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="employee : ${employees}">
+                <td th:text="${employee.name}"></td>
+                <td>
+                    <input type="number" min="1" max="5" name="rating" th:value="${employeeReview.rating}">
+                </td>
+                <td>
+                    <input type="text" name="comment" th:value="${employeeReview.comment}">
+                </td>
+                <td>
+                    <button class="btn-save-review" 
+                            data-employee-id="${employee.id}"
+                            data-contract-id="${contractId}">Save Review</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
-	    <button type="submit">Submit Review</button>
-	</form>
-
+    <script>
+        // AJAX Submit Review Form
+        $(document).on('click', '.btn-save-review', function() {
+            var employeeId = $(this).data('employee-id');
+            var contractId = $(this).data('contract-id');
+            var rating = $(this).closest('tr').find('input[name="rating"]').val();
+            var comment = $(this).closest('tr').find('input[name="comment"]').val();
+            
+            // Gửi AJAX request để lưu hoặc cập nhật đánh giá
+            $.ajax({
+                url: '/reviews/saveOrUpdate/' + contractId,
+                method: 'POST',
+                data: {
+                    employeeId: employeeId,
+                    rating: rating,
+                    comment: comment
+                },
+                success: function(response) {
+                    alert('Review saved successfully!');
+                    // Optional: Redirect to contract details page
+                    window.location.href = '/contractDetails/' + contractId;
+                },
+                error: function() {
+                    alert('Error saving review.');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
