@@ -7,7 +7,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +31,9 @@ public class EmployeeReviewsController {
 
         // Lấy danh sách emp_service_id theo contractId
         List<Integer> empServiceIds = employeeReviewsService.getEmpServiceIdsByContractId(contractId);
+        
+        Integer contractDetailId = employeeReviewsService.getContractDetailIdByContractId(contractId);
+
 
         // Danh sách lưu trữ tên nhân viên
         List<String> employeeNames = new ArrayList<>();
@@ -39,13 +46,49 @@ public class EmployeeReviewsController {
 
             employeeNames.addAll(names);  // Thêm tên nhân viên vào danh sách
         }
+        Integer employeeId = empServiceIds.isEmpty() ? null : empServiceIds.get(0);
 
         // Thêm vào model để hiển thị trong view
         model.addAttribute("contractId", contractId);
+        model.addAttribute("contractDetailId", contractDetailId);
         model.addAttribute("empServiceIds", empServiceIds);
         model.addAttribute("employeeReviews", employeeReviews);
-        model.addAttribute("employeeNames", employeeNames);  // Truyền danh sách tên nhân viên vào model
+        model.addAttribute("employeeNames", employeeNames); 
+        model.addAttribute("employeeId", employeeId);
 
         return "customer/reviews/form";  // Trả về view HTML
     }
+    
+    @PostMapping("/employee-reviews/submit")
+    @ResponseBody
+    public String submitReview(@RequestParam(required = true) Integer contractDetailId,
+            @RequestParam(required = true) Integer employeeId,
+            @RequestParam(required = true) Integer rating,
+            @RequestParam(required = true) String comment) {
+    	if (contractDetailId == null || employeeId == null || rating == null || comment == null || rating < 1 || rating > 5) {
+            return "Invalid data submitted!";
+        }
+
+
+        boolean exists = employeeReviewsService.existsByContractDetailIdAndEmployeeId(contractDetailId, employeeId);
+
+        EmployeeReviews review = new EmployeeReviews();
+        review.setContractDetailId(contractDetailId);
+        review.setEmployeeId(employeeId);
+        review.setRating(rating);
+        review.setComment(comment);
+        review.setCreatedAt(LocalDateTime.now());
+
+        if (exists) {
+            // Nếu có, thực hiện update
+            employeeReviewsService.updateReview(review);
+        } else {
+            // Nếu không, tạo mới
+            employeeReviewsService.saveReview(review);
+        }
+
+        // Trả về thông báo kết quả thành công
+        return "Review submitted successfully!";
+    }
+
 }

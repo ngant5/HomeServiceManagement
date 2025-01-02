@@ -20,6 +20,19 @@ public class EmployeeReviewsService {
         this.employeeReviewsRepository = employeeReviewsRepository;
         this.employeeRepository = employeeRepository;
     }
+    
+    public Integer getContractDetailIdByContractId(int contractId) {
+        // Gọi phương thức từ repository để lấy danh sách ContractDetails
+        List<ContractDetails> contractDetails = employeeReviewsRepository.findContractDetailsByContractId(contractId);
+        
+        // Kiểm tra và trả về contractDetailId nếu có
+        if (contractDetails != null && !contractDetails.isEmpty()) {
+            return contractDetails.get(0).getContractDetailId();  // Trả về contractDetailId đầu tiên (hoặc bạn có thể thêm logic xử lý khác nếu cần)
+        }
+        return null;  // Trả về null nếu không tìm thấy contractDetailId
+    }
+
+
 
     // Lấy tất cả đánh giá nhân viên theo contractId
     public List<EmployeeReviews> getReviewsByContractId(int contractId) {
@@ -45,6 +58,20 @@ public class EmployeeReviewsService {
     
     public List<String> getEmployeeNamesByServiceId(int serviceId) {
         return employeeRepository.findEmployeeNamesByServiceId(serviceId);
+    }
+
+    public boolean existsByContractDetailIdAndEmployeeId(int contractDetailId, int employeeId) {
+        return employeeReviewsRepository.existsByContractDetailIdAndEmployeeId(contractDetailId, employeeId);
+    }
+
+    // Lưu review mới
+    public void saveReview(EmployeeReviews review) {
+        employeeReviewsRepository.saveReview(review);
+    }
+
+    // Cập nhật review
+    public void updateReview(EmployeeReviews review) {
+        employeeReviewsRepository.updateReview(review);
     }
 
 
