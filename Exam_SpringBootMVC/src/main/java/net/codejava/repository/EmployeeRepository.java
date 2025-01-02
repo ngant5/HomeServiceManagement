@@ -145,13 +145,36 @@ public class EmployeeRepository {
         );
     }
     
-    public List<Employees> findEmployeesByServiceId(int serviceId) {
-        String sql = "SELECT e.* FROM Employees e " +
-                     "JOIN emp_service es ON e.employee_id = es.employee_id " +
-                     "WHERE es.service_id = ?";
+	/*
+	 * public List<Employees> findEmployeesByServiceId(int serviceId) { String sql =
+	 * "SELECT e.* FROM Employees e " +
+	 * "JOIN emp_service es ON e.employee_id = es.employee_id " +
+	 * "WHERE es.service_id = ?";
+	 * 
+	 * return jdbcTemplate.query(sql, new Object[]{serviceId}, new
+	 * BeanPropertyRowMapper<>(Employees.class)); }
+	 */
+    
+	/*
+	 * public List<Employees> findEmployeesByServiceId(int serviceId) { String sql =
+	 * "SELECT e.* FROM Employees e " +
+	 * "JOIN Employee_Services es ON e.employee_id = es.employee_id " +
+	 * "WHERE es.service_id = ?";
+	 * 
+	 * return jdbcTemplate.query(sql, new Object[]{serviceId}, new
+	 * BeanPropertyRowMapper<>(Employees.class)); }
+	 */
+    
+    public List<String> findEmployeeNamesByServiceId(int empServiceId) {
+        String sql = "SELECT e.fullname " +
+                     "FROM Employees e " +
+                     "JOIN Employee_Services es ON e.employee_id = es.employee_id " +
+                     "WHERE es.emp_service_id = ?";
         
-        return jdbcTemplate.query(sql, new Object[]{serviceId}, new BeanPropertyRowMapper<>(Employees.class));
+        return jdbcTemplate.queryForList(sql, new Object[]{empServiceId}, String.class);
     }
+
+
     
     public Optional<Employees> findByToken(String token) {
         String sql = "SELECT * FROM Employees WHERE token = ?";

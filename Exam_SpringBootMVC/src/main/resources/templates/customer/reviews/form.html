@@ -1,69 +1,31 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reviews</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Employee Reviews</title>
 </head>
 <body>
-    <h2>Reviews for Contract: ${contractId}</h2>
+    <h1>Employee Reviews for Contract ID: <span th:text="${contractId}"></span></h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Employee</th>
-                <th>Rating</th>
-                <th>Comment</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="employee : ${employees}">
-                <td th:text="${employee.name}"></td>
-                <td>
-                    <input type="number" min="1" max="5" name="rating" th:value="${employeeReview.rating}">
-                </td>
-                <td>
-                    <input type="text" name="comment" th:value="${employeeReview.comment}">
-                </td>
-                <td>
-                    <button class="btn-save-review" 
-                            data-employee-id="${employee.id}"
-                            data-contract-id="${contractId}">Save Review</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <h3>Emp Service IDs:</h3>
+    <ul>
+        <li th:each="empServiceId : ${empServiceIds}" th:text="${empServiceId}"></li>
+    </ul>
 
-    <script>
-        // AJAX Submit Review Form
-        $(document).on('click', '.btn-save-review', function() {
-            var employeeId = $(this).data('employee-id');
-            var contractId = $(this).data('contract-id');
-            var rating = $(this).closest('tr').find('input[name="rating"]').val();
-            var comment = $(this).closest('tr').find('input[name="comment"]').val();
-            
-            // Gửi AJAX request để lưu hoặc cập nhật đánh giá
-            $.ajax({
-                url: '/reviews/saveOrUpdate/' + contractId,
-                method: 'POST',
-                data: {
-                    employeeId: employeeId,
-                    rating: rating,
-                    comment: comment
-                },
-                success: function(response) {
-                    alert('Review saved successfully!');
-                    // Optional: Redirect to contract details page
-                    window.location.href = '/contractDetails/' + contractId;
-                },
-                error: function() {
-                    alert('Error saving review.');
-                }
-            });
-        });
-    </script>
+    <h3>Employee Names:</h3>
+    <ul>
+        <li th:each="employeeName : ${employeeNames}">
+            <span th:text="${employeeName}">Employee Full Name</span>
+        </li>
+    </ul>
+
+    <h3>Employee Reviews:</h3>
+    <ul>
+        <li th:each="review : ${employeeReviews}">
+            <span th:text="${review.fullname}">Full Name</span> -
+            <span th:text="${review.rating}">Rating</span> -
+            <span th:text="${review.comment}">Comment</span> -
+            <span th:text="${review.createdAt}">Created At</span>
+        </li>
+    </ul>
 </body>
 </html>

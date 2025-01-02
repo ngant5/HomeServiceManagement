@@ -1,44 +1,51 @@
 package net.codejava.service;
 
 import net.codejava.model.EmployeeReviews;
+import net.codejava.model.Employees;
+import net.codejava.model.ContractDetails;
+import net.codejava.repository.EmployeeRepository;
 import net.codejava.repository.EmployeeReviewsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class EmployeeReviewsService {
 
     private final EmployeeReviewsRepository employeeReviewsRepository;
+    private final EmployeeRepository employeeRepository;
 
-    @Autowired
-    public EmployeeReviewsService(EmployeeReviewsRepository employeeReviewsRepository) {
+    public EmployeeReviewsService(EmployeeReviewsRepository employeeReviewsRepository, EmployeeRepository employeeRepository) {
         this.employeeReviewsRepository = employeeReviewsRepository;
+        this.employeeRepository = employeeRepository;
     }
 
-    // Tạo hoặc cập nhật đánh giá
-    public EmployeeReviews saveOrUpdateReview(int contractDetailId, int employeeId, int rating, String comment) {
-        EmployeeReviews existingReview = employeeReviewsRepository.getReviewByContractDetailId(contractDetailId);
-        if (existingReview == null) {
-            return employeeReviewsRepository.createReview(contractDetailId, employeeId, rating, comment);
-        } else {
-            return employeeReviewsRepository.updateReview(existingReview.getReviewId(), employeeId, rating, comment);
+    // Lấy tất cả đánh giá nhân viên theo contractId
+    public List<EmployeeReviews> getReviewsByContractId(int contractId) {
+        // Lấy danh sách ContractDetails theo contractId
+        List<ContractDetails> contractDetails = employeeReviewsRepository.findContractDetailsByContractId(contractId);
+        
+        // Danh sách chứa các đánh giá nhân viên
+        List<EmployeeReviews> employeeReviews = new ArrayList<>();
+
+        // Lặp qua các chi tiết hợp đồng để lấy các đánh giá
+        for (ContractDetails detail : contractDetails) {
+            List<EmployeeReviews> reviews = employeeReviewsRepository.findReviewsByContractDetailId(detail.getContractDetailId());
+            employeeReviews.addAll(reviews);  // Thêm các đánh giá vào danh sách
         }
+
+        return employeeReviews;  // Trả về danh sách đánh giá nhân viên
     }
 
-    // Lấy thông tin đánh giá theo contractDetailId
-    public EmployeeReviews getReviewByContractDetailId(int contractDetailId) {
-        return employeeReviewsRepository.getReviewByContractDetailId(contractDetailId);
+    // Lấy tất cả emp_service_id theo contractId
+    public List<Integer> getEmpServiceIdsByContractId(int contractId) {
+        return employeeReviewsRepository.findEmpServiceIdsByContractId(contractId);
+    }
+    
+    public List<String> getEmployeeNamesByServiceId(int serviceId) {
+        return employeeRepository.findEmployeeNamesByServiceId(serviceId);
     }
 
-    // Lấy tất cả đánh giá theo contractId
-    public List<EmployeeReviews> getReviewByContractId(int contractId) {
-        return employeeReviewsRepository.findByContractId(contractId);  // Gọi phương thức findByContractId
-    }
 
-    // Lấy đánh giá theo reviewId
-    public EmployeeReviews getReviewById(int reviewId) {
-        return employeeReviewsRepository.getReviewById(reviewId);
-    }
 }

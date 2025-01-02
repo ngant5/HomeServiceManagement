@@ -5,7 +5,8 @@ import java.time.LocalDateTime;
 public class EmployeeReviews {
     private int reviewId;
     private int contractDetailId;
-    private int employeeId;  // Thêm trường employeeId
+    private int employeeId;
+    private String fullname; 
     private int rating;
     private String comment;
     private LocalDateTime createdAt;
@@ -14,11 +15,22 @@ public class EmployeeReviews {
     public EmployeeReviews() {
     }
 
+    // Constructor với fullname (khi không có rating)
+    public EmployeeReviews(int reviewId, int contractDetailId, int employeeId, String fullname, String comment, LocalDateTime createdAt) {
+        this.reviewId = reviewId;
+        this.contractDetailId = contractDetailId;
+        this.employeeId = employeeId;
+        this.fullname = fullname; // Gán giá trị cho fullname
+        this.comment = comment;
+        this.createdAt = createdAt;
+        this.rating = 0; // Không có rating, gán mặc định là 0
+    }
+
     // Constructor có tham số (đã có thêm employeeId)
     public EmployeeReviews(int reviewId, int contractDetailId, int employeeId, int rating, String comment, LocalDateTime createdAt) {
         this.reviewId = reviewId;
         this.contractDetailId = contractDetailId;
-        this.employeeId = employeeId;  // Gán giá trị cho employeeId
+        this.employeeId = employeeId;
         this.rating = rating;
         this.comment = comment;
         this.createdAt = createdAt;
@@ -47,6 +59,14 @@ public class EmployeeReviews {
 
     public void setEmployeeId(int employeeId) {  // Thêm setter cho employeeId
         this.employeeId = employeeId; 
+    }
+
+    public String getFullname() {  // Thêm getter cho fullname
+        return fullname;
+    }
+
+    public void setFullname(String fullname) {  // Thêm setter cho fullname
+        this.fullname = fullname;
     }
 
     public int getRating() { 

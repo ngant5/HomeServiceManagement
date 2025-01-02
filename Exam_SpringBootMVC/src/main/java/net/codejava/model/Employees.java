@@ -23,6 +23,11 @@ public class Employees {
 
 	// Default constructor
 	public Employees() {}
+	
+	public Employees(int employeeId, String fullname) {
+        this.employeeId = employeeId;
+        this.fullname = fullname;
+    }
 
 	public Employees(int employeeId, String fullname, String password, String userType, String email, String phone,
 			String address, String profileImage, int experienceYears, int salary, int status, String verifyCode,
