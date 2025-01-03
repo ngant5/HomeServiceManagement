@@ -2,6 +2,7 @@ package net.codejava.modelviews;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import org.springframework.jdbc.core.RowMapper;
 
@@ -16,7 +17,14 @@ public class EmployeeReviewsMapper implements RowMapper<EmployeeReviews> {
         review.setContractDetailId(rs.getInt(Views.COL_EMPLOYEE_REVIEWS_CONTRACT_DETAIL_ID));
         review.setRating(rs.getInt(Views.COL_EMPLOYEE_REVIEWS_RATING));
         review.setComment(rs.getString(Views.COL_EMPLOYEE_REVIEWS_COMMENT));
-        review.setCreatedAt(rs.getTimestamp(Views.COL_EMPLOYEE_REVIEWS_CREATED_AT).toLocalDateTime());
+
+        // Convert Timestamp to java.sql.Date
+        Timestamp timestamp = rs.getTimestamp(Views.COL_EMPLOYEE_REVIEWS_CREATED_AT);
+        if (timestamp != null) {
+            // Convert Timestamp to java.sql.Date
+            review.setCreatedAt(new java.sql.Date(timestamp.getTime()));
+        }
+
         return review;
     }
 }

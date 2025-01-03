@@ -3,88 +3,179 @@
 <head>
     <title>Employee Reviews</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+	    <style>
+	        .star-rating {
+	            display: flex;
+	            cursor: pointer;
+	        }
+	        .star {
+	            font-size: 30px;
+	            color: #ccc; /* Màu sắc khi sao chưa được chọn */
+	            margin-right: 5px;
+	        }
+	        .star.selected {
+	            color: gold; /* Màu sắc khi sao được chọn */
+	        }
+	    </style>
 </head>
 <body>
-    <h1>Employee Reviews for Contract ID: <span th:text="${contractId}"></span></h1>
+	<h1>Employee Reviews for Contract ID: <span th:text="${contractId}"></span></h1>
 
-    <!-- Hiển thị các Emp Service ID -->
-    <h3>Emp Service IDs:</h3>
-    <ul>
-        <li th:each="empServiceId : ${empServiceIds}" th:text="${empServiceId}"></li>
-    </ul>
-
-
+	<!-- Hiển thị các Emp Service ID -->
+	<h3>Employee Names:</h3>
+	    <ul>
+	        <li th:each="employeeName : ${employeeNames}">
+	            <span th:text="${employeeName}">Employee Name</span>
+	        </li>
+	    </ul>
 	<ul>
 	    <li th:each="employeeInfo : ${employeeInfoList}">
 	        <span th:text="${employeeInfo.employeeId}">Employee ID</span> - 
 	        <span th:text="${employeeInfo.employeeName}">Employee Full Name</span>
 	    </li>
 	</ul>
-    <!-- Hiển thị các đánh giá nhân viên -->
-    <h3>Employee Reviews:</h3>
-    <ul>
-        <li th:each="review : ${employeeReviews}">
-            <span th:text="${review.fullname}">Employee Full Name</span> -
-            <span th:text="${review.rating}">Rating</span> -
-            <span th:text="${review.comment}">Comment</span> -
-            <span th:text="${review.createdAt}">Created At</span>
-        </li>
-    </ul>
 
-    <!-- Form tạo hoặc cập nhật đánh giá -->
-    <h3>Submit a Review</h3>
-    <form id="reviewForm" th:action="@{/employee-reviews/submit}" method="POST">
-        <input type="hidden" name="contractDetailId" th:value="${contractDetailId}" />
-        <input type="hidden" name="employeeId" th:value="${employeeId}" />
-		
+	<!-- Hiển thị các đánh giá nhân viên -->
+	<h3>Employee Reviews:</h3>
+	<ul>
+	    <li th:each="review : ${employeeReviews}">
+			<div class="star-rating">
+			                <!-- Lặp qua 5 sao, đánh dấu sao đã chọn với class "selected" -->
+			                <i class="star fas fa-star" th:class="${review.rating >= 1} ? ' selected' : ''"></i>
+			                <i class="star fas fa-star" th:class="${review.rating >= 2} ? ' selected' : ''"></i>
+			                <i class="star fas fa-star" th:class="${review.rating >= 3} ? ' selected' : ''"></i>
+			                <i class="star fas fa-star" th:class="${review.rating >= 4} ? ' selected' : ''"></i>
+			                <i class="star fas fa-star" th:class="${review.rating >= 5} ? ' selected' : ''"></i>
+			            </div>
+	        <span th:text="${review.comment}">Comment</span> - 
+	        <span th:text="${review.rating}">Rating</span> -
+			<span th:text="${#dates.format(review.CreatedAt, 'yyyy-MM-dd')}"></span>
+	    </li>
+	</ul>
 
-        <label for="rating">Rating:</label>
-        <input type="number" id="rating" name="rating" min="1" max="5" required />
+	
+	<form id="reviewForm" th:action="@{/employee-reviews/submit}" method="POST">
+	    <input type="hidden" name="contractDetailId" th:value="${contractDetailId}" />
+	    <input type="hidden" name="employeeId" th:value="${employeeId}" />
 
-        <br/><br/>
+		<input type="hidden" id="rating" name="rating" value="0" required /> <!-- Sử dụng input hidden để lưu rating -->
 
-        <label for="comment">Comment:</label>
-        <textarea id="comment" name="comment" required></textarea>
+		        <label for="rating">Rating:</label>
+		        <div class="star-rating">
+		            <!-- Các biểu tượng sao -->
+		            <i class="star fas fa-star" data-value="1"></i>
+		            <i class="star fas fa-star" data-value="2"></i>
+		            <i class="star fas fa-star" data-value="3"></i>
+		            <i class="star fas fa-star" data-value="4"></i>
+		            <i class="star fas fa-star" data-value="5"></i>
+		        </div>
 
-        <br/><br/>
+	    <br/><br/>
 
-        <button type="submit">Submit Review</button>
-    </form>
+	    <label for="comment">Comment:</label>
+	    <textarea id="comment" name="comment" required></textarea>
 
+	    <br/><br/>
+
+				<button type="button" id="submitButtonReview" th:if="${!hasReview}" onclick="toggleSubmitButton('submit')">Review</button>
+		       <button type="button" id="submitButtonUpdate" th:if="${hasReview}" onclick="toggleSubmitButton('update')">Update Review</button>
+
+		       <!-- Nút "Cancel" cho Review và Update -->
+		       <button type="button" id="cancelButton" style="display:none;" onclick="cancelReview()">Cancel</button>
+
+		       <!-- Nút "Submit" và "Submit Update" -->
+		       <button type="submit" id="submitButtonSubmit" th:unless="${hasReview}" style="display:none;">Submit Review</button>
+		       <button type="submit" id="submitButtonSubmitUpdate" th:if="${hasReview}" style="display:none;">Submit Update</button>
+  	
+	</form>
+	
     <div id="responseMessage"></div> <!-- Để hiển thị kết quả trả về -->
 
     <script>
-		$("#reviewForm").submit(function(event) {
-		    event.preventDefault();  // Ngừng việc gửi form mặc định
+		$(document).ready(function() {
+		            // Khi người dùng chọn sao, cập nhật giá trị rating
+		            $(".star").click(function() {
+		                var ratingValue = $(this).data("value");  // Lấy giá trị từ thuộc tính data-value của sao
+		                $("#rating").val(ratingValue);  // Cập nhật giá trị rating ẩn
+		                updateStarSelection(ratingValue);  // Cập nhật màu sắc của sao đã chọn
+		            });
 
-		    // Thu thập dữ liệu từ form
-		    var formData = $(this).serialize(); // Thu thập tất cả các input trong form
-		    console.log(formData);  // Kiểm tra dữ liệu form
+		            // Cập nhật màu sắc của các sao khi người dùng chọn
+		            function updateStarSelection(selectedRating) {
+		                $(".star").each(function() {
+		                    var starValue = $(this).data("value");
+		                    if (starValue <= selectedRating) {
+		                        $(this).addClass("selected");  // Thêm class "selected" để đổi màu sao
+		                    } else {
+		                        $(this).removeClass("selected");  // Xóa class "selected" nếu sao chưa được chọn
+		                    }
+		                });
+		            }
 
-		    // Kiểm tra xem rating có hợp lệ không
-		    var rating = $("#rating").val();
-		    if (!rating || isNaN(rating) || rating < 1 || rating > 5) {
-		        alert("Please enter a valid rating between 1 and 5.");
-		        return;  // Dừng lại nếu rating không hợp lệ
-		    }
+		            // Kiểm tra giá trị rating ban đầu nếu có
+		            var initialRating = $("#rating").val();
+		            if (initialRating) {
+		                updateStarSelection(initialRating);
+		            }
+		        });
 
-		    // Gửi dữ liệu AJAX đến server
-		    $.ajax({
-		        url: '/employee-reviews/submit',  // Đảm bảo URL đúng với controller
-		        type: 'POST',
-		        data: formData,
-		        success: function(response) {
-		            // Hiển thị kết quả trả về (nếu có)
-		            $("#responseMessage").html("<p>Review submitted successfully!</p>");
-		            // Có thể thêm logic để làm mới phần danh sách đánh giá ở đây nếu cần
-		        },
-		        error: function(xhr, status, error) {
-		            // Hiển thị thông báo lỗi nếu có
-		            $("#responseMessage").html("<p style='color:red;'>Error occurred: " + xhr.responseText + "</p>");
-		            console.log(xhr);  // Kiểm tra thêm thông tin lỗi từ response
+		        function toggleSubmitButton(actionType) {
+		            // Ẩn/hiện nút dựa trên hành động
+		            if (actionType === 'submit') {
+		                $("#submitButtonReview").hide();
+		                $("#submitButtonSubmit").show();
+		                $("#cancelButton").show();  // Hiển thị nút Cancel
+		            } else if (actionType === 'update') {
+		                $("#submitButtonUpdate").hide();
+		                $("#submitButtonSubmitUpdate").show();
+		                $("#cancelButton").show();  // Hiển thị nút Cancel
+		            }
 		        }
-		    });
-		});
+
+		        // Hàm hủy bỏ (hủy bỏ Review hoặc Update)
+		        function cancelReview() {
+		            // Đặt lại tất cả các giá trị ban đầu
+		            $("#reviewForm")[0].reset();
+		            $(".star").removeClass("selected"); // Xóa màu sao đã chọn
+		            $("#cancelButton").hide(); // Ẩn nút Cancel
+		            $("#submitButtonSubmit").hide(); // Ẩn nút Submit Review
+		            $("#submitButtonSubmitUpdate").hide(); // Ẩn nút Submit Update
+		            $("#submitButtonReview").show(); // Hiển thị lại nút Review
+		            $("#submitButtonUpdate").show(); // Hiển thị lại nút Update Review
+		        }
+
+        $("#reviewForm").submit(function(event) {
+            event.preventDefault();  // Ngừng việc gửi form mặc định
+
+            // Thu thập dữ liệu từ form
+            var formData = $(this).serialize(); // Thu thập tất cả các input trong form
+            console.log(formData);  // Kiểm tra dữ liệu form
+
+            // Kiểm tra xem rating có hợp lệ không
+            var rating = $("#rating").val();
+            if (!rating || isNaN(rating) || rating < 1 || rating > 5) {
+                alert("Please enter a valid rating between 1 and 5.");
+                return;  // Dừng lại nếu rating không hợp lệ
+            }
+
+            // Gửi dữ liệu AJAX đến server
+            $.ajax({
+                url: '/employee-reviews/submit',  // Đảm bảo URL đúng với controller
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    // Hiển thị kết quả trả về (nếu có)
+                    $("#responseMessage").html("<p>Review submitted successfully!</p>");
+                    // Có thể thêm logic để làm mới phần danh sách đánh giá ở đây nếu cần
+                },
+                error: function(xhr, status, error) {
+                    // Hiển thị thông báo lỗi nếu có
+                    $("#responseMessage").html("<p style='color:red;'>Error occurred: " + xhr.responseText + "</p>");
+                    console.log(xhr);  // Kiểm tra thêm thông tin lỗi từ response
+                }
+            });
+        });
     </script>
 </body>
 </html>

@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +48,17 @@ public class EmployeeReviewsController {
 
             employeeNames.addAll(names);  // Thêm tên nhân viên vào danh sách
         }
-        Integer employeeId = empServiceIds.isEmpty() ? null : empServiceIds.get(0);
+        int employeeId = empServiceIds.isEmpty() ? 0 : empServiceIds.get(0); // Đảm bảo employeeId là int
+        boolean hasReview = false;
+
+        for (EmployeeReviews review : employeeReviews) {
+            if (review.getEmployeeId() == employeeId) {  // So sánh bằng toán tử == khi làm việc với int
+                hasReview = true;
+                break;
+            }
+        }
+
+
 
         // Thêm vào model để hiển thị trong view
         model.addAttribute("contractId", contractId);
@@ -55,7 +67,8 @@ public class EmployeeReviewsController {
         model.addAttribute("employeeReviews", employeeReviews);
         model.addAttribute("employeeNames", employeeNames); 
         model.addAttribute("employeeId", employeeId);
-
+        
+        model.addAttribute("hasReview", hasReview); 
         return "customer/reviews/form";  // Trả về view HTML
     }
     
@@ -77,8 +90,11 @@ public class EmployeeReviewsController {
         review.setEmployeeId(employeeId);
         review.setRating(rating);
         review.setComment(comment);
-        review.setCreatedAt(LocalDateTime.now());
-
+        LocalDateTime localDateTime = LocalDateTime.now();  // Lấy thời gian hiện tại
+        java.util.Date utilDate = java.util.Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());  // Chuyển từ java.util.Date thành java.sql.Date
+        review.setCreatedAt(sqlDate);
+        
         if (exists) {
             // Nếu có, thực hiện update
             employeeReviewsService.updateReview(review);

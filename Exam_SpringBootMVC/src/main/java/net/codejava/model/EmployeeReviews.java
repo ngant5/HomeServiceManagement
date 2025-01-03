@@ -1,6 +1,7 @@
 package net.codejava.model;
 
-import java.time.LocalDateTime;
+import java.sql.Date;
+
 
 public class EmployeeReviews {
     private int reviewId;
@@ -9,14 +10,14 @@ public class EmployeeReviews {
     private String fullname; 
     private int rating;
     private String comment;
-    private LocalDateTime createdAt;
+    private Date createdAt;
 
     // Constructor mặc định
     public EmployeeReviews() {
     }
 
     // Constructor với fullname (khi không có rating)
-    public EmployeeReviews(int reviewId, int contractDetailId, int employeeId, String fullname, String comment, LocalDateTime createdAt) {
+    public EmployeeReviews(int reviewId, int contractDetailId, int employeeId, String fullname, String comment, Date createdAt) {
         this.reviewId = reviewId;
         this.contractDetailId = contractDetailId;
         this.employeeId = employeeId;
@@ -27,7 +28,7 @@ public class EmployeeReviews {
     }
 
     // Constructor có tham số (đã có thêm employeeId)
-    public EmployeeReviews(int reviewId, int contractDetailId, int employeeId, int rating, String comment, LocalDateTime createdAt) {
+    public EmployeeReviews(int reviewId, int contractDetailId, int employeeId, int rating, String comment, Date createdAt) {
         this.reviewId = reviewId;
         this.contractDetailId = contractDetailId;
         this.employeeId = employeeId;
@@ -85,11 +86,11 @@ public class EmployeeReviews {
         this.comment = comment; 
     }
 
-    public LocalDateTime getCreatedAt() { 
+    public Date getCreatedAt() { 
         return createdAt; 
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) { 
+    public void setCreatedAt(Date createdAt) { 
         this.createdAt = createdAt; 
     }
 }
