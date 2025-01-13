@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Employee Schedule</title>
+    <script>
+        function createSchedule() {
+            let employeeId = document.getElementById('employeeId').value;
+            let month = document.getElementById('month').value;
+            let year = document.getElementById('year').value;
+
+            fetch(`/api/schedules/create/${employeeId}?month=${month}&year=${year}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                alert("Schedule created successfully");
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</head>
+<body>
+    <h1>Create Employee Schedule</h1>
+    <label for="employeeId">Employee ID:</label>
+    <input type="number" id="employeeId" required><br><br>
+    
+    <label for="month">Month (1-12):</label>
+    <input type="number" id="month" min="1" max="12" required><br><br>
+    
+    <label for="year">Year (YYYY):</label>
+    <input type="number" id="year" min="2020" required><br><br>
+    
+    <button onclick="createSchedule()">Create Schedule</button>
+</body>
+</html>

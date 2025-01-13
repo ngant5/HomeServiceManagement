@@ -16,7 +16,7 @@
     <meta name="twitter:card" content="summary_large_image">
 
     <!-- THE TITLE OF THE PAGE -->
-    <title>Roundazzle | Careers</title>
+    <title>Happy Clean | Apply</title>
 
  	<link rel="preload" href="assets/icons/bootstrap-icons.css" as="style">
     <link rel="preload" href="assets/css/fontstyle.css" as="style">
@@ -36,10 +36,10 @@
     <span class="fade"></span>
     <main>
         <!-- SUB HERO BANNER START -->
-        <section class="sub-hero-banner" style="background-image: url('assets/	art/overlay.webp');">
-            <div class="hero-contained">
+        <section class="sub-hero-banner" style="background-image: url('assets/art/overlay.webp');">
+            <!--<div class="hero-contained">
                 <div class="hero-title fc-white">
-                    <h1 class="ff-damion">Roundazzle | Careers</h1>
+                    <h1 class="ff-damion">Happy Clean | Apply</h1>
                     <a href="index" class="fc-white">
                         Home
                     </a>
@@ -49,8 +49,8 @@
                     </a>
                     <i class="bi bi-chevron-right"></i>
                     <a href="#" class="fc-white">
-                        Web developer - Entry level
-                    </a>
+                        Apply
+                    </-->a>
                 </div>
             </div>
             <div class="hero-socials">
@@ -74,17 +74,18 @@
         <nav>
             <div class="contained">
                 <a href="index" class="logo fc-primary ff-damion row flex-alig-center">
-                    <span class="fs-h2">Roundazzle</span>
+                    <span class="fs-h2">Happy Clean</span>
                 </a>
                 <input type="checkbox" name="tablet-mobile-menu" class="tab-mob-menu" aria-label="tablet and mobile menu">
                 <div class="navigation-container">
                     <a href="index">Home</a>
                     <a href="about">About</a>
                     <a href="service">Service</a>
-                    <a href="industries">Industries</a>
-                    <a href="blog">Blog</a>
+                    <a href="employee">Employee</a>
                     <a href="career">Career</a>
-                    <a href="contact" class="btn-bg1 border-round">Contact Us</a>
+                    <a href="contact">Contact</a>
+					<a th:if="${session.customerId != null}" th:href="@{/customer/logout}" class="btn-bg1 border-round">Logout</a>
+					<a th:if="${session.customerId == null}" th:href="@{/customer/login}" class="btn-bg1 border-round">Login</a>
                 </div>
             </div>
         </nav>
@@ -94,59 +95,8 @@
         <!-- NAVIGATION END -->
 
         <section class="contained">
-            <div class="col-full">
-                <h2 class="fc-primary ta-center mt-5">Web developer - Entry level</h2>
-                <p>
-                    <i class="bi bi-calendar"></i>
-                    Date posted : 09/26/23
-                </p>
-                <p>
-                    <i class="bi bi-geo-alt"></i>
-                    Philippines - NCR
-                </p>
-                <p>
-                    <i class="bi bi-briefcase"></i>
-                    Min 3 years of experience! - Entry level
-                </p>
-                <p>
-                    PHP 18,000 - 19,000 / Month
-                </p>
-
-                <hr>
-                <h3>Job Description</h3>
-                <p>
-                    You will be involved in the full web development lifecycle - from requirements, to design, 
-                    to coding, to testing, and finally to production.
-                </p>
-                <p>
-                    In this role, you will be a key member in contributing to and evolving our web applications 
-                    by adopting the latest technologies and capabilities. Working alongside the Director of Web 
-                    Development, you will help grow the department. 
-                </p>
-
-                <h3>Qualifications</h3>
-                <ul>
-                    <li>
-                        Candidate must possess at least Bachelor’s/College Degree in Engineering 
-                        (Computer/Telecommunication), Engineering (Electrical/Electronic), Computer 
-                        Science/Information Technology, Physics or equivalent
-                    </li>
-                    <li>
-                        Must have experience of the following: Java, Javascript, HTML, CSS, or PHP, C#, .NET,
-                        Node.js, Ruby, Laravel, ANY SERVER SIDE LANGUAGE, WEB FRAMEWORK YOU CAN THINK OF! IS A MUST HAVE
-                    </li>
-                    <li>
-                        Strong analytical skills and ability to work independently
-                    </li>
-                    <li>
-                        Must have 3 years working experience in Software development - Entry level 
-                        or Fresh graduate are also welcome to apply but with atleast 3 years experience, 
-                        it's up to you where you get your experience.
-                    </li>
-                    <li>
-                        Must be willing to work Monday - Saturday
-                    </li>
-                </ul>
+            <div class="col-wide mlmr-a mt-25">
+                
 
                 <h3>Benifits</h3>
                 <ul>
@@ -191,7 +141,7 @@
     <footer class="fc-white">
         <div class="contained row flex-just-center">
             <div class="col-quad">
-                <h3 class="ff-damion">Roundazzle</h3>
+                <h3 class="ff-damion">Happy Clean</h3>
                 <p>
                     Our mission is your vision and your mission is to tell
                     us your vision, so that what you envision will become our mission.
@@ -205,15 +155,15 @@
                 <h3 class="ff-damion">Get in touch</h3>
                 <a href="#" class="display-block fc-white icon-link mt-10 mb-10">
                     <i class="bi bi-envelope-fill"></i>
-                    nonexistentadd@gmail.com
+                    happyclean@gmail.com
                 </a>
                 <a href="#" class="display-block fc-white icon-link mt-10 mb-10">
                     <i class="bi bi-telephone-fill"></i>
-                    +639123456789
+                    +84 1800 1779
                 </a>
                 <a href="#" class="display-block fc-white icon-link mt-10 mb-10">
                     <i class="bi bi-geo-alt-fill"></i>
-                    20th street, Dreamland
+					254 Ben Van Don Street, Ward 5, District 4, Ho Chi Minh City, Viet Nam
                 </a>
                 <a href="#" class="display-inblock fc-white icon-link mt-20" aria-label="Follow on facebook">
                     <i class="bi bi-facebook"></i>
@@ -232,15 +182,15 @@
                 <h3 class="ff-damion">Opening hours</h3>
                 <p class="mt-10 mb-10 fw-bold">
                     Monday - Friday:
-                    <span class="fw-normal display-block">Closed</span>
+                    <span class="fw-normal display-block">8:00 - 18:00</span>
                 </p>
                 <p class="mt-10 mb-10 fw-bold">
                     Saturday:
-                    <span class="fw-normal display-block">8:00 - 8:01</span>
+                    <span class="fw-normal display-block">8:00 - 12:00</span>
                 </p>
                 <p class="mt-10 mb-10 fw-bold">
                     Sunday:
-                    <span class="fw-normal display-block">10:00 - 10:01</span>
+                    <span class="fw-normal display-block">Closed</span>
                 </p>
             </div>
             <div class="col-quad">
@@ -257,13 +207,9 @@
                     <i class="bi bi-chevron-compact-right"></i>
                     Service
                 </a>
-                <a href="industries" class="display-block fc-white mt-5 mb-5">
+                <a href="employee" class="display-block fc-white mt-5 mb-5">
                     <i class="bi bi-chevron-compact-right"></i>
-                    Industries
-                </a>
-                <a href="blog" class="display-block fc-white mt-5 mb-5">
-                    <i class="bi bi-chevron-compact-right"></i>
-                    Blog
+                    Employee
                 </a>
                 <a href="career" class="display-block fc-white mt-5 mb-5">
                     <i class="bi bi-chevron-compact-right"></i>
@@ -276,7 +222,7 @@
             </div>
         </div>
         <div class="copy ta-center fc-white">
-            <small>&copy; Your site - Copyright 2023</small>
+            <small>&copy; HAPPY CLEAN - Copyright 2025</small>
         </div>
     </footer>
 

@@ -42,7 +42,7 @@
 					<a th:if="${session.customerId != null}" th:href="@{/contracts}">History</a>
 				 	<a th:if="${session.customerId == null}"th:href="@{/career}">Career</a>
 					<a th:if="${session.customerId != null}" th:href="@{/customer/profile/view}">Profile</a>
-					<a th:if="${session.customerId == null}"th:href="@{/contact}">Contact Us</a>
+					<a th:if="${session.customerId == null}"th:href="@{/contact}">Contact</a>
 					<a th:if="${session.customerId != null}" th:href="@{/customer/logout}" class="btn-bg1 border-round">Logout</a>
 					<a th:if="${session.customerId == null}" th:href="@{/customer/login}" class="btn-bg1 border-round">Login</a>
 				</div>

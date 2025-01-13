@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home Service</title>
+    <title>Happy Clean | Home</title>
 	<th:block th:insert="~{common/home_head_tag}"></th:block>
 </head>
 <body>
@@ -40,7 +40,7 @@
         <!-- ABOUT SECTION END -->
 
         <!-- TEAM SECTION START -->
-        <section class="contained">
+        <section class="contained bg-primary-foot ta-center">
             <h2 class="section-title ff-damion">Our Team</h2>
             <p class="col-wide mlmr-a ta-center">
                 At Happy Clean, our team consists of highly skilled and dedicated cleaning professionals who are passionate about delivering the best results for our clients. We hire only the most reliable and trustworthy individuals to ensure your satisfaction.
@@ -98,6 +98,12 @@
                 </div>
             </div>
             <br>
+			<div class="contained row flex-just-center">
+				<a href="employee" class="btn-bg2 border-round mt-25">
+					View our employees
+				</a>
+			</div>
+			
         </section>
         <!-- TEAM SECTION END -->
 
@@ -126,71 +132,13 @@
 							<a th:href="@{/service/{id}(id=${service.serviceId})}" class="btn-bg2 border-round mt-15">
 								Choose Employee
 							</a>
-
-		                </div>
-            <a href="service" class="btn-bg2 border-round mt-25">
-                View our services
-            </a>
-        </section>
+					</div>
+		            <a href="service" class="btn-bg2 border-round mt-25">
+		                View our services
+		            </a>
+        		</section>
         <!-- PREVIEW SERVICE SECTION END -->
 
-        <!-- PREVIEW BLOGS SECTION START -->
-        <section class="contained">
-            <h2 class="section-title ff-damion">Blogs</h2>
-            <p class="ta-center col-wide mlmr-a">
-                Stay informed about our blogs, it's highly unlikely that they will stay up to date. 
-                This will be the latest blog from 2023 when it's already 2026, feel free to read our 
-                outdated blogs.
-            </p>
-            <div class="row flex-just-center">
-                <div class="col-tri">
-                    <article class="card-blog">
-                        <img src="../assets/art/work1.webp" alt="">
-                        <div class="info">
-                            <h3 class="mt-5 mb-5 ff-damion fc-primary">Duckonomics</h3>
-                            <p class="ml-a mt-5">09/26/2023</p>
-                        </div>
-                        <p class="ml-10 mt-5 mb-20">
-                            Duckonomics Meets Quackonomics.
-                        </p>
-                        <a href="blog-1" class="ml-10">
-                            Read blog <i class="bi bi-box-arrow-up-right"></i>
-                        </a>
-                    </article>
-                </div>
-                <div class="col-tri">
-                    <article class="card-blog">
-                        <img src="../assets/art/work2.webp" alt="">
-                        <div class="info">
-                            <h3 class="mt-5 mb-5 ff-damion fc-primary">Quackonomics</h3>
-                            <p class="ml-a mt-5">09/26/2023</p>
-                        </div>
-                        <p class="ml-10 mt-5 mb-20">
-                            A Duck's Guide to Financial Success.
-                        </p>
-                        <a href="blog-1" class="ml-10">
-                            Read blog <i class="bi bi-box-arrow-up-right"></i>
-                        </a>
-                    </article>
-                </div>
-                <div class="col-tri">
-                    <article class="card-blog">
-                        <img src="../assets/art/work3.webp" alt="">
-                        <div class="info">
-                            <h3 class="mt-5 mb-5 ff-damion fc-primary">Galactic Gastronomy</h3>
-                            <p class="ml-a mt-5">09/26/2023</p>
-                        </div>
-                        <p class="ml-10 mt-5 mb-20">
-                            Toasting with the Stars.
-                        </p>
-                        <a href="blog-1" class="ml-10">
-                            Read blog <i class="bi bi-box-arrow-up-right"></i>
-                        </a>
-                    </article>
-                </div>
-            </div>
-        </section>
-        <!-- PREVIEW BLOGS SECTION END -->
 
         <!-- SUBSCRIBE TO NEWS LETTERS START -->
         <section class="subscribe bg-primary-foot" style="background-image: url('../assets/art/overlay.webp');">

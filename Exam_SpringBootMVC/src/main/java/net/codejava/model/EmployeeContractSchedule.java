@@ -1,57 +1,71 @@
 package net.codejava.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class EmployeeContractSchedule {
     private int scheduleId;
     private int contractDetailId; 
-    private int workDate;
+    private int employeeId; 
+    private LocalDate workDate;  
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private LocalDateTime hoursWorked;
     private int status;
 
-    
+    // Getters and Setters
     public int getScheduleId() { 
-    	return scheduleId; 
-    	}
+        return scheduleId; 
+    }
+
     public void setScheduleId(int scheduleId) { 
-    	this.scheduleId = scheduleId; 
-    	}
+        this.scheduleId = scheduleId; 
+    }
+
     public int getContractDetailId() {
-    	return contractDetailId; 
-    	}
+        return contractDetailId; 
+    }
+
     public void setContractDetailId(int contractDetailId) { 
-    	this.contractDetailId = contractDetailId;
-    	}
-    public int getWorkDate() {
-    	return workDate; 
-    	}
-    public void setWorkDate(int workDate) { 
-    	this.workDate = workDate; 
-    	}
+        this.contractDetailId = contractDetailId;
+    }
+
+    public int getEmployeeId() { 
+        return employeeId; 
+    }
+
+    public void setEmployeeId(int employeeId) { 
+        this.employeeId = employeeId;
+    }
+
+    public LocalDate getWorkDate() {
+        return workDate; 
+    }
+
+    public void setWorkDate(LocalDate workDate) { 
+        this.workDate = workDate; 
+    }
+
     public LocalDateTime getStartTime() {
-    	return startTime; 
-    	}
+        return startTime; 
+    }
+
     public void setStartTime(LocalDateTime startTime) { 
-    	this.startTime = startTime; 
-    	}
+        this.startTime = startTime; 
+    }
+
     public LocalDateTime getEndTime() { 
-    	return endTime;
-    	}
+        return endTime;
+    }
+
     public void setEndTime(LocalDateTime endTime) {
-    	this.endTime = endTime;
-    	}
-    public LocalDateTime getHoursWorked() { 
-    	return hoursWorked; 
-    	}
-    public void setHoursWorked(LocalDateTime hoursWorked) { 
-    	this.hoursWorked = hoursWorked; 
-    	}
+        this.endTime = endTime;
+    }
+
     public int getStatus() { 
-    	return status; 
-    	}
+        return status; 
+    }
+
     public void setStatus(int status) { 
-    	this.status = status;
-    	}
+        this.status = status;
+    }
 }

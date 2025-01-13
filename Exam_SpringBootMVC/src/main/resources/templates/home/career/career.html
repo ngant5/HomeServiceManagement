@@ -12,11 +12,11 @@
 
     <!-- OG IMAGE IS THE IMAGE SHOWN WHEN YOUR WEBSITE LINK IS SHARED ON SOCIAL MEDIA -->
     <meta property="og:image" content="art/og-card.png">
-    <meta property="og:title" content="Happy Clean - Cleaning Services">
+    <!--<meta property="og:title" content="Happy Clean">-->
     <meta name="twitter:card" content="summary_large_image">
 
     <!-- THE TITLE OF THE PAGE -->
-    <title>Happy Clean | Careers</title>
+    <title>Happy Clean | Career</title>
 
     <link rel="preload" href="assets/icons/bootstrap-icons.css" as="style">
     <link rel="preload" href="assets/css/fontstyle.css" as="style">
@@ -29,7 +29,7 @@
     <link rel="stylesheet" href="assets/css/layout.css">
     <link rel="stylesheet" href="assets/css/animation.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="icon" type="image/png" href="assets/art/favicon.png">
+    <!--<link rel="icon" type="image/png" href="assets/art/favicon.png">-->
 </head>
 <body>
     <!-- FADE OUT ANIMATION WHEN LOADED -->
@@ -37,7 +37,7 @@
     <main>
         <!-- SUB HERO BANNER START -->
         <section class="sub-hero-banner" style="background-image: url('assets/art/overlay.webp');">
-            <div class="hero-contained">
+            <!--<div class="hero-contained">
                 <div class="hero-title fc-white">
                     <h1 class="ff-damion">Happy Clean | Careers</h1>
                     <a href="index" class="fc-white">
@@ -48,7 +48,7 @@
                         Careers
                     </a>
                 </div>
-            </div>
+            </div>-->
             <div class="hero-socials">
                 <a href="https://www.facebook.com" class="mt-a icon-link" aria-label="Follow us on facebook">
                     <i class="bi bi-facebook"></i>
@@ -81,7 +81,7 @@
 					<a th:if="${session.customerId != null}" th:href="@{/contracts}">History</a>
 					<a th:if="${session.customerId == null}"th:href="@{/career}">Career</a>
 					<a th:if="${session.customerId != null}" th:href="@{/customer/profile/view}">Profile</a>
-					<a th:if="${session.customerId == null}"th:href="@{/contact}">Contact Us</a>
+					<a th:if="${session.customerId == null}"th:href="@{/contact}">Contact</a>
 					<a th:if="${session.customerId != null}" th:href="@{/customer/logout}" class="btn-bg1 border-round">Logout</a>
 					<a th:if="${session.customerId == null}" th:href="@{/customer/login}" class="btn-bg1 border-round">Login</a>
 				</div>
@@ -235,13 +235,9 @@
                     <i class="bi bi-chevron-compact-right"></i>
                     Service
                 </a>
-                <a href="industries" class="display-block fc-white mt-5 mb-5">
+                <a href="employee" class="display-block fc-white mt-5 mb-5">
                     <i class="bi bi-chevron-compact-right"></i>
-                    Industries
-                </a>
-                <a href="blog" class="display-block fc-white mt-5 mb-5">
-                    <i class="bi bi-chevron-compact-right"></i>
-                    Blog
+                    Employee
                 </a>
                 <a href="career" class="display-block fc-white mt-5 mb-5">
                     <i class="bi bi-chevron-compact-right"></i>
@@ -254,7 +250,7 @@
             </div>
         </div>
         <div class="copy ta-center fc-white">
-            <small>&copy; Your site - Copyright 2023</small>
+            <small>&copy; HAPPY CLEAN - Copyright 2025</small>
         </div>
     </footer>
 
