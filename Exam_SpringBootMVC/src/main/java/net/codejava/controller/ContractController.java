@@ -143,6 +143,17 @@ public class ContractController {
                 session.setAttribute("contractId", contractId);
                 session.setAttribute("empServiceId", empServiceId);
                 session.setAttribute("servicePrice", servicePrice);
+                
+                EmployeeServices employeeServices = employeeServicesService.findByEmpServiceId(empServiceId);
+                if (employeeServices != null && employeeServices.getEmployee() != null) {
+                    Integer employeeId = employeeServices.getEmployee().getEmployeeId();  // Lấy employeeId
+                    session.setAttribute("employee_id", employeeId);  
+                    System.out.println("Employee ID saved in session: " + employeeId); 
+                } else {
+                    // Xử lý nếu không tìm thấy EmployeeServices hợp lệ
+                    System.err.println("Error: Employee not found for empServiceId: " + empServiceId);
+                    return "redirect:/error"; // Chuyển đến trang lỗi
+                }
                 return "redirect:/contracts/checkout"; // Chuyển đến trang checkout
             } catch (Exception e) {
                 // Bước 5: Xử lý lỗi và log thông tin chi tiết
@@ -183,6 +194,8 @@ public class ContractController {
                     logger.warn("No totalPrice found in session. Cannot finalize contract.");
                     return "redirect:/error";
                 }
+                model.addAttribute("employeeId", session.getAttribute("employee_id"));
+
                 model.addAttribute("servicePrice", servicePrice);
 
 

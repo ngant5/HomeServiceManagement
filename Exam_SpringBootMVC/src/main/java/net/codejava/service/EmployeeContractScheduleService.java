@@ -16,7 +16,7 @@ import java.util.Optional;
 public class EmployeeContractScheduleService {
 
     @Autowired
-    private EmployeeContractScheduleRepository scheduleRepository;
+    private EmployeeContractScheduleRepository scheduleRepository; // Đảm bảo đúng tên biến
 
     // Tạo lịch làm việc cho nhân viên trong tháng
     public List<EmployeeContractSchedule> createScheduleForEmployee(int employeeId, int month, int year) {
@@ -108,5 +108,13 @@ public class EmployeeContractScheduleService {
             existingSchedule.setStatus(2); // Giả sử 2 là trạng thái "đã xóa"
             saveSchedule(existingSchedule);
         }
+    }
+    
+    public List<EmployeeContractSchedule> getSchedulesByEmployeeAndStatus(int employeeId, int status) {
+        return scheduleRepository.findByEmployeeIdAndStatus(employeeId, status);
+    }
+
+    public List<EmployeeContractSchedule> getSchedulesByEmployeeId(int employeeId) {
+        return scheduleRepository.findByEmployeeIdAndStatus(employeeId, 0);  // Giả sử status = 0 là lịch trình hợp lệ
     }
 }

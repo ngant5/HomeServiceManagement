@@ -56,7 +56,7 @@ public class EmployeeContractScheduleController {
 
             // Kiểm tra nếu không có lịch
             if (schedules.isEmpty()) {
-                return ResponseEntity.status(404).body("Không tìm thấy lịch cho nhân viên vào ngày " + date);
+                return ResponseEntity.ok("No available schedules for the selected date.");
             }
 
             return ResponseEntity.ok(schedules);

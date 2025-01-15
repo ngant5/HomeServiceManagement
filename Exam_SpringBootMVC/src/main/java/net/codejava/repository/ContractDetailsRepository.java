@@ -37,16 +37,17 @@ public class ContractDetailsRepository {
             throw new IllegalArgumentException("empServiceId không hợp lệ: " + contractDetail.getEmpServiceId());
         }
     	
-        String sql = "INSERT INTO Contract_Details (contract_id, emp_service_id, service_address, service_phone, start_date, end_date, status, hours_worked, total_price, contract_type) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Contract_Details (contract_id, emp_service_id, employee_id, service_address, service_phone, start_date, end_date, status, hours_worked, total_price, contract_type) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         logger.info("Trying to insert contract detail with emp_service_id: {}", contractDetail.getEmpServiceId());
 
         jdbcTemplate.update(sql, contractDetail.getContractId(), contractDetail.getEmpServiceId(), 
-                            contractDetail.getServiceAddress(), contractDetail.getServicePhone(),
-                            contractDetail.getStartDate(), contractDetail.getEndDate(),
-                            contractDetail.getStatus(), contractDetail.getHoursWorked(),
-                            contractDetail.getTotalPrice(), 
-        					contractDetail.getContractType());;
+        						 contractDetail.getEmployeeId(),
+        						 contractDetail.getServiceAddress(), contractDetail.getServicePhone(),
+        						 contractDetail.getStartDate(), contractDetail.getEndDate(),
+        						 contractDetail.getStatus(), contractDetail.getHoursWorked(),
+        						 contractDetail.getTotalPrice(), 
+        						 contractDetail.getContractType());;
     }
 
     // Tạo danh sách chi tiết hợp đồng
@@ -75,13 +76,14 @@ public class ContractDetailsRepository {
 
     public void updateContractDetail(ContractDetails contractDetail) {
         // SQL để cập nhật thông tin chi tiết hợp đồng
-        String sql = "UPDATE Contract_Details SET emp_service_id = ?, service_phone = ?, service_address = ?, " +
+        String sql = "UPDATE Contract_Details SET emp_service_id = ?, employee_id = ?, service_phone = ?, service_address = ?, " +
                      "start_date = ?, end_date = ?, status = ?, hours_worked = ?, total_price = ?, contract_type = ? " +
                      "WHERE contract_detail_id = ?";
         
         // Thực hiện cập nhật bản ghi vào cơ sở dữ liệu
         jdbcTemplate.update(sql, 
                             contractDetail.getEmpServiceId(),
+                            contractDetail.getEmployeeId(),
                             contractDetail.getServicePhone(),
                             contractDetail.getServiceAddress(),
                             contractDetail.getStartDate(),
@@ -108,6 +110,7 @@ public class ContractDetailsRepository {
         detail.setContractDetailId(rs.getInt("contract_detail_id"));
         detail.setContractId(rs.getInt("contract_id"));
         detail.setEmpServiceId(rs.getInt("emp_service_id"));
+        detail.setEmployeeId(rs.getInt("employee_id"));
         detail.setServiceAddress(rs.getString("service_address"));
         detail.setServicePhone(rs.getString("service_phone"));
         detail.setStartDate(rs.getTimestamp("start_date").toLocalDateTime().toLocalDate());

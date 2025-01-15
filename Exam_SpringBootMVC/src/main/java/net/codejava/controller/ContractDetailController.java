@@ -1,6 +1,7 @@
 package net.codejava.controller;
 
 import net.codejava.model.ContractDetails;
+import net.codejava.model.EmployeeContractSchedule;
 import net.codejava.model.EmployeeServices;
 import net.codejava.model.Employees;
 import net.codejava.repository.EmployeeServicesRepository;
@@ -8,6 +9,7 @@ import net.codejava.repository.EmployeeServicesRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.codejava.service.ContractDetailService;
+import net.codejava.service.EmployeeContractScheduleService;
 import net.codejava.service.EmployeeServicesService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class ContractDetailController {
 	
     @Autowired
     private ContractDetailService contractDetailService;
+    
+    @Autowired
+    private EmployeeContractScheduleService employeeContractScheduleService;
 
     private static final Logger logger = LoggerFactory.getLogger(ContractDetailController.class);
 
@@ -43,10 +48,38 @@ public class ContractDetailController {
         return "customer/contractDetail/list"; // Trả về view danh sách hợp đồng
     }
     
+    @GetMapping("/schedule")
+    public String getEmployeeSchedule(HttpSession session, Model model) {
+        Integer employeeId = (Integer) session.getAttribute("employee_id");
+
+        if (employeeId == null) {
+            logger.error("Employee ID not found in session.");
+            return "redirect:/login";  // Chuyển hướng đến trang login nếu không tìm thấy employee_id trong session
+        }
+
+        // Lấy lịch trình của nhân viên dựa trên employeeId từ EmployeeContractScheduleService
+        List<EmployeeContractSchedule> schedules = employeeContractScheduleService.getSchedulesByEmployeeId(employeeId);
+
+        if (schedules == null || schedules.isEmpty()) {
+            logger.error("No schedule found for employee with ID: {}", employeeId);
+            model.addAttribute("error", "No schedule available for this employee.");
+            return "error";  // Nếu không có lịch trình, trả về trang lỗi
+        }
+
+        // Thêm lịch trình vào model để hiển thị trên trang
+        model.addAttribute("schedules", schedules);
+
+        return "customer/contractDetail/schedule";  // Trả về view hiển thị lịch trình
+    }
+    
+    
+
+    
     @GetMapping("/{contractId}")
     public String getContractDetails(@PathVariable int contractId, Model model, HttpSession session) {
     	// Lấy customerId từ session
         Integer customerId = (Integer) session.getAttribute("customerId");
+        Integer employeeId = (Integer) session.getAttribute("employee_id");
 
         // Kiểm tra nếu customerId không tồn tại trong session
         if (customerId == null) {
@@ -118,6 +151,7 @@ public class ContractDetailController {
         model.addAttribute("employeeFullName", employeeFullName); 
         model.addAttribute("serviceName", serviceName); 
         model.addAttribute("employeeServices", employeeServices);
+        model.addAttribute("employeeId", employeeId); 
 
         // Trả về view chi tiết hợp đồng
         logger.debug("Trả về view chi tiết hợp đồng cho contractId: {}", contractDetailId);

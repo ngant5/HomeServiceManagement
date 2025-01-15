@@ -62,14 +62,8 @@ public class EmployeeContractScheduleRepository {
 
     // Tìm kiếm lịch làm việc của nhân viên theo ngày
     public List<EmployeeContractSchedule> findByEmployeeIdAndWorkDate(int employeeId, LocalDate workDate) {
-        String sql = "SELECT * FROM Employee_Contract_Schedule WHERE employee_id = ? AND work_date = ?";
+    	String sql = "SELECT * FROM Employee_Contract_Schedule WHERE employee_id = ? AND work_date = ? AND status = 1";
         return jdbcTemplate.query(sql, new Object[]{employeeId, workDate}, employeeContractScheduleRowMapper());
-    }
-
-    // Tìm kiếm lịch làm việc của nhân viên trong khoảng thời gian (startDate đến endDate)
-    public List<EmployeeContractSchedule> findByEmployeeIdAndWorkDateBetween(int employeeId, LocalDate startDate, LocalDate endDate) {
-        String sql = "SELECT * FROM Employee_Contract_Schedule WHERE employee_id = ? AND work_date BETWEEN ? AND ?";
-        return jdbcTemplate.query(sql, new Object[]{employeeId, startDate, endDate}, employeeContractScheduleRowMapper());
     }
 
     // Phương thức tìm tất cả các employee_id duy nhất từ bảng Employee_Contract_Schedule
@@ -98,5 +92,10 @@ public class EmployeeContractScheduleRepository {
                             schedule.getStatus());
 
         return schedule;
+    }
+
+    public List<EmployeeContractSchedule> findByEmployeeIdAndStatus(int employeeId, int status) {
+        String sql = "SELECT * FROM Employee_Contract_Schedule WHERE employee_id = ? AND status = 0";
+        return jdbcTemplate.query(sql, new Object[]{employeeId, status}, employeeContractScheduleRowMapper());
     }
 }

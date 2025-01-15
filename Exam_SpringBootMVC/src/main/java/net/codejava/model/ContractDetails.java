@@ -14,6 +14,7 @@ public class ContractDetails {
     private int hoursWorked;
     private double totalPrice;
     private String contractType;
+    private int employeeId;  
 
     
     public int getContractDetailId() { 
@@ -85,5 +86,13 @@ public class ContractDetails {
 
     public void setContractType(String contractType) {
         this.contractType = contractType;
+    }
+    
+    public int getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(int employeeId) {
+        this.employeeId = employeeId;
     }
 }
