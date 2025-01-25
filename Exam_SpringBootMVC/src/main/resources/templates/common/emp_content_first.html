@@ -263,8 +263,8 @@
                     <div class="image">
                       <img th:src="@{'/uploads/' + ${employee.profileImage}}" 
 			         class="card-img-top" 
-			         alt="Employee Profile Image"  
-			         onerror="this.src='http://via.placeholder.com/75';" />
+			         alt="Employee Profile Image"   />
+			         <!--onerror="this.src='http://via.placeholder.com/75';"-->
                     </div>
                     <div>
                       <h6 class="fw-500" th:text="${employee.fullname}"></h6>
@@ -279,8 +279,8 @@
                     <div class="image">
                       <img th:src="@{'/uploads/' + ${employee.profileImage}}" 
 			         class="card-img-top" 
-			         alt="Employee Profile Image"  
-			         onerror="this.src='http://via.placeholder.com/75';" />
+			         alt="Employee Profile Image"   />
+			         <!--onerror="this.src='http://via.placeholder.com/75';"-->
                     </div>
                     <div class="content text-ellipsis">
                       <h4 class="text-sm" th:text="${employee.fullname}"></h4>

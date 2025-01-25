@@ -39,7 +39,7 @@ public class EmailService {
     public void sendVerificationEmailforEmployees(Employees employee, String siteURL) {
         String toAddress = employee.getEmail();
         String fromAddress = "nguyentuyetnga.5@gmail.com"; 
-        String senderName = "Aptech";
+        String senderName = "Happy Clean";
         String subject = "Please verify your registration";
         String verifyURL = siteURL + "/employee/verify?code=" + employee.getVerifyCode();
 
@@ -61,7 +61,7 @@ public class EmailService {
     public void sendVerificationEmailforCustomer(Customers customer, String siteURL) {
         String toAddress = customer.getEmail();
         String fromAddress = "nguyentuyetnga.5@gmail.com"; 
-        String senderName = "Aptech";
+        String senderName = "Happy Clean";
         String subject = "Please verify your registration";
         String verifyURL = siteURL + "/customer/verify?code=" + customer.getVerifyCode();
 
@@ -83,7 +83,7 @@ public class EmailService {
     public void sendResetPasswordEmailforAdmin(Employees admin, String resetURL) {
         String toAddress = admin.getEmail();
         String fromAddress = "nguyentuyetnga.5@gmail.com"; // Replace with your email
-        String senderName = "Aptech";
+        String senderName = "Happy Clean";
         String subject = "Reset Your Password";
         
         String content = "Dear " + admin.getFullname() + ",\n\n"
@@ -105,7 +105,7 @@ public class EmailService {
     public void sendResetPasswordEmailforEmployees(Employees employee, String resetURL) {
         String toAddress = employee.getEmail();
         String fromAddress = "nguyentuyetnga.5@gmail.com"; // Replace with your email
-        String senderName = "Aptech";
+        String senderName = "Happy Clean";
         String subject = "Reset Your Password";
         
         String content = "Dear " + employee.getFullname() + ",\n\n"
@@ -127,7 +127,7 @@ public class EmailService {
     public void sendResetPasswordEmailforCustomers(Customers customer, String resetURL) {
         String toAddress = customer.getEmail();
         String fromAddress = "nguyentuyetnga.5@gmail.com"; // Replace with your email
-        String senderName = "Aptech";
+        String senderName = "Happy Clean";
         String subject = "Reset Your Password";
         
         String content = "Dear " + customer.getFullname() + ",\n\n"

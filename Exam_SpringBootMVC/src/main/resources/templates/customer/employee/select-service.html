@@ -10,34 +10,37 @@
 <body>
 	<th:block th:insert="~{common/home_content_first}"></th:block>
 	
+	
+	<!-- TEAM SECTION START -->
 	<section class="contained">
-		<!-- Employee Full Name -->
-		<h2 class="section-title ff-damion"><span th:text="${employee.fullname}"></span></h2>
+	    <h2 class="section-title ff-damion"><span th:text="${employee.fullname}"></span></h2>
 
-
-		<!-- Radio button option for selecting a service -->
-		<form th:action="@{/contracts/create}" method="POST">
-			<div class="row flex-just-center" th:each="empService : ${employeeServices}">
-				<div class="col-tri">
-					<div class="card-career">
-						<div class="ta-center mt-15">
-							<input type="radio" name="empServiceId" th:value="${empService.empServiceId}" required/>
-							<!-- Removed duplicate input field -->
-							<input type="hidden" name="serviceId" th:value="${empService.service.serviceId}"/>
-							<input type="hidden" name="servicePrice" th:value="${empService.service.servicePrice}"/>
-							<input type="hidden" name="serviceName" th:value="${empService.service.serviceName}"/>
-						</div>
-						<span class="fs-h4 mb-5 mt-15" th:text="${empService.service.serviceName}"></span>
-						<span class="fs-h4 mb-5 mt-15">Price: <span th:text="${empService.service.servicePrice}"></span></span>
-						<span class="fs-h4 mb-5 mt-15" th:text="${empService.service.serviceDescription}"></span>
-					</div>
-				</div>
-			</div>
-			<button type="submit" class="ta-center mt-15 btn-bg1">Request Service</button>
-			
-		</form>
-
+	    <form th:action="@{/contracts/create}" method="POST">
+	        <div class="row flex-just-center">
+	            <th:block th:each="empService : ${employeeServices}">
+	                <div class="col-tri">
+	                    <div class="card-team">
+							<input type="hidden" name="empServiceId" th:value="${empService.empServiceId}"/>
+	                        <input type="hidden" name="serviceId" th:value="${empService.service.serviceId}"/>
+	                        <input type="hidden" name="servicePrice" th:value="${empService.service.servicePrice}"/>
+							<img th:src="@{'/uploads/images/' + ${empService.service.serviceImage}}" alt="Profile image of {empService.service.serviceImage}">
+	                        
+							<h3 class="title ff-damion" th:text="${empService.service.serviceName}"></h3>
+	                        
+	                        <div class="info">
+								<h3 class="title ff-damion" th:text="${empService.service.serviceName}"></h3>
+								<h3 class="title ff-damion" th:text="${empService.service.servicePrice} + ' $/hours'"></h3>
+	                            <h3 class="ff-damion" th:text="${empService.service.serviceDescription}"></h3>
+	                            
+	                            <button type="submit" class="ta-center mt-15 btn-bg1 border-round ">Request Service</button>
+	                        </div>
+	                    </div>
+	                </div>
+	            </th:block>
+	        </div>
+	    </form>
 	</section>
+	<!-- TEAM SECTION END -->
 	<!-- ========== section end ========== -->
 	<th:block th:insert="~{common/home_content_footer}"></th:block>
 </body>

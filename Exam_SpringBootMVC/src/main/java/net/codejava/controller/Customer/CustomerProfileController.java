@@ -128,7 +128,10 @@ public class CustomerProfileController {
     }
 
     @GetMapping("/forgot-password")
-    public String showForgotPasswordForm() {
+    public String showForgotPasswordForm(@RequestParam(required = false) String sent, Model model) {
+    	if (sent != null && sent.equals("true")) {
+            model.addAttribute("send", true); 
+        }
         return "customer/cus_forgot_password";
     }
 
@@ -167,7 +170,7 @@ public class CustomerProfileController {
         if (customerService.resetPassword(token, newPassword)) {
             model.addAttribute("message", "Your password has been reset. You can now log in.");
         } else {
-            model.addAttribute("message", "Invalid or expired reset token.");
+            model.addAttribute("error", "Invalid or expired reset token.");
         }
 
         return "customer/cus_reset_password";
