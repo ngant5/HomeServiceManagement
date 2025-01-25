@@ -45,59 +45,7 @@
             <p class="col-wide mlmr-a ta-center">
                 At Happy Clean, our team consists of highly skilled and dedicated cleaning professionals who are passionate about delivering the best results for our clients. We hire only the most reliable and trustworthy individuals to ensure your satisfaction.
             </p>
-            <div class="row flex-just-center">
-                <div class="col-tri">
-                    <article class="card-team">
-                        <img src="../assets/art/team.webp" alt="">
-                        <h3 class="title ff-damion">Johnny Doe</h3>
-                        <div class="info">
-                            <h3 class="ff-damion">Cleaning Specialist</h3>
-                            <p>
-								I take pride in my work and always strive to ensure every space I clean is spotless. My mission is to provide you with a cleaner, healthier environment that you can enjoy every day.
-							</p>
-                            <p>
-                                Whispering in the language of forgotten dreams, I hear the echoes of 
-                                desires lost in silent streams.
-                            </p>
-                        </div>
-                    </article>
-                </div>
-                <div class="col-tri">
-                    <article class="card-team">
-                        <img src="../assets/art/team.webp" alt="">
-                        <h3 class="title ff-damion">Johnny Doe</h3>
-                        <div class="info">
-                            <h3 class="ff-damion">Frontend Developer</h3>
-                            <p>
-                                When I gaze upon the stars' gentle embrace, I glimpse a universe of 
-                                dreams slipping into space, but dreamers must awaken to a stark and empty place.
-                            </p>
-                            <p>
-                                Whispering in the language of forgotten dreams, I hear the echoes of 
-                                desires lost in silent streams.
-                            </p>
-                        </div>
-                    </article>
-                </div>
-                <div class="col-tri">
-                    <article class="card-team">
-                        <img src="../assets/art/team.webp" alt="">
-                        <h3 class="title ff-damion">Johnny Doe</h3>
-                        <div class="info">
-                            <h3 class="ff-damion">Frontend Developer</h3>
-                            <p>
-                                When I gaze upon the stars' gentle embrace, I glimpse a universe of 
-                                dreams slipping into space, but dreamers must awaken to a stark and empty place.
-                            </p>
-                            <p>
-                                Whispering in the language of forgotten dreams, I hear the echoes of 
-                                desires lost in silent streams.
-                            </p>
-                        </div>
-                    </article>
-                </div>
-            </div>
-            <br>
+           
 			<div class="contained row flex-just-center">
 				<a href="employee" class="btn-bg2 border-round mt-25">
 					View our employees
@@ -108,40 +56,24 @@
         <!-- TEAM SECTION END -->
 
 		<!-- PREVIEW SERVICE SECTION START -->
-		        <section class="bg-primary-foot ta-center">
-		            <h2 class="section-title ff-damion bg-primary-foot">Service</h2>
-		            <div class="contained">
-		                <p class="col-wide mlmr-a">
-		                    We offer a wide range of exceptional cleaning services designed to meet your needs. Whether it's residential cleaning, office cleaning, or deep cleaning after construction, we have you covered. Let us help you create a cleaner, healthier environment today!
-		                </p>
-		            </div>
-		            <div class="contained row flex-just-center">
-		                <div class="col-full">
-		                    <hr>
-		                </div>
-		                <div class="col-tri" th:each="service : ${services}">
-		                    <i class="bi bi-stars fs-h2"></i>
-		                    <h3 class="mt-10 ff-damion" th:text="${service.serviceName}"></h3>
-							<div class="service-image-container">
-							  	<img th:src="@{'/uploads/' + ${service.serviceImage}}" alt="Service Image" class="service-image">
-							</div>
-							<p th:text="${service.serviceDescription}"></p>
-							<p class="service-price" th:text="${service.servicePrice}"></p>
-							            
-							<!-- Liên kết tới trang chi tiết dịch vụ -->
-							<a th:href="@{/service/{id}(id=${service.serviceId})}" class="btn-bg2 border-round mt-15">
-								Choose Employee
-							</a>
+		<section class="contained bg-primary-foot ta-center">
+		            <h2 class="section-title ff-damion">Our Services</h2>
+		            <p class="col-wide mlmr-a ta-center">
+						We offer a wide range of exceptional cleaning services designed to meet your needs. Whether it's residential cleaning, office cleaning, or deep cleaning after construction, we have you covered. Let us help you create a cleaner, healthier environment today!
+					</p>
+		           
+					<div class="contained row flex-just-center">
+						<a href="service" class="btn-bg2 border-round mt-25">
+							View our services
+						</a>
 					</div>
-		            <a href="service" class="btn-bg2 border-round mt-25">
-		                View our services
-		            </a>
-        		</section>
+		</section>
+		        
         <!-- PREVIEW SERVICE SECTION END -->
 
 
         <!-- SUBSCRIBE TO NEWS LETTERS START -->
-        <section class="subscribe bg-primary-foot" style="background-image: url('../assets/art/overlay.webp');">
+        <section class="contained subscribe bg-primary-foot" style="background-image: url('../assets/art/overlay.webp');">
             <div class="contained row ta-center">
                 <div class="col-balance fc-white">
                     <h3 class="mb-a ff-damion mt-a">Subscribe to our newsletter:</h3>

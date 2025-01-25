@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Happy Clean | Service</title>
+    <title>Happy Clean | Services</title>
 	<th:block th:insert="~{common/home_head_tag}"></th:block>
 	
 </head>
@@ -30,7 +30,7 @@
 					<div class="service-image-container">
 					  	<img th:src="@{'/uploads/images/' + ${service.serviceImage}}" alt="Service Image" class="service-image">
 					</div>
-					<p class="service-price" th:text="'$' + ${service.servicePrice}"></p>
+					<p class="service-price" th:text="'$' + ${service.servicePrice}	+ ' per hour'"> </p>
 					<a th:href="@{/service/{id}(id=${service.serviceId})}" class="btn-bg2 border-round mt-15">
 						Choose Employee
 					</a>

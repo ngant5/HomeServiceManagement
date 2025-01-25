@@ -41,18 +41,7 @@
                         </select>
                     </div>
 
-                    <!-- Service Time -->
-                    <span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Time:</span>
-                    <div class="input-group">
-                        <i class="bi bi-clock"></i>
-                        <select name="startTime" id="startTime" onchange="setEndTimeMin()" required>
-                            <option value="" disabled selected>Select Start Time</option>
-                        </select>
-                        to
-                        <select name="endTime" id="endTime" required>
-                            <option value="" disabled selected>Select End Time</option>
-                        </select>
-                    </div>
+                    
 
                     <!-- Monthly Duration Fields -->
                     <div id="durationFields">
@@ -68,6 +57,19 @@
                             <input type="date" id="endDate" name="endDate" required />
                         </div>
                     </div>
+					
+					<!-- Service Time -->
+	 				<span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Time:</span>
+					<div class="input-group">
+						<i class="bi bi-clock"></i>
+						<select name="startTime" id="startTime" onchange="setEndTimeMin()" required>
+					    	<option value="" disabled selected>Select Start Time</option>
+					  	</select>
+						to
+						<select name="endTime" id="endTime" required>
+						<option value="" disabled selected>Select End Time</option>
+						</select>
+					</div>
 
                     <!-- Service Location -->
                     <span class="fs-h4 mb-15 mt-25 fc-primary">Service Location:</span>
