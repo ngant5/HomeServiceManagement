@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -41,20 +42,19 @@ public class EmployeeContractScheduleService {
     private List<EmployeeContractSchedule> createDailySchedule(int employeeId, LocalDate date) {
         List<EmployeeContractSchedule> dailySchedules = new ArrayList<>();
 
-        // Các khung giờ cố định
         String[] timeSlots = {"06:00-08:00", "08:00-10:00", "10:00-12:00", "14:00-16:00", "16:00-18:00"};
 
         for (String timeSlot : timeSlots) {
             String[] times = timeSlot.split("-");
-            LocalDateTime startTime = LocalDateTime.of(date, java.time.LocalTime.parse(times[0]));
-            LocalDateTime endTime = LocalDateTime.of(date, java.time.LocalTime.parse(times[1]));
+            LocalTime startTime = LocalTime.parse(times[0]);  
+            LocalTime endTime = LocalTime.parse(times[1]);  
 
             EmployeeContractSchedule schedule = new EmployeeContractSchedule();
             schedule.setEmployeeId(employeeId);
             schedule.setWorkDate(date);
             schedule.setStartTime(startTime);
             schedule.setEndTime(endTime);
-            schedule.setStatus(0); // Trạng thái mặc định là chưa có lịch (0)
+            schedule.setStatus(0); 
 
             dailySchedules.add(schedule);
         }

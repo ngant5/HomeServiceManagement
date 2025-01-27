@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,8 +39,12 @@ public class EmployeeContractScheduleRepository {
                 EmployeeContractSchedule schedule = schedules.get(i);
                 ps.setInt(1, schedule.getEmployeeId());
                 ps.setDate(2, java.sql.Date.valueOf(schedule.getWorkDate()));
-                ps.setTimestamp(3, java.sql.Timestamp.valueOf(schedule.getStartTime()));
-                ps.setTimestamp(4, java.sql.Timestamp.valueOf(schedule.getEndTime()));
+                LocalDateTime startDateTime = schedule.getWorkDate().atTime(schedule.getStartTime());
+                LocalDateTime endDateTime = schedule.getWorkDate().atTime(schedule.getEndTime());
+
+                ps.setTimestamp(3, Timestamp.valueOf(startDateTime));
+                ps.setTimestamp(4, Timestamp.valueOf(endDateTime));
+
                 ps.setInt(5, schedule.getStatus());
             }
         });
@@ -53,8 +58,8 @@ public class EmployeeContractScheduleRepository {
             schedule.setContractDetailId(rs.getInt("contract_detail_id"));
             schedule.setEmployeeId(rs.getInt("employee_id"));
             schedule.setWorkDate(rs.getDate("work_date").toLocalDate());
-            schedule.setStartTime(rs.getTimestamp("start_time").toLocalDateTime());
-            schedule.setEndTime(rs.getTimestamp("end_time").toLocalDateTime());
+            schedule.setStartTime(rs.getTimestamp("start_time").toLocalDateTime().toLocalTime());
+            schedule.setEndTime(rs.getTimestamp("end_time").toLocalDateTime().toLocalTime());
             schedule.setStatus(rs.getInt("status"));
             return schedule;
         };
@@ -87,9 +92,12 @@ public class EmployeeContractScheduleRepository {
                      "ON DUPLICATE KEY UPDATE employee_id = VALUES(employee_id), work_date = VALUES(work_date), " +
                      "start_time = VALUES(start_time), end_time = VALUES(end_time), status = VALUES(status)";
 
+        java.sql.Timestamp startTimestamp = java.sql.Timestamp.valueOf(schedule.getWorkDate().atTime(schedule.getStartTime()));
+        java.sql.Timestamp endTimestamp = java.sql.Timestamp.valueOf(schedule.getWorkDate().atTime(schedule.getEndTime()));
+
+        
         jdbcTemplate.update(sql, schedule.getEmployeeId(), java.sql.Date.valueOf(schedule.getWorkDate()), 
-                            java.sql.Timestamp.valueOf(schedule.getStartTime()), java.sql.Timestamp.valueOf(schedule.getEndTime()), 
-                            schedule.getStatus());
+        		startTimestamp, endTimestamp, schedule.getStatus());
 
         return schedule;
     }

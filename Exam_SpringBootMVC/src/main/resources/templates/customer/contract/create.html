@@ -1,202 +1,217 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Happy Clean</title>
-    <th:block th:insert="~{common/home_head_tag}"></th:block>
+   <meta charset="UTF-8" />
+   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <title>Happy Clean</title>
+   <th:block th:insert="~{common/home_head_tag}"></th:block>
 </head>
 <body>
-    <th:block th:insert="~{common/home_content_first}"></th:block>
+   <th:block th:insert="~{common/home_content_first}"></th:block>
+   <section class="contained">
+       <h2 class="section-title ff-damion">Request a Service</h2>
+       <p class="col-wide ta-center mlmr-a">
+           Please fill out the form below to request more information or book a service.
+       </p>
+       <!-- FORM START -->
+       <form id="contractForm" th:action="@{/contracts/checkout}" method="post" class="message-form mt-50 mb-25">
+           <!-- Hidden Fields from session -->
+           <input type="hidden" th:value="${session.customerId}">
+           <input type="hidden" id="employeeId" th:value="${employeeId}" />
+           <input type="hidden" name="contractId" th:value="${session.contractId}" />
+           <input type="hidden" name="empServiceId" th:value="${session.empServiceId}" />
+           <input type="hidden" name="servicePrice" th:value="${session.servicePrice}" />
+           <div class="row">
+               <div class="col-balance map-embed">
+                   <h2 class="fs-h4 fc-primary mb-15">Request Information</h2>
+                   <!-- Select Service Duration Type -->
+                   <span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Duration Type:</span>
+                   <div class="input-group">
+                       <i class="bi bi-calendar-range"></i>
+					   <select name="contractType" id="contractType" required>
+					       <option value="scheduled">Custom Scheduled Service</option>
+					   </select>
+                   </div>
+                   <!-- Popup Modal -->
+                   <div id="timePopup" class="popup">
+                       <div class="popup-content">
+                           <!-- Start Date -->
+                           <span class="fs-h4 mb-15 mt-25 fc-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Chọn ngày bạn muốn bắt đầu dịch vụ.">Select Service Date:</span>
+                           <div class="input-group">
+                               <i class="bi bi-calendar-event"></i>
+                               <input type="date" id="popupStartDate" required data-bs-toggle="tooltip" data-bs-placement="top" title="Nhấn vào để chọn ngày bắt đầu dịch vụ." />
+                           </div>
+                           <!-- Service Time -->
+                           <span class="fs-h4 mb-15 mt-25 fc-primary"data-bs-toggle="tooltip" data-bs-placement="top" title="Chọn thời gian bạn muốn dịch vụ bắt đầu.">Select Service Time:</span>
+                           <div class="input-group">
+                               <i class="bi bi-clock"></i>
+                               <select id="popupStartTime" required data-bs-toggle="tooltip" data-bs-placement="top" title="Chọn giờ bắt đầu dịch vụ.">
+                                   <option value="" disabled selected>Select Start Time</option>
+                               </select>
+                               <span class="separator">to</span>
+                               <select id="popupEndTime" required data-bs-toggle="tooltip" data-bs-placement="top" title="Chọn giờ kết thúc dịch vụ.">
+                                   <option value="" disabled selected>Select End Time</option>
+                               </select>
+                           </div>
+                           <!-- Add Button -->
+                           <button type="button" id="addSelection" class="btn-add mt-20" data-bs-toggle="tooltip" data-bs-placement="top" title="Nhấn để thêm giờ dịch vụ đã chọn vào danh sách.">Add Selection</button>
+                       </div>
+                   </div>
+                   <!-- Selected Time List -->
+                   <div id="selectedTimeList">
+                       <h3 data-bs-toggle="tooltip" data-bs-placement="top" title="Danh sách các giờ bạn đã chọn.">Selected Time Slots:</h3>
+                       <ul id="timeSlotList"></ul>
+                   </div>
+                   <input type="hidden" id="selectedTimes" name="selectedTimes" />
+				   
+                   <!-- Service Location -->
+                   <span class="fs-h4 mb-15 mt-25 fc-primary">Service Location:</span>
+                   <a class="display-inblock">
+                       <i class="bi bi-geo-alt-fill"></i>
+                       <input type="text" name="serviceAddress" placeholder="Service location address." required />
+                   </a>
+                   <!-- Contact Information -->
+                   <span class="fs-h4 mb-15 mt-25 fc-primary">Say Hello:</span>
+                   <a class="display-inblock">
+                       <i class="bi bi-telephone-fill"></i>
+                       <input type="text" name="servicePhone" placeholder="Your Phone Number" required />
+                   </a>
+                   <!-- Duration (Hours Worked) -->
+                   <span class="fs-h4 mb-15 mt-25 fc-primary">Duration (Hours):</span>
+                   <div class="input-group">
+                       <input type="number" name="hoursWorked" id="hoursWorked" min="1" required />
+                   </div>
+                   <!-- Nút tính tổng duration -->
+                   <button type="button" id="calculateDurationBtn" class="btn-calculate mt-20">Calculate Duration</button>
+                   <!-- Submit Button -->
+                   <button type="submit" class="btn-bg1 border-round mt-20">Send</button>
+               </div>
+           </div>
+       </form>
+       <!-- FORM END -->
+   </section>
+   <!-- ========== section end ========== -->
+   <th:block th:insert="~{common/home_content_footer}"></th:block>
+   <script>
+       function fetchAvailableTimeSlots(employeeId, date) {
+           const url = `http://localhost:8080/employees/schedules/${employeeId}/date?date=${date}`;
+           fetch(url)
+               .then(response => response.json())
+               .then(data => populateTimeOptions(data))
+               .catch(error => {
+                   console.error('Error fetching available time slots:', error);
+                   alert('Could not fetch available time slots.');
+               });
+       }
 
-    <section class="contained">
-        <h2 class="section-title ff-damion">Request a Service</h2>
-        <p class="col-wide ta-center mlmr-a">
-            Please fill out the form below to request more information or book a service.
-        </p>
+       function populateTimeOptions(data) {
+           const startTimeSelect = document.getElementById('popupStartTime');
+           const endTimeSelect = document.getElementById('popupEndTime');
+           startTimeSelect.innerHTML = '<option value="" disabled selected>Select Start Time</option>';
+           endTimeSelect.innerHTML = '<option value="" disabled selected>Select End Time</option>';
+           data.forEach(slot => {
+               const startOption = document.createElement('option');
+               startOption.value = slot.startTime;
+               startOption.textContent = formatTime(slot.startTime);
+               startTimeSelect.appendChild(startOption);
+               const endOption = document.createElement('option');
+               endOption.value = slot.endTime;
+               endOption.textContent = formatTime(slot.endTime);
+               endTimeSelect.appendChild(endOption);
+           });
+       }
 
-        <!-- FORM START -->
-        <form id="contractForm" th:action="@{/contracts/checkout}" method="post" class="message-form mt-50 mb-25">
-            <!-- Hidden Fields from session -->
-            <input type="hidden" th:value="${session.customerId}">
-            <input type="hidden" id="employeeId" th:value="${employeeId}" />
-            <input type="hidden" name="contractId" th:value="${session.contractId}" />
-            <input type="hidden" name="empServiceId" th:value="${session.empServiceId}" />
-            <input type="hidden" name="servicePrice" th:value="${session.servicePrice}" />
+       function formatTime(time) {
+           const date = new Date(`1970-01-01T${time}`);
+           return date.toTimeString().slice(0, 5); // HH:MM format
+       }
 
-            <div class="row">
-                <div class="col-balance map-embed">
-                    <h2 class="fs-h4 fc-primary mb-15">Request Information</h2>
+       function updateSelectedTimes() {
+           const selectedTimes = document.getElementById('selectedTimes');
+           const listItems = document.querySelectorAll('#timeSlotList li');
+           const times = [];
 
-                    <!-- Select Service Duration Type -->
-                    <span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Duration Type:</span>
-                    <div class="input-group">
-                        <i class="bi bi-calendar-range"></i>
-                        <select name="contractType" id="contractType" required>
-                            <option value="" disabled selected>Select Duration Type</option>
-                            <option value="one_time">One Time</option>
-                            <option value="by_day">By Day</option>
-                            <option value="by_month">Monthly</option>
-                        </select>
-                    </div>
+           listItems.forEach(item => {
+               const [date, startTime, endTime] = item.textContent.split(',').map(str => str.split(': ')[1]);
+               times.push({ startDate: date, startTime, endTime });
+           });
 
-                    
+           selectedTimes.value = JSON.stringify(times);
+       }
 
-                    <!-- Monthly Duration Fields -->
-                    <div id="durationFields">
-                        <span class="fs-h4 mb-15 mt-25 fc-primary">Start Date:</span>
-                        <div class="input-group">
-                            <i class="bi bi-calendar-event"></i>
-                            <input type="date" name="startDate" id="startDate" required />
-                        </div>
+       function calculateTotalDuration() {
+           const selectedTimes = document.getElementById('selectedTimes');
+           const timeSlots = selectedTimes.value ? JSON.parse(selectedTimes.value) : [];
+           let totalDuration = 0;
 
-                        <span class="fs-h4 mb-15 mt-25 fc-primary">End Date:</span>
-                        <div class="input-group">
-                            <i class="bi bi-calendar-event"></i>
-                            <input type="date" id="endDate" name="endDate" required />
-                        </div>
-                    </div>
-					
-					<!-- Service Time -->
-	 				<span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Time:</span>
-					<div class="input-group">
-						<i class="bi bi-clock"></i>
-						<select name="startTime" id="startTime" onchange="setEndTimeMin()" required>
-					    	<option value="" disabled selected>Select Start Time</option>
-					  	</select>
-						to
-						<select name="endTime" id="endTime" required>
-						<option value="" disabled selected>Select End Time</option>
-						</select>
-					</div>
+           timeSlots.forEach(slot => {
+               const startDate = new Date(`${slot.startDate}T${slot.startTime}`);
+               const endDate = new Date(`${slot.startDate}T${slot.endTime}`);
+			   if (!startDate.getTime() || !endDate.getTime()) {
+			               console.error("Invalid date or time");
+			               return; // Skip invalid slots
+			           }
+               const durationInMillis = endDate - startDate;
+               totalDuration += durationInMillis / (1000 * 60 * 60);
+           });
 
-                    <!-- Service Location -->
-                    <span class="fs-h4 mb-15 mt-25 fc-primary">Service Location:</span>
-                    <a class="display-inblock">
-                        <i class="bi bi-geo-alt-fill"></i>
-                        <input type="text" name="serviceAddress" placeholder="Service location address." required />
-                    </a>
+           document.getElementById('hoursWorked').value = totalDuration.toFixed(2);
+       }
 
-                    <!-- Contact Information -->
-                    <span class="fs-h4 mb-15 mt-25 fc-primary">Say Hello:</span>
-                    <a class="display-inblock">
-                        <i class="bi bi-telephone-fill"></i>
-                        <input type="text" name="servicePhone" placeholder="Your Phone Number" required />
-                    </a>
+       document.getElementById('popupStartDate').addEventListener('change', function() {
+           const date = this.value;
+           const employeeId = document.getElementById('employeeId').value;
+           if (employeeId && date) {
+               fetchAvailableTimeSlots(employeeId, date);
+           }
+       });
 
-                    <!-- Duration (Hours Worked) -->
-                    <span class="fs-h4 mb-15 mt-25 fc-primary">Duration (Hours):</span>
-                    <div class="input-group">
-                        <input type="number" name="hoursWorked" id="hoursWorked" min="1" required />
-                    </div>
+       document.getElementById('addSelection').addEventListener('click', function() {
+           const startDate = document.getElementById('popupStartDate').value;
+           const startTime = document.getElementById('popupStartTime').value;
+           const endTime = document.getElementById('popupEndTime').value;
+           
+           if (startDate && startTime && endTime) {
+               const listItem = document.createElement('li');
+               listItem.classList.add('time-slot-item');
+               listItem.textContent = `Date: ${startDate}, Start Time: ${startTime} to End Time: ${endTime}`;
+               
+               const removeButton = document.createElement('button');
+               removeButton.classList.add('remove-btn');
+               removeButton.textContent = 'x';
+               removeButton.addEventListener('click', function() {
+                   listItem.remove();
+                   updateSelectedTimes();
+                   calculateTotalDuration();  // Tính toán lại tổng thời gian sau khi xóa
+               });
 
-                    <!-- Submit Button -->
-                    <button type="submit" class="btn-bg1 border-round mt-20">Send</button>
-                </div>
-            </div>
-        </form>
-        <!-- FORM END -->
-    </section>
-    <!-- ========== section end ========== -->
+               listItem.appendChild(removeButton);
+               document.getElementById('timeSlotList').appendChild(listItem);
+               
+               const selectedTimes = document.getElementById('selectedTimes');
+               const currentTimes = selectedTimes.value ? JSON.parse(selectedTimes.value) : [];
+               currentTimes.push({ startDate, startTime, endTime });
+               selectedTimes.value = JSON.stringify(currentTimes);
+               calculateTotalDuration(); // Tính toán lại tổng thời gian sau khi thêm
+           } else {
+               alert('Please select both start and end times.');
+           }
+       });
 
-    <th:block th:insert="~{common/home_content_footer}"></th:block>
+       // Add event listeners for duration calculation
+       document.getElementById('popupStartTime').addEventListener('change', calculateTotalDuration);
+       document.getElementById('popupEndTime').addEventListener('change', calculateTotalDuration);
 
-  <script>
-// Function to update service schedule based on selected date
-function updateSchedule() {
-    const employeeId = document.getElementById('employeeId').value; // Lấy employeeId từ thẻ hidden
-    console.log("Employee ID:", employeeId);
-    if (!employeeId || employeeId === "0") { // Kiểm tra nếu không có employeeId hợp lệ
-        console.log("No employeeId found in session.");
-        alert("Không tìm thấy ID nhân viên. Vui lòng đăng nhập lại.");
-        return;
-    } else {
-        console.log("Employee ID: " + employeeId);
-    }
-    const selectedDate = document.getElementById('startDate').value;  // Selected start date
-    fetchScheduleData(employeeId, selectedDate);  // Fetch available schedule for the selected date
-}
-
-// Function to fetch available schedules for a specific employee and date from the API
-function fetchScheduleData(employeeId, date) {
-    const url = `http://localhost:8080/employees/schedules/${employeeId}/date?date=${date}`;
-    console.log(`Employee ID: ${employeeId}, Date: ${date}`);
-    console.log('Date:', date);
-    // In ra URL để kiểm tra
-    console.log('Fetching schedule data from URL:', url);
-
-    // Gửi yêu cầu đến API
-    fetch(url)
-        .then(response => {
-            // Kiểm tra toàn bộ response trước khi tiếp tục
-            console.log('Response received:', response);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            // Kiểm tra nếu dữ liệu là JSON
-            return response.text();  // Đọc dữ liệu dưới dạng văn bản
-        })
-        .then(data => {
-            console.log('Schedule data received:', data);
-            
-            // Kiểm tra nếu là thông báo lỗi "No available schedules"
-            if (data === "No available schedules for the selected date.") {
-                alert('Không có lịch trống cho ngày đã chọn.');
-                return;
-            }
-
-            try {
-                // Cố gắng phân tích dữ liệu nếu có lịch làm việc
-                const scheduleData = JSON.parse(data);
-                populateServiceTimeOptions(scheduleData);
-            } catch (e) {
-                console.error('Error parsing JSON:', e);
-                alert('Đã có lỗi khi xử lý dữ liệu lịch.');
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching schedule data:', error);
-            alert(`Lỗi khi lấy dữ liệu lịch: ${error.message}`);
-        });
-}
-
-// Function to populate the start and end time options based on fetched schedule data
-function populateServiceTimeOptions(data) {
-    const startTimeSelect = document.getElementById('startTime');
-    const endTimeSelect = document.getElementById('endTime');
-    // Clear old options
-    startTimeSelect.innerHTML = '<option value="" disabled selected>Select Start Time</option>';
-    endTimeSelect.innerHTML = '<option value="" disabled selected>Select End Time</option>';
-
-    // Loop through the schedule data and add time options
-    data.forEach(schedule => {
-        const startTimeOption = document.createElement('option');
-        startTimeOption.value = schedule.startTime;
-        startTimeOption.textContent = formatTime(schedule.startTime);
-        startTimeSelect.appendChild(startTimeOption);
-
-        const endTimeOption = document.createElement('option');
-        endTimeOption.value = schedule.endTime;
-        endTimeOption.textContent = formatTime(schedule.endTime);
-        endTimeSelect.appendChild(endTimeOption);
-    });
-}
-
-// Function to format time into a more readable format (HH:MM)
-function formatTime(time) {
-    const date = new Date(time);
-    return date.toTimeString().slice(0, 5);  // Extract hour and minute (HH:MM format)
-}
-
-// Run when the page is loaded
-window.onload = function() {
-    // Attach event listener to update the schedule when the start date is changed
-    document.getElementById('startDate').addEventListener('change', updateSchedule);
-};
-</script>
-
-
-
+       // Add event listener for calculate button
+       document.getElementById('calculateDurationBtn').addEventListener('click', function() {
+		const selectedTimes = document.getElementById('selectedTimes').value;
+		    if (selectedTimes && selectedTimes.length > 0) {
+		        calculateTotalDuration();  // Tính toán lại tổng thời gian khi nhấn nút
+		    } else {
+		        alert("Please select at least one time slot.");
+		    }
+       });
+   </script>
 </body>
 </html>

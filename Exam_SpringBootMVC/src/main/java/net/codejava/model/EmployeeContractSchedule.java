@@ -2,16 +2,28 @@ package net.codejava.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class EmployeeContractSchedule {
     private int scheduleId;
     private int contractDetailId; 
     private int employeeId; 
     private LocalDate workDate;  
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private int status;
 
+    
+    public String getStartTimeFormatted() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        return startTime.format(formatter); 
+    }
+
+    public String getEndTimeFormatted() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        return endTime.format(formatter); 
+    }
     // Getters and Setters
     public int getScheduleId() { 
         return scheduleId; 
@@ -45,19 +57,19 @@ public class EmployeeContractSchedule {
         this.workDate = workDate; 
     }
 
-    public LocalDateTime getStartTime() {
+    public LocalTime getStartTime() {
         return startTime; 
     }
 
-    public void setStartTime(LocalDateTime startTime) { 
+    public void setStartTime(LocalTime startTime) { 
         this.startTime = startTime; 
     }
 
-    public LocalDateTime getEndTime() { 
+    public LocalTime getEndTime() { 
         return endTime;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
+    public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
 
