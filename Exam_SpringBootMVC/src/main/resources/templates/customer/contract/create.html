@@ -83,7 +83,14 @@
                        <input type="number" name="hoursWorked" id="hoursWorked" min="1" required />
                    </div>
                    <!-- Nút tính tổng duration -->
-                   <button type="button" id="calculateDurationBtn" class="btn-calculate mt-20">Calculate Duration</button>
+				   <input type="hidden" id="totalPrice" name="totalPrice" />
+				   <!-- Hiển thị tổng giá -->
+				   <span class="fs-h4 mb-15 mt-25 fc-primary">Total Price:</span>
+				   <div class="total-price-container">
+				       <!--<label for="totalPriceDisplay">Total Price: </label>-->
+				       <input type="text" id="totalPriceDisplay" readonly />
+				   </div>
+
                    <!-- Submit Button -->
                    <button type="submit" class="btn-bg1 border-round mt-20">Send</button>
                </div>
@@ -93,124 +100,175 @@
    </section>
    <!-- ========== section end ========== -->
    <th:block th:insert="~{common/home_content_footer}"></th:block>
+
    <script>
-       function fetchAvailableTimeSlots(employeeId, date) {
-           const url = `http://localhost:8080/employees/schedules/${employeeId}/date?date=${date}`;
-           fetch(url)
-               .then(response => response.json())
-               .then(data => populateTimeOptions(data))
-               .catch(error => {
-                   console.error('Error fetching available time slots:', error);
-                   alert('Could not fetch available time slots.');
-               });
-       }
+       document.addEventListener('DOMContentLoaded', function() {
+           // Mã JavaScript của bạn sẽ chạy ở đây, sau khi DOM đã được tải đầy đủ
 
-       function populateTimeOptions(data) {
-           const startTimeSelect = document.getElementById('popupStartTime');
-           const endTimeSelect = document.getElementById('popupEndTime');
-           startTimeSelect.innerHTML = '<option value="" disabled selected>Select Start Time</option>';
-           endTimeSelect.innerHTML = '<option value="" disabled selected>Select End Time</option>';
-           data.forEach(slot => {
-               const startOption = document.createElement('option');
-               startOption.value = slot.startTime;
-               startOption.textContent = formatTime(slot.startTime);
-               startTimeSelect.appendChild(startOption);
-               const endOption = document.createElement('option');
-               endOption.value = slot.endTime;
-               endOption.textContent = formatTime(slot.endTime);
-               endTimeSelect.appendChild(endOption);
-           });
-       }
-
-       function formatTime(time) {
-           const date = new Date(`1970-01-01T${time}`);
-           return date.toTimeString().slice(0, 5); // HH:MM format
-       }
-
-       function updateSelectedTimes() {
-           const selectedTimes = document.getElementById('selectedTimes');
-           const listItems = document.querySelectorAll('#timeSlotList li');
-           const times = [];
-
-           listItems.forEach(item => {
-               const [date, startTime, endTime] = item.textContent.split(',').map(str => str.split(': ')[1]);
-               times.push({ startDate: date, startTime, endTime });
-           });
-
-           selectedTimes.value = JSON.stringify(times);
-       }
-
-       function calculateTotalDuration() {
-           const selectedTimes = document.getElementById('selectedTimes');
-           const timeSlots = selectedTimes.value ? JSON.parse(selectedTimes.value) : [];
-           let totalDuration = 0;
-
-           timeSlots.forEach(slot => {
-               const startDate = new Date(`${slot.startDate}T${slot.startTime}`);
-               const endDate = new Date(`${slot.startDate}T${slot.endTime}`);
-			   if (!startDate.getTime() || !endDate.getTime()) {
-			               console.error("Invalid date or time");
-			               return; // Skip invalid slots
-			           }
-               const durationInMillis = endDate - startDate;
-               totalDuration += durationInMillis / (1000 * 60 * 60);
-           });
-
-           document.getElementById('hoursWorked').value = totalDuration.toFixed(2);
-       }
-
-       document.getElementById('popupStartDate').addEventListener('change', function() {
-           const date = this.value;
-           const employeeId = document.getElementById('employeeId').value;
-           if (employeeId && date) {
-               fetchAvailableTimeSlots(employeeId, date);
+           function fetchAvailableTimeSlots(employeeId, date) {
+               const url = `http://localhost:8080/employees/schedules/${employeeId}/date?date=${date}`;
+               fetch(url)
+                   .then(response => response.json())
+                   .then(data => populateTimeOptions(data))
+                   .catch(error => {
+                       console.error('Error fetching available time slots:', error);
+                       alert('Could not fetch available time slots.');
+                   });
            }
-       });
 
-       document.getElementById('addSelection').addEventListener('click', function() {
-           const startDate = document.getElementById('popupStartDate').value;
-           const startTime = document.getElementById('popupStartTime').value;
-           const endTime = document.getElementById('popupEndTime').value;
-           
-           if (startDate && startTime && endTime) {
-               const listItem = document.createElement('li');
-               listItem.classList.add('time-slot-item');
-               listItem.textContent = `Date: ${startDate}, Start Time: ${startTime} to End Time: ${endTime}`;
-               
-               const removeButton = document.createElement('button');
-               removeButton.classList.add('remove-btn');
-               removeButton.textContent = 'x';
-               removeButton.addEventListener('click', function() {
-                   listItem.remove();
-                   updateSelectedTimes();
-                   calculateTotalDuration();  // Tính toán lại tổng thời gian sau khi xóa
+           function populateTimeOptions(data) {
+               const startTimeSelect = document.getElementById('popupStartTime');
+               const endTimeSelect = document.getElementById('popupEndTime');
+               startTimeSelect.innerHTML = '<option value="" disabled selected>Select Start Time</option>';
+               endTimeSelect.innerHTML = '<option value="" disabled selected>Select End Time</option>';
+               data.forEach(slot => {
+                   const startOption = document.createElement('option');
+                   startOption.value = slot.startTime;
+                   startOption.textContent = formatTime(slot.startTime);
+                   startTimeSelect.appendChild(startOption);
+                   const endOption = document.createElement('option');
+                   endOption.value = slot.endTime;
+                   endOption.textContent = formatTime(slot.endTime);
+                   endTimeSelect.appendChild(endOption);
                });
+           }
 
-               listItem.appendChild(removeButton);
-               document.getElementById('timeSlotList').appendChild(listItem);
-               
+           function formatTime(time) {
+               const date = new Date(`1970-01-01T${time}`);
+               return date.toTimeString().slice(0, 5); // HH:MM format
+           }
+
+           function updateSelectedTimes() {
                const selectedTimes = document.getElementById('selectedTimes');
-               const currentTimes = selectedTimes.value ? JSON.parse(selectedTimes.value) : [];
-               currentTimes.push({ startDate, startTime, endTime });
-               selectedTimes.value = JSON.stringify(currentTimes);
-               calculateTotalDuration(); // Tính toán lại tổng thời gian sau khi thêm
-           } else {
-               alert('Please select both start and end times.');
+               const listItems = document.querySelectorAll('#timeSlotList li');
+               const times = [];
+
+               listItems.forEach(item => {
+                   const [dateText, startTimeText, endTimeText] = item.textContent.split(',').map(str => str.split(': ')[1]);
+                   const startTime = formatTime(startTimeText);
+                   const endTime = formatTime(endTimeText);
+                   times.push({ startDate: dateText, startTime, endTime });
+               });
+
+               selectedTimes.value = JSON.stringify(times);
            }
-       });
 
-       // Add event listeners for duration calculation
-       document.getElementById('popupStartTime').addEventListener('change', calculateTotalDuration);
-       document.getElementById('popupEndTime').addEventListener('change', calculateTotalDuration);
+           function calculateTotalDuration() {
+               const selectedTimes = document.getElementById('selectedTimes');
+               const timeSlots = selectedTimes.value ? JSON.parse(selectedTimes.value) : [];
+               let totalDuration = 0;
 
-       // Add event listener for calculate button
-       document.getElementById('calculateDurationBtn').addEventListener('click', function() {
-		const selectedTimes = document.getElementById('selectedTimes').value;
-		    if (selectedTimes && selectedTimes.length > 0) {
-		        calculateTotalDuration();  // Tính toán lại tổng thời gian khi nhấn nút
-		    } else {
-		        alert("Please select at least one time slot.");
-		    }
+               timeSlots.forEach(slot => {
+                   const startDate = new Date(`${slot.startDate}T${slot.startTime}`);
+                   const endDate = new Date(`${slot.startDate}T${slot.endTime}`);
+                   if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                       console.error("Invalid start time or end time:", slot.startTime, slot.endTime);
+                       return; // Bỏ qua nếu có lỗi
+                   }
+                   const durationInMillis = endDate - startDate;
+                   if (durationInMillis < 0) {
+                       console.error("End time is before start time.");
+                       return; // Bỏ qua nếu giờ kết thúc trước giờ bắt đầu
+                   }
+                   totalDuration += durationInMillis / (1000 * 60 * 60);
+               });
+
+               document.getElementById('hoursWorked').value = totalDuration.toFixed(2);
+           }
+
+           document.getElementById('popupStartDate').addEventListener('change', function() {
+               const date = this.value;
+               const employeeId = document.getElementById('employeeId').value;
+               if (employeeId && date) {
+                   fetchAvailableTimeSlots(employeeId, date);
+               }
+           });
+
+           document.getElementById('addSelection').addEventListener('click', function() {
+               const startDate = document.getElementById('popupStartDate').value;
+               const startTime = document.getElementById('popupStartTime').value;
+               const endTime = document.getElementById('popupEndTime').value;
+
+               if (startDate && startTime && endTime) {
+                   const listItem = document.createElement('li');
+                   listItem.classList.add('time-slot-item');
+                   
+                   // Tạo đối tượng Date từ Start Time và End Time để tính Duration
+                   const startDateTime = new Date(`${startDate}T${startTime}`);
+                   const endDateTime = new Date(`${startDate}T${endTime}`);
+                   const durationInMillis = endDateTime - startDateTime;
+                   const durationInHours = durationInMillis / (1000 * 60 * 60); // Tính duration theo giờ
+                   
+                   // Cập nhật text hiển thị và thêm hidden input
+                   listItem.textContent = `Date: ${startDate}, Start Time: ${formatTime(startTime)} to End Time: ${formatTime(endTime)} (Duration: ${durationInHours.toFixed(2)} hours)`;
+
+                   // Tạo input hidden để lưu trữ duration
+                   const hiddenInput = document.createElement('input');
+                   hiddenInput.type = 'hidden';
+                   hiddenInput.name = 'hoursWorked[]'; // Thêm vào tên mảng để gửi cùng form
+                   hiddenInput.value = durationInHours.toFixed(2); // Lưu trữ duration tính toán
+                   listItem.appendChild(hiddenInput);
+
+                   // Thêm nút xóa
+                   const removeButton = document.createElement('button');
+                   removeButton.classList.add('remove-btn');
+                   removeButton.textContent = 'x';
+                   removeButton.addEventListener('click', function() {
+                       listItem.remove();
+                       updateTotalDuration(); 
+					   calculateTotalPrice(); 
+                   });
+
+                   listItem.appendChild(removeButton);
+                   document.getElementById('timeSlotList').appendChild(listItem);
+
+                   // Cập nhật tổng duration
+                   updateTotalDuration();
+                   calculateTotalPrice();
+               } else {
+                   alert('Please select both start and end times.');
+               }
+           });
+
+           function updateTotalDuration() {
+               const hiddenInputs = document.querySelectorAll('input[name="hoursWorked[]"]');
+               let totalDuration = 0;
+
+               hiddenInputs.forEach(input => {
+                   const duration = parseFloat(input.value);
+                   if (!isNaN(duration)) {
+                       totalDuration += duration;
+                   }
+               });
+
+               document.getElementById('hoursWorked').value = totalDuration.toFixed(2);
+               calculateTotalPrice();
+           }
+
+           document.getElementById('popupStartTime').addEventListener('change', calculateTotalDuration);
+           document.getElementById('popupEndTime').addEventListener('change', calculateTotalDuration);
+
+           function calculateTotalPrice() {
+               const servicePrice = parseFloat(document.querySelector('input[name="servicePrice"]').value); // Lấy giá dịch vụ từ hidden input
+               const hoursWorked = parseFloat(document.getElementById('hoursWorked').value); // Lấy số giờ đã làm từ input
+
+               console.log("Service Price: ", servicePrice);
+               console.log("Hours Worked: ", hoursWorked);
+
+               if (!isNaN(servicePrice) && !isNaN(hoursWorked)) {
+                   const totalPrice = servicePrice * hoursWorked; 
+                   document.getElementById('totalPrice').value = totalPrice.toFixed(2); 
+				   document.getElementById('totalPriceDisplay').value = totalPrice.toFixed(2); 
+               } else {
+                   alert("Please ensure both service price and duration are valid.");
+               }
+           }
+
+           document.getElementById('hoursWorked').addEventListener('input', function() {
+               const hours = document.getElementById('hoursWorked').value;
+               console.log("Hours worked changed to:", hours);  
+               calculateTotalPrice();
+           });
        });
    </script>
 </body>
