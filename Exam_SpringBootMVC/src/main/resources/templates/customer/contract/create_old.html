@@ -1,268 +1,337 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Happy Clean</title>
-    <th:block th:insert="~{common/home_head_tag}"></th:block>
-</head>
-<body>
-    <th:block th:insert="~{common/home_content_first}"></th:block>
-
-    <section class="contained">
-        <h2 class="section-title ff-damion">Request a Service</h2>
-        <p class="col-wide ta-center mlmr-a">
-            Please fill out the form below to request more information or book a service.
-        </p>
-
-        <!-- FORM START -->
-        <form id="contractForm" th:action="@{/contracts/checkout}" method="post" class="message-form mt-50 mb-25">
-            <!-- Hidden Fields from session -->
-            <input type="hidden" th:value="${session.customerId}">
-            <input type="hidden" id="employeeId" th:value="${employeeId}" />
-            <input type="hidden" name="contractId" th:value="${session.contractId}" />
-            <input type="hidden" name="empServiceId" th:value="${session.empServiceId}" />
-            <input type="hidden" name="servicePrice" th:value="${session.servicePrice}" />
-
-            <div class="row">
-                <div class="col-balance map-embed">
-                    <h2 class="fs-h4 fc-primary mb-15">Request Information</h2>
-
-                    <!-- Select Service Duration Type -->
-                    <span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Duration Type:</span>
-                    <div class="input-group">
-                        <i class="bi bi-calendar-range"></i>
-                        <select name="contractType" id="contractType" required>
-                            <option value="" disabled selected>Select Duration Type</option>
-                            <option value="one_time">Custom Scheduled Service</option>
-                            <option value="by_month">Monthly Service</option>
-                        </select>
-                    </div>
-
-                    
-
-                    <!-- Monthly Duration Fields -->
-                    <div id="durationFields">
-                        <span class="fs-h4 mb-15 mt-25 fc-primary">Start Date:</span>
-                        <div class="input-group">
-                            <i class="bi bi-calendar-event"></i>
-                            <input type="date" name="startDate" id="startDate" required />
-                        </div>
-
-                        <span class="fs-h4 mb-15 mt-25 fc-primary">End Date:</span>
-                        <div class="input-group">
-                            <i class="bi bi-calendar-event"></i>
-                            <input type="date" id="endDate" name="endDate" required />
-                        </div>
-                    </div>
-					
-					<!-- Service Time -->
-	 				<span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Time:</span>
-					<div class="input-group">
-						<i class="bi bi-clock"></i>
-						<select name="startTime" id="startTime" required>
-					    	<option value="" disabled selected>Select Start Time</option>
-					  	</select>
-						to
-						<select name="endTime" id="endTime" required>
-						<option value="" disabled selected>Select End Time</option>
-						</select>
-					</div>
-
-                    <!-- Service Location -->
-                    <span class="fs-h4 mb-15 mt-25 fc-primary">Service Location:</span>
-                    <a class="display-inblock">
-                        <i class="bi bi-geo-alt-fill"></i>
-                        <input type="text" name="serviceAddress" placeholder="Service location address." required />
-                    </a>
-
-                    <!-- Contact Information -->
-                    <span class="fs-h4 mb-15 mt-25 fc-primary">Say Hello:</span>
-                    <a class="display-inblock">
-                        <i class="bi bi-telephone-fill"></i>
-                        <input type="text" name="servicePhone" placeholder="Your Phone Number" required />
-                    </a>
-
-                    <!-- Duration (Hours Worked) -->
-                    <span class="fs-h4 mb-15 mt-25 fc-primary">Duration (Hours):</span>
-                    <div class="input-group">
-                        <input type="number" name="hoursWorked" id="hoursWorked" min="1" required />
-                    </div>
-
-                    <!-- Submit Button -->
-                    <button type="submit" class="btn-bg1 border-round mt-20">Send</button>
-                </div>
-            </div>
-        </form>
-        <!-- FORM END -->
-    </section>
-    <!-- ========== section end ========== -->
-
-    <th:block th:insert="~{common/home_content_footer}"></th:block>
-
-  <script>
-// Function to update service schedule based on selected date
-function updateSchedule() {
-    const employeeId = document.getElementById('employeeId').value; // Lấy employeeId từ thẻ hidden
-    console.log("Employee ID:", employeeId);
-    if (!employeeId || employeeId === "0") { // Kiểm tra nếu không có employeeId hợp lệ
-        console.log("No employeeId found in session.");
-        alert("Không tìm thấy ID nhân viên. Vui lòng đăng nhập lại.");
-        return;
-    } else {
-        console.log("Employee ID: " + employeeId);
-    }
-    const selectedDate = document.getElementById('startDate').value;  // Selected start date
-    fetchScheduleData(employeeId, selectedDate);  // Fetch available schedule for the selected date
-}
-
-// Function to fetch available schedules for a specific employee and date from the API
-function fetchScheduleData(employeeId, date) {
-    const url = `http://localhost:8080/employees/schedules/${employeeId}/date?date=${date}`;
-    console.log(`Employee ID: ${employeeId}, Date: ${date}`);
-    console.log('Date:', date);
-    // In ra URL để kiểm tra
-    console.log('Fetching schedule data from URL:', url);
-
-    // Gửi yêu cầu đến API
-    fetch(url)
-        .then(response => {
-            // Kiểm tra toàn bộ response trước khi tiếp tục
-            console.log('Response received:', response);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            // Kiểm tra nếu dữ liệu là JSON
-            return response.text();  // Đọc dữ liệu dưới dạng văn bản
-        })
-        .then(data => {
-            console.log('Schedule data received:', data);
-            
-            // Kiểm tra nếu là thông báo lỗi "No available schedules"
-            if (data === "No available schedules for the selected date.") {
-                alert('Không có lịch trống cho ngày đã chọn.');
-                return;
-            }
-
-            try {
-                // Cố gắng phân tích dữ liệu nếu có lịch làm việc
-                const scheduleData = JSON.parse(data);
-                populateServiceTimeOptions(scheduleData);
-            } catch (e) {
-                console.error('Error parsing JSON:', e);
-                alert('Đã có lỗi khi xử lý dữ liệu lịch.');
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching schedule data:', error);
-            alert(`Lỗi khi lấy dữ liệu lịch: ${error.message}`);
-        });
-}
-
-// Function to populate the start and end time options based on fetched schedule data
-function populateServiceTimeOptions(data) {
-    const startTimeSelect = document.getElementById('startTime');
-    const endTimeSelect = document.getElementById('endTime');
-    // Clear old options
-    startTimeSelect.innerHTML = '<option value="" disabled selected>Select Start Time</option>';
-    endTimeSelect.innerHTML = '<option value="" disabled selected>Select End Time</option>';
-
-    // Loop through the schedule data and add time options
-    data.forEach(schedule => {
-        const startTimeOption = document.createElement('option');
-        startTimeOption.value = schedule.startTime;
-        startTimeOption.textContent = formatTime(schedule.startTime);
-        startTimeSelect.appendChild(startTimeOption);
-
-        const endTimeOption = document.createElement('option');
-        endTimeOption.value = schedule.endTime;
-        endTimeOption.textContent = formatTime(schedule.endTime);
-        endTimeSelect.appendChild(endTimeOption);
-    	});
+   <meta charset="UTF-8" />
+   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <title>Happy Clean</title>
+   <th:block th:insert="~{common/home_head_tag}"></th:block>
+   <style>
+	#timePopup {
+	    display: none;
+	    position: fixed;
+	    top: 50%;
+	    left: 50%;
+	    transform: translate(-50%, -50%);  
+	    width: 100%;
+	    height: 100%;
+	    background: rgba(0, 0, 0, 0.5); 
+	    justify-content: center; 
+	    align-items: center; 
+	    z-index: 999; 
 	}
 
-		// Function to format time into a more readable format (HH:MM)
-		function formatTime(time) {
-		    const date = new Date(`1970-01-01T${time}`);
-		    return date.toTimeString().slice(0, 5);  // Extract hour and minute (HH:MM format)
-		}
-		
-		
-		// Function to calculate duration between start and end time
-		function calculateDuration() {
-		    const startTime = document.getElementById('startTime').value; 
-		    const endTime = document.getElementById('endTime').value; 
-			const contractType = document.getElementById('contractType').value;
-		
-		    if (!startTime || !endTime) {
-		        return; 
-		    }
-		
-			const startParts = startTime.split(':'); 
-			const endParts = endTime.split(':');
 
-			const start = new Date(1970, 0, 1, startParts[0], startParts[1]); 
-			const end = new Date(1970, 0, 1, endParts[0], endParts[1]);
-		
-		    // Kiểm tra nếu giờ kết thúc sớm hơn giờ bắt đầu
-		    if (end < start) {
-		        alert('End time cannot be earlier than start time.');
-		        return; 
-		    }
-		
-		    
-		    const durationInMs = end - start; 
-		    const durationInHours = durationInMs / (1000 * 60 * 60); 
-			
-			let totalHours = durationInHours;
-		
-			if (contractType === "one_time") {
-			        totalHours = durationInHours;
-			    } else if (contractType === "by_day") {
-					const startDate = document.getElementById('startDate').value; 
-					        const endDate = document.getElementById('endDate').value; 
+       .popup-content {
+           background-color: #fff;
+           padding: 20px;
+           border-radius: 8px;
+           max-width: 400px;
+           width: 100%;
+       }
+	   
+	   .popup-content {
+	       background-color: #fff;
+	       padding: 20px;
+	       border-radius: 8px;
+	       max-width: 400px;
+	       width: 100%;
+	       position: relative; 
+	   }
 
-					        if (startDate && endDate) {
-					            const start = new Date(startDate); 
-					            const end = new Date(endDate); 
+	   .btn-close {
+	              position: absolute;
+	              top: 10px;
+	              right: 10px;
+	              background: none;
+	              border: none;
+	              font-size: 20px;
+	              color: #333;
+	              cursor: pointer;
+	          }
 
-					            const oneDay = 24 * 60 * 60 * 1000; 
-								const totalDays = Math.round(Math.abs((end - start) / oneDay)) + 1;
-								
-					            totalHours = totalDays * durationInHours;
-					        }
-			    } else if (contractType === "by_month") {
-			        const startDate = document.getElementById('startDate').value;
-			        const endDate = document.getElementById('endDate').value;
+   </style>
 
-			        if (startDate && endDate) {
-			            const start = new Date(startDate);
-			            const end = new Date(endDate);
+</head>
+<body>
+   <th:block th:insert="~{common/home_content_first}"></th:block>
+   <section class="contained">
+       <h2 class="section-title ff-damion">Request a Service</h2>
+       <p class="col-wide ta-center mlmr-a">
+           Please fill out the form below to request more information or book a service.
+       </p>
+       <!-- FORM START -->
+       <form id="contractForm" th:action="@{/contracts/checkout}" method="post" class="message-form mt-50 mb-25">
+           <!-- Hidden Fields from session -->
+           <input type="hidden" th:value="${session.customerId}">
+           <input type="hidden" id="employeeId" th:value="${employeeId}" />
+           <input type="hidden" name="contractId" th:value="${session.contractId}" />
+           <input type="hidden" name="empServiceId" th:value="${session.empServiceId}" />
+           <input type="hidden" name="servicePrice" th:value="${session.servicePrice}" />
+           <div class="row">
+               <div class="col-balance map-embed">
+                   <h2 class="fs-h4 fc-primary mb-15">Request Information</h2>
+                   <!-- Select Service Duration Type -->
+				   <input type="hidden" name="contractType" id="contractType" value="scheduled" />
+                   <!-- Popup Modal -->
+				   <!-- Nút để hiển thị popup -->
+				   <button type="button" id="showPopup" class="btn-bg1 border-round mt-20">Show Time Selection</button>
 
-			            const oneDay = 24 * 60 * 60 * 1000; 
-			            const totalDays = Math.round(Math.abs((start - end) / oneDay)); 
+                   <div id="timePopup" class="popup">
+                       <div class="popup-content">
+						<button type="button" id="closePopup" class="btn-close">X</button>
 
-			            totalHours = totalDays * durationInHours;
-			        }
-			    }
+                           <!-- Start Date -->
+                           <span class="fs-h4 mb-15 mt-25 fc-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Please select the date you would like the service to begin.">Select Service Date:</span>
+                           <div class="input-group">
+                               <i class="bi bi-calendar-event"></i>
+                               <input type="date" id="popupStartDate" required data-bs-toggle="tooltip" data-bs-placement="top" title="Click to select the service start date." />
+                           </div>
+                           <!-- Service Time -->
+                           <span class="fs-h4 mb-15 mt-25 fc-primary"data-bs-toggle="tooltip" data-bs-placement="top" title="Please choose a start time for your service.">Select Service Time:</span>
+                           <div class="input-group">
+                               <i class="bi bi-clock"></i>
+                               <select id="popupStartTime" required data-bs-toggle="tooltip" data-bs-placement="top" title="Please choose a start time for your service.">
+                                   <option value="" disabled selected>Select Start Time</option>
+                               </select>
+                               <span class="separator">to</span>
+                               <select id="popupEndTime" required data-bs-toggle="tooltip" data-bs-placement="top" title="Please choose an end time for your service.">
+                                   <option value="" disabled selected>Select End Time</option>
+                               </select>
+                           </div>
+                           <!-- Add Button -->
+                           <button type="button" id="addSelection" class="btn-add mt-20" data-bs-toggle="tooltip" data-bs-placement="top" title="Click here to add the selected time to your booking.">Add to Request</button>
+                       </div>
+                   </div>
+                   <!-- Selected Time List -->
+                   <div id="selectedTimeList">
+                       <h3 data-bs-toggle="tooltip" data-bs-placement="top" title="Here you can review the time slots you’ve selected.">Selected Time Slots:</h3>
+                       <ul id="timeSlotList"></ul>
+                   </div>
+                   <input type="hidden" id="selectedTimes" name="selectedTimes" />
+				   
+				   <!-- Duration (Hours Worked) -->
+					<span class="fs-h4 mb-15 mt-25 fc-primary">Duration (Hours):</span>
+				 	<div class="input-group">
+						<input type="text" name="hoursWorked" id="hoursWorked" required />
+					</div>
+				                      
+				   	<input type="hidden" id="totalPrice" name="totalPrice" />
+				 	<!-- Hiển thị tổng giá -->
+				   	<span class="fs-h4 mb-15 mt-25 fc-primary">Total Price:</span>
+				   		<div class="total-price-container">
+				   		<!--<label for="totalPriceDisplay">Total Price: </label>-->
+				   			<input type="text" id="totalPriceDisplay" readonly />
+				   	</div>
+				   
+                   <!-- Service Location -->
+                   <span class="fs-h4 mb-15 mt-25 fc-primary">Service Location:</span>
+                   <a class="input-group">
+                       <i class="bi bi-geo-alt-fill"></i>
+                       <input type="text" name="serviceAddress" placeholder="Service location address." required />
+                   </a>
+                   <!-- Contact Information -->
+                   <span class="fs-h4 mb-15 mt-25 fc-primary">Say Hello:</span>
+                   <a class="input-group">
+                       <i class="bi bi-telephone-fill"></i>
+                       <input type="text" name="servicePhone" placeholder="Your Phone Number" required />
+                   </a>
+                   
 
+                   <!-- Submit Button -->
+                   <button type="submit" class="btn-bg1 border-round mt-20">Send</button>
+               </div>
+           </div>
+       </form>
+       <!-- FORM END -->
+   </section>
+   <!-- ========== section end ========== -->
+   <th:block th:insert="~{common/home_content_footer}"></th:block>
 
-		    document.getElementById('hoursWorked').value = totalHours.toFixed(2); 
-			
-		}
+   <script>
+       document.addEventListener('DOMContentLoaded', function() {
+           // Mã JavaScript của bạn sẽ chạy ở đây, sau khi DOM đã được tải đầy đủ
 
-		window.onload = function() {
-			document.getElementById('startDate').addEventListener('change', updateSchedule);
-		    document.getElementById('startTime').addEventListener('change', calculateDuration); 
-			
-		    document.getElementById('endTime').addEventListener('change', calculateDuration); 
-			
-		};
-		
-</script>
+           function fetchAvailableTimeSlots(employeeId, date) {
+               const url = `http://localhost:8080/employees/schedules/${employeeId}/date?date=${date}`;
+               fetch(url)
+                   .then(response => response.json())
+                   .then(data => populateTimeOptions(data))
+                   .catch(error => {
+                       console.error('Error fetching available time slots:', error);
+                       alert('Could not fetch available time slots.');
+                   });
+           }
 
+           function populateTimeOptions(data) {
+               const startTimeSelect = document.getElementById('popupStartTime');
+               const endTimeSelect = document.getElementById('popupEndTime');
+               startTimeSelect.innerHTML = '<option value="" disabled selected>Select Start Time</option>';
+               endTimeSelect.innerHTML = '<option value="" disabled selected>Select End Time</option>';
+               data.forEach(slot => {
+                   const startOption = document.createElement('option');
+                   startOption.value = slot.startTime;
+                   startOption.textContent = formatTime(slot.startTime);
+                   startTimeSelect.appendChild(startOption);
+                   const endOption = document.createElement('option');
+                   endOption.value = slot.endTime;
+                   endOption.textContent = formatTime(slot.endTime);
+                   endTimeSelect.appendChild(endOption);
+               });
+           }
 
+           function formatTime(time) {
+               const date = new Date(`1970-01-01T${time}`);
+               return date.toTimeString().slice(0, 5); // HH:MM format
+           }
 
+           function updateSelectedTimes() {
+               const selectedTimes = document.getElementById('selectedTimes');
+               const listItems = document.querySelectorAll('#timeSlotList li');
+               const times = [];
+
+               listItems.forEach(item => {
+                   const [dateText, startTimeText, endTimeText] = item.textContent.split(',').map(str => str.split(': ')[1]);
+                   const startTime = formatTime(startTimeText);
+                   const endTime = formatTime(endTimeText);
+                   times.push({ startDate: dateText, startTime, endTime });
+               });
+
+               selectedTimes.value = JSON.stringify(times);
+           }
+
+           function calculateTotalDuration() {
+               const selectedTimes = document.getElementById('selectedTimes');
+               const timeSlots = selectedTimes.value ? JSON.parse(selectedTimes.value) : [];
+               let totalDuration = 0;
+
+               timeSlots.forEach(slot => {
+                   const startDate = new Date(`${slot.startDate}T${slot.startTime}`);
+                   const endDate = new Date(`${slot.startDate}T${slot.endTime}`);
+                   if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                       console.error("Invalid start time or end time:", slot.startTime, slot.endTime);
+                       return; // Bỏ qua nếu có lỗi
+                   }
+                   const durationInMillis = endDate - startDate;
+                   if (durationInMillis < 0) {
+                       console.error("End time is before start time.");
+                       return; // Bỏ qua nếu giờ kết thúc trước giờ bắt đầu
+                   }
+                   totalDuration += durationInMillis / (1000 * 60 * 60);
+               });
+
+               document.getElementById('hoursWorked').value = totalDuration.toFixed(2);
+           }
+
+           document.getElementById('popupStartDate').addEventListener('change', function() {
+               const date = this.value;
+               const employeeId = document.getElementById('employeeId').value;
+               if (employeeId && date) {
+                   fetchAvailableTimeSlots(employeeId, date);
+               }
+           });
+
+           document.getElementById('addSelection').addEventListener('click', function() {
+               const startDate = document.getElementById('popupStartDate').value;
+               const startTime = document.getElementById('popupStartTime').value;
+               const endTime = document.getElementById('popupEndTime').value;
+
+               if (startDate && startTime && endTime) {
+                   const listItem = document.createElement('li');
+                   listItem.classList.add('time-slot-item');
+                   
+                   // Tạo đối tượng Date từ Start Time và End Time để tính Duration
+                   const startDateTime = new Date(`${startDate}T${startTime}`);
+                   const endDateTime = new Date(`${startDate}T${endTime}`);
+                   const durationInMillis = endDateTime - startDateTime;
+                   const durationInHours = durationInMillis / (1000 * 60 * 60); // Tính duration theo giờ
+                   
+                   // Cập nhật text hiển thị và thêm hidden input
+                   listItem.textContent = `Date: ${startDate}, Start Time: ${formatTime(startTime)} to End Time: ${formatTime(endTime)} (Duration: ${durationInHours.toFixed(2)} hours)`;
+
+                   // Tạo input hidden để lưu trữ duration
+                   const hiddenInput = document.createElement('input');
+                   hiddenInput.type = 'hidden';
+                   hiddenInput.name = 'hoursWorked[]'; // Thêm vào tên mảng để gửi cùng form
+                   hiddenInput.value = durationInHours.toFixed(2); // Lưu trữ duration tính toán
+                   listItem.appendChild(hiddenInput);
+
+                   // Thêm nút xóa
+                   const removeButton = document.createElement('button');
+                   removeButton.classList.add('remove-btn');
+                   removeButton.textContent = 'x';
+                   removeButton.addEventListener('click', function() {
+                       listItem.remove();
+                       updateTotalDuration(); 
+					   calculateTotalPrice(); 
+                   });
+
+                   listItem.appendChild(removeButton);
+                   document.getElementById('timeSlotList').appendChild(listItem);
+
+                   // Cập nhật tổng duration
+                   updateTotalDuration();
+                   calculateTotalPrice();
+               } else {
+                   alert('Please select both start and end times.');
+               }
+           });
+
+           function updateTotalDuration() {
+               const hiddenInputs = document.querySelectorAll('input[name="hoursWorked[]"]');
+               let totalDuration = 0;
+
+               hiddenInputs.forEach(input => {
+                   const duration = parseFloat(input.value);
+                   if (!isNaN(duration)) {
+                       totalDuration += duration;
+                   }
+               });
+
+               document.getElementById('hoursWorked').value = totalDuration.toFixed(2);
+               calculateTotalPrice();
+           }
+
+           document.getElementById('popupStartTime').addEventListener('change', calculateTotalDuration);
+           document.getElementById('popupEndTime').addEventListener('change', calculateTotalDuration);
+
+           function calculateTotalPrice() {
+               const servicePrice = parseFloat(document.querySelector('input[name="servicePrice"]').value); // Lấy giá dịch vụ từ hidden input
+               const hoursWorked = parseFloat(document.getElementById('hoursWorked').value); // Lấy số giờ đã làm từ input
+
+               console.log("Service Price: ", servicePrice);
+               console.log("Hours Worked: ", hoursWorked);
+
+               if (!isNaN(servicePrice) && !isNaN(hoursWorked)) {
+                   const totalPrice = servicePrice * hoursWorked; 
+                   document.getElementById('totalPrice').value = totalPrice.toFixed(2); 
+				   document.getElementById('totalPriceDisplay').value = totalPrice.toFixed(2); 
+               } else {
+                   alert("Please ensure both service price and duration are valid.");
+               }
+           }
+
+           document.getElementById('hoursWorked').addEventListener('input', function() {
+               const hours = document.getElementById('hoursWorked').value;
+               console.log("Hours worked changed to:", hours);  
+               calculateTotalPrice();
+           });
+       });		   document.getElementById('showPopup').addEventListener('click', function() {
+		       const popup = document.getElementById('timePopup');
+		       popup.style.display = 'flex';  // Đảm bảo sử dụng 'flex' thay vì 'block'
+		   });
+
+		   document.getElementById('closePopup').addEventListener('click', function() {
+		       const popup = document.getElementById('timePopup');
+		       popup.style.display = 'none';  // Ẩn popup khi nhấn nút đóng
+		   });
+
+		   document.getElementById('timePopup').addEventListener('click', function(e) {
+		       if (e.target === this) {
+		           this.style.display = 'none';  // Đóng popup khi nhấn ngoài popup
+		       }
+		   });
+
+   </script>
 </body>
 </html>

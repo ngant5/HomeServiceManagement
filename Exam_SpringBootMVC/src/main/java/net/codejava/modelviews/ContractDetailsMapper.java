@@ -20,8 +20,8 @@ public class ContractDetailsMapper implements RowMapper<ContractDetails> {
         contractDetail.setStartDate(rs.getTimestamp(Views.COL_CONTRACT_DETAILS_START_DATE).toLocalDateTime().toLocalDate());
         contractDetail.setEndDate(rs.getTimestamp(Views.COL_CONTRACT_DETAILS_END_DATE).toLocalDateTime().toLocalDate());
         contractDetail.setStatus(rs.getInt(Views.COL_CONTRACT_DETAILS_STATUS));
-        contractDetail.setHoursWorked(rs.getInt(Views.COL_CONTRACT_DETAILS_HOURS_WORKED));
-        contractDetail.setTotalPrice(rs.getInt(Views.COL_CONTRACT_DETAILS_TOTAL_PRICE));
+        contractDetail.setHoursWorked(rs.getString(Views.COL_CONTRACT_DETAILS_HOURS_WORKED));
+        contractDetail.setTotalPrice(rs.getString(Views.COL_CONTRACT_DETAILS_TOTAL_PRICE));
         return contractDetail;
     }
 }

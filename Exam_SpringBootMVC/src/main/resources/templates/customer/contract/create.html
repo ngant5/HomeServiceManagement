@@ -6,6 +6,92 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <title>Happy Clean</title>
    <th:block th:insert="~{common/home_head_tag}"></th:block>
+   <style>
+	#timePopup {
+	    display: none;
+	    position: fixed;
+	    top: 50%;
+	    left: 50%;
+	    transform: translate(-50%, -50%);  
+	    width: 100%;
+	    height: 100%;
+	    background: rgba(0, 0, 0, 0.5); 
+	    justify-content: center; 
+	    align-items: center; 
+	    z-index: 999; 
+	}
+
+
+       .popup-content {
+           background-color: #fff;
+           padding: 20px;
+           border-radius: 8px;
+           max-width: 400px;
+           width: 100%;
+       }
+	   
+	   .popup-content {
+	       background-color: #fff;
+	       padding: 20px;
+	       border-radius: 8px;
+	       max-width: 400px;
+	       width: 100%;
+	       position: relative; 
+	   }
+
+	   .btn-close {
+	              position: absolute;
+	              top: 10px;
+	              right: 10px;
+	              background: none;
+	              border: none;
+	              font-size: 20px;
+	              color: #333;
+	              cursor: pointer;
+	          }
+			  /* Style cho Button "Add to Request" */
+			  .btn-add {
+			      background-color: #28a745; /* Màu xanh lá */
+			      color: white; /* Màu chữ trắng */
+			      border: none;
+			      padding: 10px 20px;
+			      font-size: 16px;
+			      border-radius: 5px;
+			      cursor: pointer;
+			      transition: background-color 0.3s;
+			  }
+
+			  .btn-add:hover {
+			      background-color: #218838; /* Màu xanh lá đậm khi hover */
+			  }
+
+			  .btn-add:focus {
+			      outline: none;
+			  }
+			  /* Style cho Button "Remove" */
+			  .remove-btn {
+			      background-color: #dc3545; /* Màu đỏ */
+			      color: white; /* Màu chữ trắng */
+			      border: none;
+			      padding: 5px 10px;
+			      font-size: 14px;
+			      border-radius: 50%;
+			      cursor: pointer;
+			      transition: background-color 0.3s, transform 0.2s;
+			      display: inline-block;
+			      margin-left: 10px;
+			  }
+
+			  .remove-btn:hover {
+			      background-color: #c82333; /* Màu đỏ đậm khi hover */
+			      transform: scale(1.1); /* Tăng kích thước nhẹ khi hover */
+			  }
+
+			  .remove-btn:focus {
+			      outline: none;
+			  }
+   </style>
+
 </head>
 <body>
    <th:block th:insert="~{common/home_content_first}"></th:block>
@@ -18,78 +104,93 @@
        <form id="contractForm" th:action="@{/contracts/checkout}" method="post" class="message-form mt-50 mb-25">
            <!-- Hidden Fields from session -->
            <input type="hidden" th:value="${session.customerId}">
-           <input type="hidden" id="employeeId" th:value="${employeeId}" />
+           <input type="hidden" name="employeeId" id="employeeId" th:value="${employeeId}" />
            <input type="hidden" name="contractId" th:value="${session.contractId}" />
            <input type="hidden" name="empServiceId" th:value="${session.empServiceId}" />
            <input type="hidden" name="servicePrice" th:value="${session.servicePrice}" />
            <div class="row">
                <div class="col-balance map-embed">
-                   <h2 class="fs-h4 fc-primary mb-15">Request Information</h2>
+                   <h2 class="fs-h4 fc-primary mb-15">Please select your service time below:</h2>
                    <!-- Select Service Duration Type -->
-                   <span class="fs-h4 mb-15 mt-25 fc-primary">Select Service Duration Type:</span>
-                   <div class="input-group">
-                       <i class="bi bi-calendar-range"></i>
-					   <select name="contractType" id="contractType" required>
-					       <option value="scheduled">Custom Scheduled Service</option>
-					   </select>
-                   </div>
+				   <input type="hidden" name="contractType" id="contractType" value="scheduled" />
+				   <span class="fs-h4 mb-15 mt-25 fc-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Please select the date you would like the service to begin.">Select Service Date:</span>
+				   <div class="input-group">
+				   		<i class="bi bi-calendar-event"></i>                               
+						<input type="date" name="startDate" required data-bs-toggle="tooltip" data-bs-placement="top" title="Click to select the service start date." />
+				   </div>				   							                                  
+				
+				   <span class="fs-h4 mb-15 mt-25 fc-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Please select the date you would like the service to begin.">Select Service Date:</span>
+					<div class="input-group">
+						<i class="bi bi-calendar-event"></i>
+						<input type="date" name="endDate"  required data-bs-toggle="tooltip" data-bs-placement="top" title="Click to select the service start date." />
+			       </div>
                    <!-- Popup Modal -->
+				   <!-- Nút để hiển thị popup -->
+				   <button type="button" id="showPopup" class="btn-bg1 border-round mt-20">Select Service Time</button>
+
                    <div id="timePopup" class="popup">
                        <div class="popup-content">
+						<button type="button" id="closePopup" class="btn-close">X</button>
+
                            <!-- Start Date -->
-                           <span class="fs-h4 mb-15 mt-25 fc-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Chọn ngày bạn muốn bắt đầu dịch vụ.">Select Service Date:</span>
+                           <span class="fs-h4 mb-15 mt-25 fc-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Please select the date you would like the service to begin.">Select Service Date:</span>
                            <div class="input-group">
                                <i class="bi bi-calendar-event"></i>
-                               <input type="date" id="popupStartDate" required data-bs-toggle="tooltip" data-bs-placement="top" title="Nhấn vào để chọn ngày bắt đầu dịch vụ." />
-                           </div>
+                               <input type="date" id="popupStartDate" required data-bs-toggle="tooltip" data-bs-placement="top" title="Click to select the service start date." />
+							   
+							   
+							   </div>
                            <!-- Service Time -->
-                           <span class="fs-h4 mb-15 mt-25 fc-primary"data-bs-toggle="tooltip" data-bs-placement="top" title="Chọn thời gian bạn muốn dịch vụ bắt đầu.">Select Service Time:</span>
+                           <span class="fs-h4 mb-15 mt-25 fc-primary"data-bs-toggle="tooltip" data-bs-placement="top" title="Please choose a start time for your service.">Select Service Time:</span>
                            <div class="input-group">
                                <i class="bi bi-clock"></i>
-                               <select id="popupStartTime" required data-bs-toggle="tooltip" data-bs-placement="top" title="Chọn giờ bắt đầu dịch vụ.">
+                               <select id="popupStartTime" required data-bs-toggle="tooltip" data-bs-placement="top" title="Please choose a start time for your service.">
                                    <option value="" disabled selected>Select Start Time</option>
                                </select>
                                <span class="separator">to</span>
-                               <select id="popupEndTime" required data-bs-toggle="tooltip" data-bs-placement="top" title="Chọn giờ kết thúc dịch vụ.">
+                               <select id="popupEndTime" required data-bs-toggle="tooltip" data-bs-placement="top" title="Please choose an end time for your service.">
                                    <option value="" disabled selected>Select End Time</option>
                                </select>
                            </div>
                            <!-- Add Button -->
-                           <button type="button" id="addSelection" class="btn-add mt-20" data-bs-toggle="tooltip" data-bs-placement="top" title="Nhấn để thêm giờ dịch vụ đã chọn vào danh sách.">Add Selection</button>
+                           <button type="button" id="addSelection" class="btn-add mt-20" data-bs-toggle="tooltip" data-bs-placement="top" title="Click here to add the selected time to your booking.">Add to Request</button>
                        </div>
                    </div>
                    <!-- Selected Time List -->
                    <div id="selectedTimeList">
-                       <h3 data-bs-toggle="tooltip" data-bs-placement="top" title="Danh sách các giờ bạn đã chọn.">Selected Time Slots:</h3>
+                       <h3 data-bs-toggle="tooltip" data-bs-placement="top" title="Here you can review the time slots you’ve selected.">Selected Time Slots:</h3>
                        <ul id="timeSlotList"></ul>
                    </div>
                    <input type="hidden" id="selectedTimes" name="selectedTimes" />
 				   
+				   <!-- Duration (Hours Worked) -->
+				   
+					<span class="fs-h4 mb-15 mt-25 fc-primary">Duration (Hours):</span>
+				 	<div class="input-group">
+						<input type="text" name="hoursWorked" id="hoursWorked" readonly />
+					</div>
+				                      
+				   	<input type="hidden" id="totalPrice" name="totalPrice" />
+				 	<!-- Hiển thị tổng giá -->
+				   	<span class="fs-h4 mb-15 mt-25 fc-primary">Total Price:</span>
+				   		<div class="total-price-container">
+				   		<!--<label for="totalPriceDisplay">Total Price: </label>-->
+				   			<input type="text" id="totalPriceDisplay" readonly />
+				   	</div>
+				   
                    <!-- Service Location -->
                    <span class="fs-h4 mb-15 mt-25 fc-primary">Service Location:</span>
-                   <a class="display-inblock">
+                   <a class="input-group">
                        <i class="bi bi-geo-alt-fill"></i>
                        <input type="text" name="serviceAddress" placeholder="Service location address." required />
                    </a>
                    <!-- Contact Information -->
                    <span class="fs-h4 mb-15 mt-25 fc-primary">Say Hello:</span>
-                   <a class="display-inblock">
+                   <a class="input-group">
                        <i class="bi bi-telephone-fill"></i>
                        <input type="text" name="servicePhone" placeholder="Your Phone Number" required />
                    </a>
-                   <!-- Duration (Hours Worked) -->
-                   <span class="fs-h4 mb-15 mt-25 fc-primary">Duration (Hours):</span>
-                   <div class="input-group">
-                       <input type="number" name="hoursWorked" id="hoursWorked" min="1" required />
-                   </div>
-                   <!-- Nút tính tổng duration -->
-				   <input type="hidden" id="totalPrice" name="totalPrice" />
-				   <!-- Hiển thị tổng giá -->
-				   <span class="fs-h4 mb-15 mt-25 fc-primary">Total Price:</span>
-				   <div class="total-price-container">
-				       <!--<label for="totalPriceDisplay">Total Price: </label>-->
-				       <input type="text" id="totalPriceDisplay" readonly />
-				   </div>
+                   
 
                    <!-- Submit Button -->
                    <button type="submit" class="btn-bg1 border-round mt-20">Send</button>
@@ -183,52 +284,93 @@
                    fetchAvailableTimeSlots(employeeId, date);
                }
            });
+		  
 
-           document.getElementById('addSelection').addEventListener('click', function() {
-               const startDate = document.getElementById('popupStartDate').value;
-               const startTime = document.getElementById('popupStartTime').value;
-               const endTime = document.getElementById('popupEndTime').value;
+		   // Hàm format lại ngày để đưa vào giá trị hidden input (định dạng YYYY-MM-DD)
+		   function formatDate(date) {
+		       // date ở đây là định dạng MM-DD
+		       const [month, day] = date.split('-');
+		       const year = new Date().getFullYear(); // Dùng năm hiện tại nếu không có trong ngày
+		       return `${year}-${month}-${day}`;  // Chuyển đổi thành YYYY-MM-DD
+		   }
 
-               if (startDate && startTime && endTime) {
-                   const listItem = document.createElement('li');
-                   listItem.classList.add('time-slot-item');
-                   
-                   // Tạo đối tượng Date từ Start Time và End Time để tính Duration
-                   const startDateTime = new Date(`${startDate}T${startTime}`);
-                   const endDateTime = new Date(`${startDate}T${endTime}`);
-                   const durationInMillis = endDateTime - startDateTime;
-                   const durationInHours = durationInMillis / (1000 * 60 * 60); // Tính duration theo giờ
-                   
-                   // Cập nhật text hiển thị và thêm hidden input
-                   listItem.textContent = `Date: ${startDate}, Start Time: ${formatTime(startTime)} to End Time: ${formatTime(endTime)} (Duration: ${durationInHours.toFixed(2)} hours)`;
+           
+		   document.getElementById('addSelection').addEventListener('click', function() {
+		       const startDate = document.getElementById('popupStartDate').value;
+		       const startTime = document.getElementById('popupStartTime').value;
+		       const endTime = document.getElementById('popupEndTime').value;
 
-                   // Tạo input hidden để lưu trữ duration
-                   const hiddenInput = document.createElement('input');
-                   hiddenInput.type = 'hidden';
-                   hiddenInput.name = 'hoursWorked[]'; // Thêm vào tên mảng để gửi cùng form
-                   hiddenInput.value = durationInHours.toFixed(2); // Lưu trữ duration tính toán
-                   listItem.appendChild(hiddenInput);
+		       if (startDate && startTime && endTime) {
+		           let found = false;
+		           const listItems = document.querySelectorAll('#timeSlotList li');
+		           
+		           // Duyệt qua tất cả các mục đã chọn trong danh sách
+		           listItems.forEach(item => {
+		               const itemDate = item.querySelector('.item-date').textContent.split(': ')[1];
+		               
+		               // Nếu ngày đã có trong danh sách, thay thế thông tin
+		               if (itemDate === startDate) {
+		                   found = true;
+		                   
+		                   // Tạo đối tượng Date từ Start Time và End Time để tính Duration
+		                   const startDateTime = new Date(`${startDate}T${startTime}`);
+		                   const endDateTime = new Date(`${startDate}T${endTime}`);
+		                   const durationInMillis = endDateTime - startDateTime;
+		                   const durationInHours = durationInMillis / (1000 * 60 * 60); // Tính duration theo giờ
+		                   
+		                   // Cập nhật thời gian đã chọn
+		                   item.querySelector('.item-times').textContent = `Start Time: ${formatTime(startTime)} to End Time: ${formatTime(endTime)} (Duration: ${durationInHours.toFixed(2)} hours)`;
+		                   
+		                   // Cập nhật giá trị hidden input duration
+		                   const durationInput = item.querySelector('.item-duration');
+		                   durationInput.value = durationInHours.toFixed(2);
 
-                   // Thêm nút xóa
-                   const removeButton = document.createElement('button');
-                   removeButton.classList.add('remove-btn');
-                   removeButton.textContent = 'x';
-                   removeButton.addEventListener('click', function() {
-                       listItem.remove();
-                       updateTotalDuration(); 
-					   calculateTotalPrice(); 
-                   });
+		                   // Cập nhật tổng duration và giá trị
+		                   updateTotalDuration();
+		                   calculateTotalPrice();
+		               }
+		           });
 
-                   listItem.appendChild(removeButton);
-                   document.getElementById('timeSlotList').appendChild(listItem);
+		           // Nếu chưa có mục nào cho ngày này, thêm mới
+		           if (!found) {
+		               const listItem = document.createElement('li');
+		               listItem.classList.add('time-slot-item');
+		               
+		               // Tạo đối tượng Date từ Start Time và End Time để tính Duration
+		               const startDateTime = new Date(`${startDate}T${startTime}`);
+		               const endDateTime = new Date(`${startDate}T${endTime}`);
+		               const durationInMillis = endDateTime - startDateTime;
+		               const durationInHours = durationInMillis / (1000 * 60 * 60); // Tính duration theo giờ
+		               
+		               // Cập nhật text hiển thị và thêm hidden input
+		               listItem.innerHTML = `
+		                   <span class="item-date">Date: ${startDate}</span>,
+		                   <span class="item-times">Time: ${formatTime(startTime)}-${formatTime(endTime)} (${durationInHours.toFixed(2)} hours)</span>
+		                   <input type="hidden" class="item-duration" name="hoursWorked[]" value="${durationInHours.toFixed(2)}">
+		               `;
 
-                   // Cập nhật tổng duration
-                   updateTotalDuration();
-                   calculateTotalPrice();
-               } else {
-                   alert('Please select both start and end times.');
-               }
-           });
+		               // Thêm nút xóa
+		               const removeButton = document.createElement('button');
+		               removeButton.classList.add('remove-btn');
+		               removeButton.textContent = 'x';
+		               removeButton.addEventListener('click', function() {
+		                   listItem.remove();
+		                   updateTotalDuration();
+		                   calculateTotalPrice();
+		               });
+
+		               listItem.appendChild(removeButton);
+		               document.getElementById('timeSlotList').appendChild(listItem);
+
+		               // Cập nhật tổng duration và giá trị
+		               updateTotalDuration();
+		               calculateTotalPrice();
+		           }
+				   updateStartAndEndDate();
+		       } else {
+		           alert('Please select both start and end times.');
+		       }
+		   });
 
            function updateTotalDuration() {
                const hiddenInputs = document.querySelectorAll('input[name="hoursWorked[]"]');
@@ -269,7 +411,22 @@
                console.log("Hours worked changed to:", hours);  
                calculateTotalPrice();
            });
-       });
+       });		   document.getElementById('showPopup').addEventListener('click', function() {
+		       const popup = document.getElementById('timePopup');
+		       popup.style.display = 'flex';  // Đảm bảo sử dụng 'flex' thay vì 'block'
+		   });
+
+		   document.getElementById('closePopup').addEventListener('click', function() {
+		       const popup = document.getElementById('timePopup');
+		       popup.style.display = 'none';  // Ẩn popup khi nhấn nút đóng
+		   });
+
+		   document.getElementById('timePopup').addEventListener('click', function(e) {
+		       if (e.target === this) {
+		           this.style.display = 'none';  // Đóng popup khi nhấn ngoài popup
+		       }
+		   });
+
    </script>
 </body>
 </html>

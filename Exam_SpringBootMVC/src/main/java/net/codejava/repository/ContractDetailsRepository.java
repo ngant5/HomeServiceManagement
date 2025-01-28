@@ -41,11 +41,15 @@ public class ContractDetailsRepository {
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         logger.info("Trying to insert contract detail with emp_service_id: {}", contractDetail.getEmpServiceId());
 
-        jdbcTemplate.update(sql, contractDetail.getContractId(), contractDetail.getEmpServiceId(), 
+        jdbcTemplate.update(sql, contractDetail.getContractId(), 
+        						 contractDetail.getEmpServiceId(), 
         						 contractDetail.getEmployeeId(),
-        						 contractDetail.getServiceAddress(), contractDetail.getServicePhone(),
-        						 contractDetail.getStartDate(), contractDetail.getEndDate(),
-        						 contractDetail.getStatus(), contractDetail.getHoursWorked(),
+        						 contractDetail.getServiceAddress(), 
+        						 contractDetail.getServicePhone(),
+        						 contractDetail.getStartDate(), 
+        						 contractDetail.getEndDate(),
+        						 contractDetail.getStatus(), 
+        						 contractDetail.getHoursWorked(),
         						 contractDetail.getTotalPrice(), 
         						 contractDetail.getContractType());;
     }
@@ -116,8 +120,8 @@ public class ContractDetailsRepository {
         detail.setStartDate(rs.getTimestamp("start_date").toLocalDateTime().toLocalDate());
         detail.setEndDate(rs.getTimestamp("end_date").toLocalDateTime().toLocalDate());
         detail.setStatus(rs.getInt("status"));
-        detail.setHoursWorked(rs.getInt("hours_worked"));
-        detail.setTotalPrice(rs.getDouble("total_price"));
+        detail.setHoursWorked(rs.getString("hours_worked"));
+        detail.setTotalPrice(rs.getString("total_price"));
         return detail;
     }
     

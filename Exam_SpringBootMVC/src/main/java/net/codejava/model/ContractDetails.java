@@ -11,8 +11,8 @@ public class ContractDetails {
     private LocalDate startDate;
     private LocalDate endDate;
     private int status;
-    private int hoursWorked;
-    private double totalPrice;
+    private String hoursWorked;
+    private String totalPrice;
     private String contractType;
     private int employeeId;  
 
@@ -67,16 +67,16 @@ public class ContractDetails {
     public void setStatus(int status) {
     	this.status = status; 
     	}
-    public int getHoursWorked() {
+    public String getHoursWorked() {
     	return hoursWorked; 
     	}
-    public void setHoursWorked(int hoursWorked) { 
+    public void setHoursWorked(String hoursWorked) { 
     	this.hoursWorked = hoursWorked;
     	}
-    public double getTotalPrice() { 
+    public String getTotalPrice() { 
     	return totalPrice; 
     	}
-    public void setTotalPrice(double totalPrice) { 
+    public void setTotalPrice(String totalPrice) { 
     	this.totalPrice = totalPrice;
     	}
     

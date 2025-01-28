@@ -212,8 +212,10 @@ public class ContractController {
                                        @RequestParam String servicePhone,
                                        @RequestParam String startDate,
                                        @RequestParam String endDate,
-                                       @RequestParam int hoursWorked,
+                                       @RequestParam String hoursWorked,
                                        @RequestParam String contractType,
+                                       @RequestParam String totalPrice,
+                                       @RequestParam Integer employeeId,
                                        HttpSession session,
                                        Model model) {
         	Integer customerId = (Integer) session.getAttribute("customerId");
@@ -224,16 +226,12 @@ public class ContractController {
             
             Integer contractId = (Integer) session.getAttribute("contractId");
             Integer empServiceId = (Integer) session.getAttribute("empServiceId"); 
-            Double servicePrice = (Double) session.getAttribute("servicePrice"); 
-            Double totalPrice = servicePrice * hoursWorked;
+            
+
 
             logger.info("Finalizing contract for contractId: {} with empServiceId: {}", contractId, empServiceId);
             
-            
-            if (servicePrice == null) {
-                logger.warn("No totalPrice found in session. Cannot finalize contract.");
-                return "redirect:/error"; // Chuyển đến trang lỗi
-            }
+           
 
             if (contractId != null) {
                 // Tạo chi tiết hợp đồng
@@ -242,12 +240,29 @@ public class ContractController {
                 contractDetail.setEmpServiceId(empServiceId);
                 contractDetail.setServiceAddress(serviceAddress);
                 contractDetail.setServicePhone(servicePhone);
-                contractDetail.setStartDate(LocalDate.parse(startDate)); 
-                contractDetail.setEndDate(LocalDate.parse(endDate)); 
                 contractDetail.setHoursWorked(hoursWorked);
                 contractDetail.setStatus(0);
-                contractDetail.setTotalPrice(totalPrice);
                 contractDetail.setContractType(contractType);
+                contractDetail.setTotalPrice(totalPrice);
+                contractDetail.setEmployeeId(employeeId);
+                if (!startDate.isEmpty()) {
+                    try {
+                        contractDetail.setStartDate(LocalDate.parse(startDate)); 
+                    } catch (DateTimeParseException e) {
+                        logger.error("Invalid start date format: {}", startDate);
+                        return "redirect:/error";  // Nếu startDate không hợp lệ
+                    }
+                }
+
+                if (!endDate.isEmpty()) {
+                    try {
+                        contractDetail.setEndDate(LocalDate.parse(endDate)); 
+                    } catch (DateTimeParseException e) {
+                        logger.error("Invalid end date format: {}", endDate);
+                        return "redirect:/error";  // Nếu endDate không hợp lệ
+                    }
+                }
+
 
                 // Gọi API để tạo chi tiết hợp đồng
                 ResponseEntity<ContractDetails> response = contractDetailService.createContractDetail(contractDetail);
