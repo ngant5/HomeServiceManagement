@@ -49,7 +49,47 @@
 	              color: #333;
 	              cursor: pointer;
 	          }
+			  /* Style cho Button "Add to Request" */
+			  .btn-add {
+			      background-color: #28a745; /* Màu xanh lá */
+			      color: white; /* Màu chữ trắng */
+			      border: none;
+			      padding: 10px 20px;
+			      font-size: 16px;
+			      border-radius: 5px;
+			      cursor: pointer;
+			      transition: background-color 0.3s;
+			  }
 
+			  .btn-add:hover {
+			      background-color: #218838; /* Màu xanh lá đậm khi hover */
+			  }
+
+			  .btn-add:focus {
+			      outline: none;
+			  }
+			  /* Style cho Button "Remove" */
+			  .remove-btn {
+			      background-color: #dc3545; /* Màu đỏ */
+			      color: white; /* Màu chữ trắng */
+			      border: none;
+			      padding: 5px 10px;
+			      font-size: 14px;
+			      border-radius: 50%;
+			      cursor: pointer;
+			      transition: background-color 0.3s, transform 0.2s;
+			      display: inline-block;
+			      margin-left: 10px;
+			  }
+
+			  .remove-btn:hover {
+			      background-color: #c82333; /* Màu đỏ đậm khi hover */
+			      transform: scale(1.1); /* Tăng kích thước nhẹ khi hover */
+			  }
+
+			  .remove-btn:focus {
+			      outline: none;
+			  }
    </style>
 
 </head>
@@ -64,18 +104,29 @@
        <form id="contractForm" th:action="@{/contracts/checkout}" method="post" class="message-form mt-50 mb-25">
            <!-- Hidden Fields from session -->
            <input type="hidden" th:value="${session.customerId}">
-           <input type="hidden" id="employeeId" th:value="${employeeId}" />
+           <input type="hidden" name="employeeId" id="employeeId" th:value="${employeeId}" />
            <input type="hidden" name="contractId" th:value="${session.contractId}" />
            <input type="hidden" name="empServiceId" th:value="${session.empServiceId}" />
            <input type="hidden" name="servicePrice" th:value="${session.servicePrice}" />
            <div class="row">
                <div class="col-balance map-embed">
-                   <h2 class="fs-h4 fc-primary mb-15">Request Information</h2>
+                   <h2 class="fs-h4 fc-primary mb-15">Please select your service time below:</h2>
                    <!-- Select Service Duration Type -->
 				   <input type="hidden" name="contractType" id="contractType" value="scheduled" />
+				   <span class="fs-h4 mb-15 mt-25 fc-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Please select the date you would like the service to begin.">Select Service Date:</span>
+				   <div class="input-group">
+				   		<i class="bi bi-calendar-event"></i>                               
+						<input type="date" name="startDate" required data-bs-toggle="tooltip" data-bs-placement="top" title="Click to select the service start date." />
+				   </div>				   							                                  
+				
+				   <span class="fs-h4 mb-15 mt-25 fc-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Please select the date you would like the service to begin.">Select Service Date:</span>
+					<div class="input-group">
+						<i class="bi bi-calendar-event"></i>
+						<input type="date" name="endDate"  required data-bs-toggle="tooltip" data-bs-placement="top" title="Click to select the service start date." />
+			       </div>
                    <!-- Popup Modal -->
 				   <!-- Nút để hiển thị popup -->
-				   <button type="button" id="showPopup" class="btn-bg1 border-round mt-20">Show Time Selection</button>
+				   <button type="button" id="showPopup" class="btn-bg1 border-round mt-20">Select Service Time</button>
 
                    <div id="timePopup" class="popup">
                        <div class="popup-content">
@@ -86,7 +137,9 @@
                            <div class="input-group">
                                <i class="bi bi-calendar-event"></i>
                                <input type="date" id="popupStartDate" required data-bs-toggle="tooltip" data-bs-placement="top" title="Click to select the service start date." />
-                           </div>
+							   
+							   
+							   </div>
                            <!-- Service Time -->
                            <span class="fs-h4 mb-15 mt-25 fc-primary"data-bs-toggle="tooltip" data-bs-placement="top" title="Please choose a start time for your service.">Select Service Time:</span>
                            <div class="input-group">
@@ -111,9 +164,10 @@
                    <input type="hidden" id="selectedTimes" name="selectedTimes" />
 				   
 				   <!-- Duration (Hours Worked) -->
+				   
 					<span class="fs-h4 mb-15 mt-25 fc-primary">Duration (Hours):</span>
 				 	<div class="input-group">
-						<input type="text" name="hoursWorked" id="hoursWorked" required />
+						<input type="text" name="hoursWorked" id="hoursWorked" readonly />
 					</div>
 				                      
 				   	<input type="hidden" id="totalPrice" name="totalPrice" />
@@ -230,52 +284,93 @@
                    fetchAvailableTimeSlots(employeeId, date);
                }
            });
+		  
 
-           document.getElementById('addSelection').addEventListener('click', function() {
-               const startDate = document.getElementById('popupStartDate').value;
-               const startTime = document.getElementById('popupStartTime').value;
-               const endTime = document.getElementById('popupEndTime').value;
+		   // Hàm format lại ngày để đưa vào giá trị hidden input (định dạng YYYY-MM-DD)
+		   function formatDate(date) {
+		       // date ở đây là định dạng MM-DD
+		       const [month, day] = date.split('-');
+		       const year = new Date().getFullYear(); // Dùng năm hiện tại nếu không có trong ngày
+		       return `${year}-${month}-${day}`;  // Chuyển đổi thành YYYY-MM-DD
+		   }
 
-               if (startDate && startTime && endTime) {
-                   const listItem = document.createElement('li');
-                   listItem.classList.add('time-slot-item');
-                   
-                   // Tạo đối tượng Date từ Start Time và End Time để tính Duration
-                   const startDateTime = new Date(`${startDate}T${startTime}`);
-                   const endDateTime = new Date(`${startDate}T${endTime}`);
-                   const durationInMillis = endDateTime - startDateTime;
-                   const durationInHours = durationInMillis / (1000 * 60 * 60); // Tính duration theo giờ
-                   
-                   // Cập nhật text hiển thị và thêm hidden input
-                   listItem.textContent = `Date: ${startDate}, Start Time: ${formatTime(startTime)} to End Time: ${formatTime(endTime)} (Duration: ${durationInHours.toFixed(2)} hours)`;
+           
+		   document.getElementById('addSelection').addEventListener('click', function() {
+		       const startDate = document.getElementById('popupStartDate').value;
+		       const startTime = document.getElementById('popupStartTime').value;
+		       const endTime = document.getElementById('popupEndTime').value;
 
-                   // Tạo input hidden để lưu trữ duration
-                   const hiddenInput = document.createElement('input');
-                   hiddenInput.type = 'hidden';
-                   hiddenInput.name = 'hoursWorked[]'; // Thêm vào tên mảng để gửi cùng form
-                   hiddenInput.value = durationInHours.toFixed(2); // Lưu trữ duration tính toán
-                   listItem.appendChild(hiddenInput);
+		       if (startDate && startTime && endTime) {
+		           let found = false;
+		           const listItems = document.querySelectorAll('#timeSlotList li');
+		           
+		           // Duyệt qua tất cả các mục đã chọn trong danh sách
+		           listItems.forEach(item => {
+		               const itemDate = item.querySelector('.item-date').textContent.split(': ')[1];
+		               
+		               // Nếu ngày đã có trong danh sách, thay thế thông tin
+		               if (itemDate === startDate) {
+		                   found = true;
+		                   
+		                   // Tạo đối tượng Date từ Start Time và End Time để tính Duration
+		                   const startDateTime = new Date(`${startDate}T${startTime}`);
+		                   const endDateTime = new Date(`${startDate}T${endTime}`);
+		                   const durationInMillis = endDateTime - startDateTime;
+		                   const durationInHours = durationInMillis / (1000 * 60 * 60); // Tính duration theo giờ
+		                   
+		                   // Cập nhật thời gian đã chọn
+		                   item.querySelector('.item-times').textContent = `Start Time: ${formatTime(startTime)} to End Time: ${formatTime(endTime)} (Duration: ${durationInHours.toFixed(2)} hours)`;
+		                   
+		                   // Cập nhật giá trị hidden input duration
+		                   const durationInput = item.querySelector('.item-duration');
+		                   durationInput.value = durationInHours.toFixed(2);
 
-                   // Thêm nút xóa
-                   const removeButton = document.createElement('button');
-                   removeButton.classList.add('remove-btn');
-                   removeButton.textContent = 'x';
-                   removeButton.addEventListener('click', function() {
-                       listItem.remove();
-                       updateTotalDuration(); 
-					   calculateTotalPrice(); 
-                   });
+		                   // Cập nhật tổng duration và giá trị
+		                   updateTotalDuration();
+		                   calculateTotalPrice();
+		               }
+		           });
 
-                   listItem.appendChild(removeButton);
-                   document.getElementById('timeSlotList').appendChild(listItem);
+		           // Nếu chưa có mục nào cho ngày này, thêm mới
+		           if (!found) {
+		               const listItem = document.createElement('li');
+		               listItem.classList.add('time-slot-item');
+		               
+		               // Tạo đối tượng Date từ Start Time và End Time để tính Duration
+		               const startDateTime = new Date(`${startDate}T${startTime}`);
+		               const endDateTime = new Date(`${startDate}T${endTime}`);
+		               const durationInMillis = endDateTime - startDateTime;
+		               const durationInHours = durationInMillis / (1000 * 60 * 60); // Tính duration theo giờ
+		               
+		               // Cập nhật text hiển thị và thêm hidden input
+		               listItem.innerHTML = `
+		                   <span class="item-date">Date: ${startDate}</span>,
+		                   <span class="item-times">Time: ${formatTime(startTime)}-${formatTime(endTime)} (${durationInHours.toFixed(2)} hours)</span>
+		                   <input type="hidden" class="item-duration" name="hoursWorked[]" value="${durationInHours.toFixed(2)}">
+		               `;
 
-                   // Cập nhật tổng duration
-                   updateTotalDuration();
-                   calculateTotalPrice();
-               } else {
-                   alert('Please select both start and end times.');
-               }
-           });
+		               // Thêm nút xóa
+		               const removeButton = document.createElement('button');
+		               removeButton.classList.add('remove-btn');
+		               removeButton.textContent = 'x';
+		               removeButton.addEventListener('click', function() {
+		                   listItem.remove();
+		                   updateTotalDuration();
+		                   calculateTotalPrice();
+		               });
+
+		               listItem.appendChild(removeButton);
+		               document.getElementById('timeSlotList').appendChild(listItem);
+
+		               // Cập nhật tổng duration và giá trị
+		               updateTotalDuration();
+		               calculateTotalPrice();
+		           }
+				   updateStartAndEndDate();
+		       } else {
+		           alert('Please select both start and end times.');
+		       }
+		   });
 
            function updateTotalDuration() {
                const hiddenInputs = document.querySelectorAll('input[name="hoursWorked[]"]');

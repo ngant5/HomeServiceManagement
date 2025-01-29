@@ -12,6 +12,7 @@ public class EmployeeContractSchedule {
     private LocalDate workDate;  
     private LocalTime startTime;
     private LocalTime endTime;
+    private int hoursWorked;
     private int status;
 
     
@@ -72,6 +73,15 @@ public class EmployeeContractSchedule {
     public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
+    
+    public int getHoursWorked() {
+        return hoursWorked;
+    }
+
+    public void setHoursWorked(int hoursWorked) {
+        this.hoursWorked = hoursWorked;
+    }
+
 
     public int getStatus() { 
         return status; 

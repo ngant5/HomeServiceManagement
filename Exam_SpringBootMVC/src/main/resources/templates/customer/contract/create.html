@@ -113,13 +113,13 @@
                    <h2 class="fs-h4 fc-primary mb-15">Please select your service time below:</h2>
                    <!-- Select Service Duration Type -->
 				   <input type="hidden" name="contractType" id="contractType" value="scheduled" />
-				   <span class="fs-h4 mb-15 mt-25 fc-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Please select the date you would like the service to begin.">Select Service Date:</span>
+				   <span class="fs-h4 mb-15 mt-25 fc-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Please select the date you would like the service to begin.">Start Date:</span>
 				   <div class="input-group">
 				   		<i class="bi bi-calendar-event"></i>                               
 						<input type="date" name="startDate" required data-bs-toggle="tooltip" data-bs-placement="top" title="Click to select the service start date." />
 				   </div>				   							                                  
 				
-				   <span class="fs-h4 mb-15 mt-25 fc-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Please select the date you would like the service to begin.">Select Service Date:</span>
+				   <span class="fs-h4 mb-15 mt-25 fc-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Please select the date you would like the service to begin.">End Date:</span>
 					<div class="input-group">
 						<i class="bi bi-calendar-event"></i>
 						<input type="date" name="endDate"  required data-bs-toggle="tooltip" data-bs-placement="top" title="Click to select the service start date." />
@@ -426,7 +426,48 @@
 		           this.style.display = 'none';  // Đóng popup khi nhấn ngoài popup
 		       }
 		   });
+		   const today = new Date().toISOString().split('T')[0];
 
+		           // Cập nhật thuộc tính min của input ngày bắt đầu và ngày kết thúc
+		           const startDateInput = document.querySelector('input[name="startDate"]');
+		           startDateInput.setAttribute('min', today);
+
+		           const popupStartDateInput = document.getElementById('popupStartDate');
+		           popupStartDateInput.setAttribute('min', today);
+
+		           // Cập nhật thuộc tính min của ngày kết thúc khi ngày bắt đầu thay đổi
+		           startDateInput.addEventListener('change', function() {
+		               const startDate = startDateInput.value;
+		               const endDateInput = document.querySelector('input[name="endDate"]');
+		               endDateInput.setAttribute('min', startDate); // End Date không được trước Start Date
+		           });
+
+		           // Cập nhật thuộc tính min của popup date khi Start Date và End Date thay đổi
+		           const updatePopupDateRange = () => {
+		               const startDate = startDateInput.value;
+		               const endDate = document.querySelector('input[name="endDate"]').value;
+
+		               if (startDate && endDate) {
+		                   popupStartDateInput.setAttribute('min', startDate); // Popup Start Date không được trước Start Date
+		                   popupStartDateInput.setAttribute('max', endDate); // Popup Start Date không được sau End Date
+		               }
+		           };
+
+		           startDateInput.addEventListener('change', updatePopupDateRange);
+		           document.querySelector('input[name="endDate"]').addEventListener('change', updatePopupDateRange);
+
+		           // Hàm để xử lý khi popup chọn ngày
+		           popupStartDateInput.addEventListener('change', function() {
+		               const popupDate = popupStartDateInput.value;
+		               const startDate = startDateInput.value;
+		               const endDate = document.querySelector('input[name="endDate"]').value;
+
+		               // Kiểm tra popup date có nằm trong khoảng startDate - endDate không
+		               if (popupDate < startDate || popupDate > endDate) {
+		                   alert("Please select a date between Start Date and End Date.");
+		                   popupStartDateInput.value = ''; // Xóa giá trị đã chọn không hợp lệ
+		               }
+		           });
    </script>
 </body>
 </html>
