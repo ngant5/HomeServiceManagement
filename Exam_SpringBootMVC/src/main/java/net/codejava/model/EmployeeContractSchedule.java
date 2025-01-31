@@ -12,7 +12,7 @@ public class EmployeeContractSchedule {
     private LocalDate workDate;  
     private LocalTime startTime;
     private LocalTime endTime;
-    private int hoursWorked;
+    private int hoursWork;
     private int status;
 
     
@@ -74,12 +74,12 @@ public class EmployeeContractSchedule {
         this.endTime = endTime;
     }
     
-    public int getHoursWorked() {
-        return hoursWorked;
+    public int getHoursWork() {
+        return hoursWork;
     }
 
-    public void setHoursWorked(int hoursWorked) {
-        this.hoursWorked = hoursWorked;
+    public void setHoursWorked(int hoursWork) {
+        this.hoursWork = hoursWork;
     }
 
 

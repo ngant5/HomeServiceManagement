@@ -142,7 +142,26 @@ public class ContractController {
                 // Bước 4: Lưu contractId vào session
                 session.setAttribute("contractId", contractId);
                 session.setAttribute("empServiceId", empServiceId);
+             
+             // Trong controller trước khi lưu giá trị vào session
+                System.out.println("Before saving to session, servicePrice: " + servicePrice);
+
+                // Kiểm tra xem session đã có giá trị cũ chưa
+                Double currentSessionServicePrice = (Double) session.getAttribute("servicePrice");
+                System.out.println("Current session servicePrice: " + currentSessionServicePrice);
+
+                // Lưu vào session và kiểm tra lại
                 session.setAttribute("servicePrice", servicePrice);
+                System.out.println("Service Price saved in session: " + session.getAttribute("servicePrice"));
+
+                // Sau đó lưu giá trị mới vào session
+                session.setAttribute("servicePrice", servicePrice);
+
+                // Kiểm tra lại giá trị đã lưu trong session
+                System.out.println("Service Price saved in session: " + servicePrice);
+
+                System.out.println(" empServiceId saved in session: " + empServiceId);
+
                 
                 EmployeeServices employeeServices = employeeServicesService.findByEmpServiceId(empServiceId);
                 if (employeeServices != null && employeeServices.getEmployee() != null) {
@@ -227,7 +246,13 @@ public class ContractController {
             Integer contractId = (Integer) session.getAttribute("contractId");
             Integer empServiceId = (Integer) session.getAttribute("empServiceId"); 
             
-
+            Double servicePrice = (Double) session.getAttribute("servicePrice");
+            if (servicePrice == null) {
+                logger.error("Error: servicePrice is not found in session.");
+                return "redirect:/error"; // Nếu không có servicePrice trong session
+            } else {
+                logger.info("Service Price retrieved from session: {}", servicePrice);
+            }
 
             logger.info("Finalizing contract for contractId: {} with empServiceId: {}", contractId, empServiceId);
             

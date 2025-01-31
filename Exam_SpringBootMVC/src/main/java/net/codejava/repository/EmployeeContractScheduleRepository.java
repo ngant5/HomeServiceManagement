@@ -60,7 +60,7 @@ public class EmployeeContractScheduleRepository {
             schedule.setWorkDate(rs.getDate("work_date").toLocalDate());
             schedule.setStartTime(rs.getTimestamp("start_time").toLocalDateTime().toLocalTime());
             schedule.setEndTime(rs.getTimestamp("end_time").toLocalDateTime().toLocalTime());
-            schedule.setHoursWorked(rs.getInt("hours_worked"));
+            schedule.setHoursWorked(rs.getInt("hours_work"));
             schedule.setStatus(rs.getInt("status"));
             return schedule;
         };
