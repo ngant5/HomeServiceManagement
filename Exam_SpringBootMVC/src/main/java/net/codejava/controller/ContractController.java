@@ -65,10 +65,8 @@ public class ContractController {
     
     @GetMapping
     public String showContractList(HttpSession session, Model model) {
-        // Lấy customerId từ session
         Integer customerId = (Integer) session.getAttribute("customerId");
 
-        // Kiểm tra nếu customerId không tồn tại trong session
         if (customerId == null) {
             logger.error("Error: customerId is not found in session.");
             return "redirect:/customer/login";
@@ -92,33 +90,20 @@ public class ContractController {
 
         @PostMapping("/create")
         public String createContract(@ModelAttribute Contracts contract, 
-        							@RequestParam(required = false) Double servicePrice, 
+        							@RequestParam(required = true) Double servicePrice, 
         							@RequestParam int empServiceId,
         							HttpSession session) {
             Integer customerId = (Integer) session.getAttribute("customerId");
+            System.out.println("Received servicePrice from request: " + servicePrice);
 
+            session.setAttribute("servicePrice", servicePrice);
+            System.out.println("servicePrice: " + servicePrice);
             // Bước 1: Kiểm tra customerId
             if (customerId == null) {
                 System.err.println("Error: customerId is null. Redirecting to error page.");
                 return "redirect:/customer/login"; 
             }
             
-            if (empServiceId <= 0) {
-                System.err.println("Error: empServiceId is invalid: " + empServiceId);
-                return "redirect:/error"; // Chuyển đến trang lỗi
-            }
-
-            if (servicePrice == null) {
-                servicePrice = (Double) session.getAttribute("servicePrice");  // Lấy từ session nếu không có trong request
-            }
-            
-            if (servicePrice == null) {
-                // Nếu không có servicePrice trong session, trả về lỗi
-                System.err.println("Error: servicePrice not found in session or request.");
-                return "redirect:/error";
-            }
-
-
             // Bước 2: Thiết lập customerId cho hợp đồng
             contract.setCustomerId(customerId);
             contract.setContractStatus(0); // Mặc định là 0
@@ -142,6 +127,7 @@ public class ContractController {
                 // Bước 4: Lưu contractId vào session
                 session.setAttribute("contractId", contractId);
                 session.setAttribute("empServiceId", empServiceId);
+                session.setAttribute("servicePrice", servicePrice);
              
              // Trong controller trước khi lưu giá trị vào session
                 System.out.println("Before saving to session, servicePrice: " + servicePrice);
@@ -270,6 +256,7 @@ public class ContractController {
                 contractDetail.setContractType(contractType);
                 contractDetail.setTotalPrice(totalPrice);
                 contractDetail.setEmployeeId(employeeId);
+                totalPrice = totalPrice.replace("$", "").trim();
                 if (!startDate.isEmpty()) {
                     try {
                         contractDetail.setStartDate(LocalDate.parse(startDate)); 
@@ -293,6 +280,16 @@ public class ContractController {
                 ResponseEntity<ContractDetails> response = contractDetailService.createContractDetail(contractDetail);
                 if (response.getStatusCode().is2xxSuccessful()) {
                 	logger.info("Contract detail created successfully.");
+                	
+                	    try {
+                	        // Chuyển totalPrice từ String sang Double
+                	        double totalPriceDouble = Double.parseDouble(totalPrice);
+                	        contractService.updateContractTotalPrice(contractId, totalPriceDouble);
+                	        logger.info("Contract updated with new totalPrice: {}", totalPriceDouble);
+                	    } catch (NumberFormatException e) {
+                	        logger.error("Invalid totalPrice format: {}", totalPrice); // Nếu không thể chuyển đổi thành double
+                	        return "redirect:/error"; // Quay lại trang lỗi nếu totalPrice không hợp lệ
+                	    }
                     return "customer/contract/success"; // Chuyển đến trang thành công
                 }else {
                     logger.error("Failed to create contract detail. Response status: {}", response.getStatusCode());
@@ -316,8 +313,7 @@ public class ContractController {
         return "customer/contract/detail";
     }
     
-
-
+   
     @GetMapping("/details/create")
     public String showCreateContractDetailsForm(@RequestParam int contractId, Model model) {
         model.addAttribute("contractId", contractId);
@@ -372,6 +368,5 @@ public class ContractController {
         // Trả về trang payment
         return "customer/payment/create";
     }
-
-
 }
+

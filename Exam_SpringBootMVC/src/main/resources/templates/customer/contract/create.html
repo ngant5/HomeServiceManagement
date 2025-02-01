@@ -107,7 +107,7 @@
            <input type="hidden" name="employeeId" id="employeeId" th:value="${employeeId}" />
            <input type="hidden" name="contractId" th:value="${session.contractId}" />
            <input type="hidden" name="empServiceId" th:value="${session.empServiceId}" />
-           <input type="text" name="servicePrice" th:value="${session.servicePrice}" />
+           <input type="text" name="servicePrice" th:value="${servicePrice}" />
            <div class="row">
                <div class="col-balance map-embed">
                    <h2 class="fs-h4 fc-primary mb-15">Please select your service time below:</h2>
@@ -158,14 +158,14 @@
 				 	<div class="input-group">
 						<input type="text" name="hoursWorked" id="hoursWorked" readonly />
 					</div>
-				                      
-				   	<input type="hidden" id="totalPrice" name="totalPrice" />
-				 	<!-- Hiển thị tổng giá -->
-				   	<span class="fs-h4 mb-15 mt-25 fc-primary">Total Price:</span>
-				   		<div class="total-price-container">
-				   		<!--<label for="totalPriceDisplay">Total Price: </label>-->
-				   			<input type="text" id="totalPriceDisplay" readonly />
-				   	</div>
+				                     
+					
+					<span class="fs-h4 mb-15 mt-25 fc-primary">Total Price:</span>
+					<div class="total-price-container">
+					    <!-- Hiển thị tổng giá -->
+					    <input type="text" id="totalPriceDisplay" name="totalPrice"  value="${totalPrice}" readonly />
+					</div>
+
 				   
                    <!-- Service Location -->
                    <span class="fs-h4 mb-15 mt-25 fc-primary">Service Location:</span>
@@ -199,11 +199,12 @@
 	    const closePopupBtn = document.getElementById('closePopup');
 	    const selectedTimeList = document.getElementById('selectedTimeList');
 	    const timeSlotList = document.getElementById('timeSlotList');
-	    const popupTimeSlotList = document.getElementById('popupTimeSlotList'); // Khai báo đúng chỗ
+	    const popupTimeSlotList = document.getElementById('popupTimeSlotList'); 
 	    const startDateInput = document.querySelector('input[name="startDate"]');
 	    const endDateInput = document.querySelector('input[name="endDate"]');
 	    const hoursWorkedInput = document.getElementById('hoursWorked');
-	    const totalPriceInput = document.getElementById('totalPriceDisplay');
+	    const totalPriceDisplay = document.getElementById('totalPriceDisplay');
+		const servicePriceInput = document.querySelector('input[name="servicePrice"]');
 	    const selectedTimesInput = document.getElementById('selectedTimes');
 	    const employeeId = document.getElementById('employeeId').value;
 	    let selectedTimeSlots = [];
@@ -357,15 +358,14 @@
 	    // Tính tổng giờ và giá tiền
 	    function calculateTotal() {
 	        let totalHours = selectedTimeSlots.reduce((sum, slot) => sum + slot.hoursWork, 0);
-
-	        // Hiển thị tổng giờ làm việc
-	        hoursWorkedInput.value = totalHours.toFixed(2);
-			const servicePrice = parseFloat(document.getElementById('servicePrice').value);
+			hoursWorkedInput.value = totalHours.toFixed(2);
+			const servicePrice = parseFloat(servicePriceInput.value); 
 	        const totalPrice = totalHours * servicePrice;
-	        totalPriceInput.value = `$${totalPrice.toFixed(2)}`;
+	        totalPriceDisplay.value = `$${totalPrice.toFixed(2)}`;
 
 	        // Cập nhật hidden input để gửi lên server
 	        selectedTimesInput.value = JSON.stringify(selectedTimeSlots);
+
 	    }
 
 			// Đặt ngày hôm nay làm giá trị mặc định cho startDate
@@ -413,9 +413,6 @@
 			});
 
 	});  
-	// Lấy các phần tử input
-	
-
 
 </script>
 

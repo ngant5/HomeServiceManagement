@@ -70,6 +70,10 @@ public class ContractService {
     }
 
 
+    public void updateContractTotalPrice(int contractId, double totalPrice) {
+        contractRepository.updateTotalPrice(contractId, totalPrice);
+    }
+
     // Phương thức upload file hợp đồng
     public void uploadContractFile(MultipartFile file, int contractId) {
     	String uploadDirectory = System.getProperty("user.dir") + "/uploads/contracts"; 

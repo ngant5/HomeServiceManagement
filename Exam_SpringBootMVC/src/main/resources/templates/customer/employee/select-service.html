@@ -15,14 +15,13 @@
 	<section class="contained">
 	    <h2 class="section-title ff-damion"><span th:text="${employee.fullname}"></span></h2>
 
-	    <form th:action="@{/contracts/create}" method="POST">
+	    <form th:action="@{/contracts/create}" method="POST" id="serviceForm">
+
 	        <div class="row flex-just-center">
 	            <th:block th:each="empService : ${employeeServices}">
 	                <div class="col-tri">
 	                    <div class="card-team">
-							<input type="hidden" name="empServiceId" th:value="${empService.empServiceId}"/>
-	                        <input type="hidden" name="serviceId" th:value="${empService.service.serviceId}"/>
-	                        <input type="hidden" name="servicePrice" th:value="${empService.service.servicePrice}"/>
+
 							<img th:src="@{'/uploads/images/' + ${empService.service.serviceImage}}" alt="Profile image of {empService.service.serviceImage}">
 	                        
 							<h3 class="title ff-damion" th:text="${empService.service.serviceName}"></h3>
@@ -30,18 +29,58 @@
 	                        <div class="info">
 								<h3 class="title ff-damion" th:text="${empService.service.serviceName}"></h3>
 								<h3 class="title ff-damion" th:text="${empService.service.servicePrice} + ' per hour'"></h3>
-	                            <h3 class="ff-damion" th:text="${empService.service.serviceDescription}"></h3>
-	                            
-	                            <button type="submit" class="ta-center mt-15 btn-bg1 border-round ">Request Service</button>
-	                        </div>
+								
+								<h3 class="ff-damion" th:text="${empService.service.serviceDescription}"></h3>
+								<input type="radio" name="empServiceId" th:value="${empService.empServiceId}" required/> 
+								<input type="hidden" name="servicePrice" th:value="${empService.service.servicePrice}"  class="servicePriceInput" />
+							</div>
 	                    </div>
 	                </div>
 	            </th:block>
 	        </div>
+			<button type="submit" class="ta-center mt-15 btn-bg1 border-round ">Request Service</button>
 	    </form>
 	</section>
 	<!-- TEAM SECTION END -->
 	<!-- ========== section end ========== -->
 	<th:block th:insert="~{common/home_content_footer}"></th:block>
+	<script>
+	    // Khi form được submit, lấy giá trị của servicePrice từ dịch vụ đã chọn
+	    document.getElementById('serviceForm').addEventListener('submit', function(event) {
+	        // Lấy tất cả các radio button
+	        var radios = document.querySelectorAll('input[name="empServiceId"]');
+	        var selectedPrice = null;
+	        
+	        // Duyệt qua các radio button và lấy giá trị của servicePrice của dịch vụ được chọn
+	        radios.forEach(function(radio) {
+	            if (radio.checked) {
+	                var hiddenPriceInput = radio.closest('.card-team').querySelector('.servicePriceInput');
+	                if (hiddenPriceInput) {
+	                    selectedPrice = hiddenPriceInput.value;
+	                }
+	            }
+	        });
+
+	        // Nếu không có dịch vụ nào được chọn, thông báo lỗi hoặc ngừng submit form
+	        if (selectedPrice === null) {
+	            event.preventDefault();
+	            alert('Please select a service.');
+	        } else {
+				var existingServicePriceInputs = document.querySelectorAll('input[name="servicePrice"]');
+				        existingServicePriceInputs.forEach(function(input) {
+				            input.remove(); // Loại bỏ các input trùng lặp
+				        });
+
+	            // Đặt giá trị của servicePrice vào input hidden của form
+	            var formServicePriceInput = document.createElement('input');
+	            formServicePriceInput.setAttribute('type', 'hidden');
+	            formServicePriceInput.setAttribute('name', 'servicePrice');
+	            formServicePriceInput.setAttribute('value', selectedPrice);
+	            document.getElementById('serviceForm').appendChild(formServicePriceInput);
+	        }
+	    });
+	</script>
+
+	
 </body>
 </html>
