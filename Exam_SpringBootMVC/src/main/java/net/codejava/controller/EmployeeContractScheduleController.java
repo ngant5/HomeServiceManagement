@@ -1,48 +1,56 @@
 package net.codejava.controller;
 
 import net.codejava.model.EmployeeContractSchedule;
+import net.codejava.model.Employees;
 import net.codejava.service.EmployeeContractScheduleService;
+import net.codejava.service.EmployeeService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/employees/schedules")
+@Controller
+@RequestMapping("admin/employees/schedules")
 public class EmployeeContractScheduleController {
 
     @Autowired
     private EmployeeContractScheduleService employeeScheduleService;
+    
+    @Autowired
+    private EmployeeService employeeService;
+    
+    private static final String[] timeSlots = {"06:00-08:00", "08:00-10:00", "10:00-12:00", "14:00-16:00", "16:00-18:00"};
 
-    // API để tạo lịch làm việc cho nhân viên trong một tháng
-    @PostMapping("/create/{employeeId}")
-    public ResponseEntity<?> createSchedule(
-            @PathVariable int employeeId,
-            @RequestParam int month,
-            @RequestParam int year) {
+ 	@GetMapping("/add")
+ 	public String showAddSchedulePage() {
+       	return "admin/ad_addschedule"; 
+	}
+   
+    
+    @PostMapping("/createForAllEmployees")
+    public ResponseEntity<?> createScheduleForAllEmployees() {
         try {
-            // Kiểm tra hợp lệ tháng và năm
-            if (month < 1 || month > 12 || year < 1) {
-                return ResponseEntity.badRequest().body("Tháng hoặc năm không hợp lệ.");
-            }
+            LocalDate currentDate = LocalDate.now();
+            int currentMonth = currentDate.getMonthValue();
+            int currentYear = currentDate.getYear() + 1; // Tăng năm lên 1
 
-            // Gọi dịch vụ để tạo lịch làm việc cho nhân viên trong tháng
-            List<EmployeeContractSchedule> schedules = employeeScheduleService.createScheduleForEmployee(employeeId, month, year);
+            // Tạo lịch cho tất cả nhân viên trong tháng hiện tại và năm sau
+            employeeScheduleService.createSchedulesForAllEmployees(currentMonth, currentYear);
 
-            // Nếu không có lịch được tạo, trả về thông báo
-            if (schedules.isEmpty()) {
-                return ResponseEntity.status(404).body("Không thể tạo lịch cho nhân viên với ID " + employeeId);
-            }
+            return ResponseEntity.ok("Đã tạo lịch làm việc cho tất cả nhân viên.");
 
-            // Trả về danh sách lịch đã được tạo
-            return ResponseEntity.ok(schedules);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Đã có lỗi xảy ra: " + e.getMessage());
         }
     }
+
 
     // API để lấy lịch làm việc của nhân viên vào một ngày cụ thể
     @GetMapping("/{employeeId}/date")

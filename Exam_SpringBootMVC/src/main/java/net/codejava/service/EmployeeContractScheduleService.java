@@ -1,6 +1,7 @@
 package net.codejava.service;
 
 import net.codejava.model.EmployeeContractSchedule;
+import net.codejava.model.Employees;
 import net.codejava.repository.EmployeeContractScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,28 +18,34 @@ import java.util.Optional;
 public class EmployeeContractScheduleService {
 
     @Autowired
-    private EmployeeContractScheduleRepository scheduleRepository; // Đảm bảo đúng tên biến
+    private EmployeeContractScheduleRepository scheduleRepository; 
+    
+    @Autowired
+    private EmployeeService employeeService;
+    
+    public void createSchedulesForAllEmployees(int month, int year) {
+        List<Employees> employees = employeeService.getAllEmployees();
+        
+        for (Employees employee : employees) {
+            createScheduleForEmployee(employee.getEmployeeId(), month, year);
+        }
+    }
 
-    // Tạo lịch làm việc cho nhân viên trong tháng
     public List<EmployeeContractSchedule> createScheduleForEmployee(int employeeId, int month, int year) {
         List<EmployeeContractSchedule> schedules = new ArrayList<>();
 
-        // Tạo ngày bắt đầu và kết thúc trong tháng
-        LocalDate startDate = LocalDate.of(year, month, 1); // Ngày đầu tháng
-        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth()); // Ngày cuối tháng
+        LocalDate startDate = LocalDate.of(year, month, 1); 
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth()); 
 
-        // Duyệt qua tất cả các ngày trong tháng và tạo lịch làm việc cho từng ngày
         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
             schedules.addAll(createDailySchedule(employeeId, date));
         }
 
-        // Lưu tất cả các lịch vào cơ sở dữ liệu
-        scheduleRepository.insertBatch(schedules);  // Giả sử insertBatch có thể thực hiện tốt
+        scheduleRepository.insertBatch(schedules);  
 
         return schedules;
     }
 
-    // Tạo lịch làm việc cho một ngày với các khung giờ cố định
     private List<EmployeeContractSchedule> createDailySchedule(int employeeId, LocalDate date) {
         List<EmployeeContractSchedule> dailySchedules = new ArrayList<>();
 
@@ -55,6 +62,7 @@ public class EmployeeContractScheduleService {
             schedule.setStartTime(startTime);
             schedule.setEndTime(endTime);
             schedule.setStatus(0); 
+            schedule.setHoursWork(2); 
 
             dailySchedules.add(schedule);
         }
@@ -80,6 +88,7 @@ public class EmployeeContractScheduleService {
 
         System.out.println("Lịch làm việc đã được tạo cho tất cả nhân viên vào đầu tháng.");
     }
+
 
     // Phương thức giả định để lấy tất cả các ID nhân viên (bạn có thể thay thế bằng phương thức thực tế)
     private List<Integer> getAllEmployeeIds() {

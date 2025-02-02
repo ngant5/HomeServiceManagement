@@ -25,8 +25,8 @@ public class EmployeeContractScheduleRepository {
     }
 
     public int[] insertBatch(List<EmployeeContractSchedule> schedules) {
-        String sql = "INSERT INTO Employee_Contract_Schedule (employee_id, work_date, start_time, end_time, status) " +
-                     "VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Employee_Contract_Schedule (employee_id, work_date, start_time, end_time, status, hours_work) " +
+                     "VALUES (?, ?, ?, ?, ?, ?)";
 
         return jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
@@ -46,6 +46,8 @@ public class EmployeeContractScheduleRepository {
                 ps.setTimestamp(4, Timestamp.valueOf(endDateTime));
 
                 ps.setInt(5, schedule.getStatus());
+                ps.setInt(6, schedule.getHoursWork());  
+
             }
         });
     }
@@ -60,7 +62,7 @@ public class EmployeeContractScheduleRepository {
             schedule.setWorkDate(rs.getDate("work_date").toLocalDate());
             schedule.setStartTime(rs.getTimestamp("start_time").toLocalDateTime().toLocalTime());
             schedule.setEndTime(rs.getTimestamp("end_time").toLocalDateTime().toLocalTime());
-            schedule.setHoursWorked(rs.getInt("hours_work"));
+            schedule.setHoursWork(rs.getInt("hours_work"));
             schedule.setStatus(rs.getInt("status"));
             return schedule;
         };

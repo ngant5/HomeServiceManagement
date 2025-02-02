@@ -14,6 +14,7 @@ public class EmployeeContractSchedule {
     private LocalTime endTime;
     private int hoursWork;
     private int status;
+    private LocalDateTime expireTime;
 
     
     public String getStartTimeFormatted() {
@@ -78,7 +79,7 @@ public class EmployeeContractSchedule {
         return hoursWork;
     }
 
-    public void setHoursWorked(int hoursWork) {
+    public void setHoursWork(int hoursWork) {
         this.hoursWork = hoursWork;
     }
 
@@ -89,5 +90,13 @@ public class EmployeeContractSchedule {
 
     public void setStatus(int status) { 
         this.status = status;
+    }
+    
+    public LocalDateTime getExpireTime() {
+        return expireTime;
+    }
+
+    public void setExpireTime(LocalDateTime expireTime) {
+        this.expireTime = expireTime;
     }
 }
