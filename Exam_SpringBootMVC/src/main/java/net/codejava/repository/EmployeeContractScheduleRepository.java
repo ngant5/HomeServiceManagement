@@ -51,6 +51,12 @@ public class EmployeeContractScheduleRepository {
             }
         });
     }
+    
+    public boolean existsByMonthAndYear(int month, int year) {
+        String sql = "SELECT COUNT(*) FROM Employee_Contract_Schedule WHERE MONTH(work_date) = ? AND YEAR(work_date) = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, month, year);
+        return count != null && count > 0;
+    }
 
     // RowMapper để chuyển kết quả từ ResultSet thành đối tượng EmployeeContractSchedule
     private RowMapper<EmployeeContractSchedule> employeeContractScheduleRowMapper() {
@@ -70,7 +76,7 @@ public class EmployeeContractScheduleRepository {
 
     // Tìm kiếm lịch làm việc của nhân viên theo ngày
     public List<EmployeeContractSchedule> findByEmployeeIdAndWorkDate(int employeeId, LocalDate workDate) {
-    	String sql = "SELECT * FROM Employee_Contract_Schedule WHERE employee_id = ? AND work_date = ? AND status = 1";
+    	String sql = "SELECT * FROM Employee_Contract_Schedule WHERE employee_id = ? AND work_date = ? AND status = 0";
         return jdbcTemplate.query(sql, new Object[]{employeeId, workDate}, employeeContractScheduleRowMapper());
     }
 

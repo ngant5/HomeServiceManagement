@@ -15,16 +15,19 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("admin/employees/schedules")
 public class EmployeeContractScheduleController {
-
+	private static final Logger logger = LoggerFactory.getLogger(EmployeeContractScheduleController.class);  
     @Autowired
     private EmployeeContractScheduleService employeeScheduleService;
     
     @Autowired
     private EmployeeService employeeService;
+    
     
     private static final String[] timeSlots = {"06:00-08:00", "08:00-10:00", "10:00-12:00", "14:00-16:00", "16:00-18:00"};
 
@@ -34,94 +37,87 @@ public class EmployeeContractScheduleController {
 	}
    
     
-    @PostMapping("/createForAllEmployees")
-    public ResponseEntity<?> createScheduleForAllEmployees() {
+ 	@PostMapping("/createForAllEmployees")
+    public ResponseEntity<?> createScheduleForAllEmployees(@RequestParam("month") int month, @RequestParam("year") int year) {
         try {
-            LocalDate currentDate = LocalDate.now();
-            int currentMonth = currentDate.getMonthValue();
-            int currentYear = currentDate.getYear() + 1; // Tăng năm lên 1
+            boolean scheduleExists = employeeScheduleService.isScheduleExist(month, year);
+            if (scheduleExists) {
+                logger.info("The schedule has been created for the month: " + month + ", year: " + year);
+                return ResponseEntity.status(400).body("The schedule has already been created for the month " + month + " year " + year);
+            }
 
-            // Tạo lịch cho tất cả nhân viên trong tháng hiện tại và năm sau
-            employeeScheduleService.createSchedulesForAllEmployees(currentMonth, currentYear);
+            logger.debug("Creating schedule for the month:  " + month + ", year: " + year);
+            employeeScheduleService.createSchedulesForAllEmployees(month, year);
 
-            return ResponseEntity.ok("Đã tạo lịch làm việc cho tất cả nhân viên.");
+            logger.info("The schedule has been created for all employees.");
+            return ResponseEntity.ok("The schedule has been created for all employees.");
 
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Đã có lỗi xảy ra: " + e.getMessage());
+            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
         }
     }
 
 
-    // API để lấy lịch làm việc của nhân viên vào một ngày cụ thể
     @GetMapping("/{employeeId}/date")
     public ResponseEntity<?> getSchedulesByEmployeeAndDate(
             @PathVariable int employeeId,
             @RequestParam String date) {
         try {
-            // Chuyển đổi workDate từ String thành LocalDate
             LocalDate workDate = LocalDate.parse(date);
             List<EmployeeContractSchedule> schedules = employeeScheduleService.getSchedulesByEmployeeAndDate(employeeId, workDate);
 
-            // Kiểm tra nếu không có lịch
             if (schedules.isEmpty()) {
                 return ResponseEntity.ok("No available schedules for the selected date.");
             }
 
             return ResponseEntity.ok(schedules);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Đã có lỗi xảy ra: " + e.getMessage());
+            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
         }
     }
 
-    // API để cập nhật lịch làm việc của nhân viên
     @PutMapping("/update/{scheduleId}")
     public ResponseEntity<?> updateSchedule(
             @PathVariable int scheduleId,
             @RequestBody EmployeeContractSchedule updatedSchedule) {
         try {
-            // Lấy lịch cũ từ cơ sở dữ liệu
             Optional<EmployeeContractSchedule> existingSchedule = employeeScheduleService.getScheduleById(scheduleId);
 
             if (existingSchedule.isEmpty()) {
-                return ResponseEntity.status(404).body("Không tìm thấy lịch làm việc với ID " + scheduleId);
+                return ResponseEntity.status(404).body("No schedule found with ID " + scheduleId);
             }
 
-            // Cập nhật thông tin lịch làm việc
             EmployeeContractSchedule schedule = existingSchedule.get();
             schedule.setStartTime(updatedSchedule.getStartTime());
             schedule.setEndTime(updatedSchedule.getEndTime());
             schedule.setStatus(updatedSchedule.getStatus());
 
-            // Lưu lại lịch đã cập nhật
             employeeScheduleService.saveSchedule(schedule);
 
             return ResponseEntity.ok(schedule);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Đã có lỗi xảy ra: " + e.getMessage());
+            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
         }
     }
 
-    // API để cập nhật trạng thái (xóa) lịch làm việc của nhân viên
-    @PutMapping("/delete/{scheduleId}")
+    @PutMapping("/off/{scheduleId}")
     public ResponseEntity<?> deleteSchedule(@PathVariable int scheduleId) {
         try {
-            // Lấy lịch từ cơ sở dữ liệu
             Optional<EmployeeContractSchedule> schedule = employeeScheduleService.getScheduleById(scheduleId);
 
             if (schedule.isEmpty()) {
-                return ResponseEntity.status(404).body("Không tìm thấy lịch làm việc với ID " + scheduleId);
+                return ResponseEntity.status(404).body("No schedule found with ID " + scheduleId);
             }
 
-            // Cập nhật trạng thái của lịch làm việc thành "đã xóa" (ví dụ: 2 hoặc 3 - tùy vào quy định của bạn)
             EmployeeContractSchedule existingSchedule = schedule.get();
-            existingSchedule.setStatus(2);  // Giả sử trạng thái 2 là "đã xóa"
+            existingSchedule.setStatus(0);  
 
-            // Lưu lại lịch đã cập nhật trạng thái
             employeeScheduleService.saveSchedule(existingSchedule);
 
-            return ResponseEntity.ok("Lịch làm việc với ID " + scheduleId + " đã được cập nhật trạng thái.");
+            return ResponseEntity.ok("The schedule with ID " + scheduleId + " has been updated with the new status.");
+
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Đã có lỗi xảy ra: " + e.getMessage());
+            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
         }
     }
 }

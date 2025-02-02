@@ -23,6 +23,11 @@ public class EmployeeContractScheduleService {
     @Autowired
     private EmployeeService employeeService;
     
+    public boolean isScheduleExist(int month, int year) {
+        return scheduleRepository.existsByMonthAndYear(month, year);
+    }
+
+    
     public void createSchedulesForAllEmployees(int month, int year) {
         List<Employees> employees = employeeService.getAllEmployees();
         
@@ -45,6 +50,8 @@ public class EmployeeContractScheduleService {
 
         return schedules;
     }
+    
+    
 
     private List<EmployeeContractSchedule> createDailySchedule(int employeeId, LocalDate date) {
         List<EmployeeContractSchedule> dailySchedules = new ArrayList<>();

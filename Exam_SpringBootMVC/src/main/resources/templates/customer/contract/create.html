@@ -237,7 +237,7 @@
 
 	    // Lấy dữ liệu từ API
 	    function fetchAvailableTimes(popupStartDate) {
-	        const url = `http://localhost:8080/employees/schedules/${employeeId}/date?date=${popupStartDate}`;
+	        const url = `http://localhost:8080/schedules/${employeeId}/date?date=${popupStartDate}`;
 
 	        fetch(url)
 	            .then(response => {
