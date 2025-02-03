@@ -291,7 +291,12 @@
 					            </button>
 
 	            `;
-	            popupTimeSlotList.appendChild(timeItem); // Thêm phần tử vào danh sách thời gian trong popup
+				const selectButton = timeItem.querySelector('.btn-add');
+				        selectButton.addEventListener('click', () => {
+				            onSelectSlot(slot);
+				        });
+
+	            popupTimeSlotList.appendChild(timeItem); 
 	        });
 	    }
 
@@ -413,6 +418,104 @@
 			});
 
 	});  
+	
+	let selectedSlots = {}; // Lưu trữ các lịch đã chọn theo scheduleId
+
+	// Hàm xử lý sự kiện chọn lịch
+	function onSelectSlot(slot) {
+	    const scheduleId = slot.scheduleId;
+		console.log("Selecting slot with scheduleId:", scheduleId);
+
+
+	    // Cập nhật trạng thái của lịch trong cơ sở dữ liệu
+	    updateSlotStatus(scheduleId, 1);  // Cập nhật status = 1 khi người dùng chọn lịch
+
+	    // Lưu thông tin lịch đã chọn và ghi nhận thời gian chọn
+	    selectedSlots[scheduleId] = {
+	        ...slot,
+	        selectedAt: new Date() // Ghi nhận thời gian chọn
+	    };
+
+	    addSelectedSlotToList(slot); // Thêm vào danh sách đã chọn
+	}
+
+	// Cập nhật trạng thái của slot
+	function updateSlotStatus(scheduleId, status) {
+		console.log(`Updating status for scheduleId ${scheduleId} to ${status} `);
+		    
+
+	    fetch(`http://localhost:8080/schedules/updateSlot/${scheduleId}?status=${status}`, {
+	        method: "PUT",
+	        headers: {
+	            "Content-Type": "application/json"
+	        }
+	    })
+	    .then(response => response.json())
+	    .then(data => {
+	        console.log("Server response:", data);
+	        if (data.success) {
+	            alert("Slot selected successfully!");
+	        } else {
+	            alert("Failed to update slot status: " + data.message);
+	        }
+	    })
+	    .catch(error => {
+	        console.error('Error updating slot status:', error);
+	        alert("An error occurred while updating slot status.");
+	    });
+	}
+
+	// Hàm hiển thị danh sách các lịch đã chọn
+	function addSelectedSlotToList(slot) {
+	    const selectedTimeList = document.getElementById('selectedTimeList'); // Giả sử có một phần tử danh sách để hiển thị
+	    const listItem = document.createElement('li');
+	    listItem.innerHTML = `
+	        <div class="item-times">
+	            Date: ${slot.workDate} from ${slot.startTime} to ${slot.endTime} (${slot.hoursWork.toFixed(2)} hours)
+	            <button type="button" class="remove-btn" onclick="onRemoveSlot(${slot.scheduleId})">Remove</button>
+	        </div>
+	    `;
+	    selectedTimeList.appendChild(listItem); // Thêm lịch vào danh sách hiển thị
+	}
+
+	// Hàm xử lý sự kiện xóa lịch đã chọn
+	function onRemoveSlot(scheduleId) {
+	    console.log("Removing slot with scheduleId:", scheduleId);
+	    updateSlotStatus(scheduleId, 0);
+
+	    // Xóa slot khỏi danh sách đã chọn
+	    delete selectedSlots[scheduleId];
+
+	    // Cập nhật lại giao diện
+	    updateSelectedTimeList();
+	}
+
+	// Cập nhật lại danh sách đã chọn sau khi xóa lịch
+	function updateSelectedTimeList() {
+	    const selectedTimeList = document.getElementById('selectedTimeList');
+	    selectedTimeList.innerHTML = '';  // Xóa nội dung hiện tại
+
+	    // Sắp xếp các lịch đã chọn theo ngày và giờ
+	    const sortedSlots = Object.values(selectedSlots).sort((a, b) => {
+	        if (a.workDate !== b.workDate) {
+	            return new Date(a.workDate) - new Date(b.workDate);
+	        }
+	        return a.startTime.localeCompare(b.startTime);
+	    });
+
+	    // Hiển thị lại danh sách các lịch đã chọn
+	    sortedSlots.forEach(slot => {
+	        const listItem = document.createElement('li');
+	        listItem.innerHTML = `
+	            <div class="item-times">
+	                Date: ${slot.workDate} from ${slot.startTime} to ${slot.endTime} (${slot.hoursWork.toFixed(2)} hours)
+	                <button type="button" class="remove-btn" onclick="onRemoveSlot(${slot.scheduleId})">Remove</button>
+	            </div>
+	        `;
+	        selectedTimeList.appendChild(listItem);
+	    });
+	}
+
 
 </script>
 

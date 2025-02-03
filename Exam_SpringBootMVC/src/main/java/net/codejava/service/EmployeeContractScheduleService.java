@@ -4,6 +4,7 @@ import net.codejava.model.EmployeeContractSchedule;
 import net.codejava.model.Employees;
 import net.codejava.repository.EmployeeContractScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -112,19 +113,10 @@ public class EmployeeContractScheduleService {
     }
 
     // Lưu lại lịch làm việc (cập nhật hoặc thêm mới)
-    public EmployeeContractSchedule saveSchedule(EmployeeContractSchedule schedule) {
-        return scheduleRepository.save(schedule);  // Bạn cần có phương thức save trong repository để hỗ trợ
-    }
+    public EmployeeContractSchedule saveSchedule(EmployeeContractSchedule
+    		 schedule) { return scheduleRepository.save(schedule);
+    		 }
 
-    // Xóa lịch làm việc (cập nhật trạng thái thành "đã xóa")
-    public void deleteSchedule(int scheduleId) {
-        Optional<EmployeeContractSchedule> schedule = getScheduleById(scheduleId);
-        if (schedule.isPresent()) {
-            EmployeeContractSchedule existingSchedule = schedule.get();
-            existingSchedule.setStatus(2); // Giả sử 2 là trạng thái "đã xóa"
-            saveSchedule(existingSchedule);
-        }
-    }
     
     public List<EmployeeContractSchedule> getSchedulesByEmployeeAndStatus(int employeeId, int status) {
         return scheduleRepository.findByEmployeeIdAndStatus(employeeId, status);
@@ -133,4 +125,32 @@ public class EmployeeContractScheduleService {
     public List<EmployeeContractSchedule> getSchedulesByEmployeeId(int employeeId) {
         return scheduleRepository.findByEmployeeIdAndStatus(employeeId, 0);  // Giả sử status = 0 là lịch trình hợp lệ
     }
+
+    public boolean updateSlotStatus(int scheduleId, int status, LocalDateTime expireTime) {
+        try {
+            Optional<EmployeeContractSchedule> scheduleOpt = scheduleRepository.findById(scheduleId);
+            
+            if (scheduleOpt.isPresent()) {
+            	EmployeeContractSchedule schedule = scheduleOpt.get();
+                schedule.setStatus(status);
+
+                if (expireTime == null) {
+                    expireTime = LocalDateTime.now();
+                }
+                schedule.setExpireTime(expireTime);
+
+                scheduleRepository.updateStatus(scheduleId, status, expireTime);
+
+                return true;
+            } else {
+                System.out.println("No schedule found with scheduleId: " + scheduleId);
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
 }

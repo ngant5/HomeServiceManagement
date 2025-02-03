@@ -70,6 +70,12 @@ public class EmployeeContractScheduleRepository {
             schedule.setEndTime(rs.getTimestamp("end_time").toLocalDateTime().toLocalTime());
             schedule.setHoursWork(rs.getInt("hours_work"));
             schedule.setStatus(rs.getInt("status"));
+            Timestamp expireTime = rs.getTimestamp("expire_time");
+            if (expireTime != null) {
+                schedule.setExpireTime(expireTime.toLocalDateTime());
+            } else {
+                schedule.setExpireTime(null);
+            }
             return schedule;
         };
     }
@@ -94,25 +100,69 @@ public class EmployeeContractScheduleRepository {
         return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0));
     }
 
-    // Phương thức lưu hoặc cập nhật EmployeeContractSchedule
     public EmployeeContractSchedule save(EmployeeContractSchedule schedule) {
         String sql = "INSERT INTO Employee_Contract_Schedule (employee_id, work_date, start_time, end_time, status) " +
                      "VALUES (?, ?, ?, ?, ?) " +
                      "ON DUPLICATE KEY UPDATE employee_id = VALUES(employee_id), work_date = VALUES(work_date), " +
                      "start_time = VALUES(start_time), end_time = VALUES(end_time), status = VALUES(status)";
-
+        
         java.sql.Timestamp startTimestamp = java.sql.Timestamp.valueOf(schedule.getWorkDate().atTime(schedule.getStartTime()));
         java.sql.Timestamp endTimestamp = java.sql.Timestamp.valueOf(schedule.getWorkDate().atTime(schedule.getEndTime()));
 
-        
-        jdbcTemplate.update(sql, schedule.getEmployeeId(), java.sql.Date.valueOf(schedule.getWorkDate()), 
-        		startTimestamp, endTimestamp, schedule.getStatus());
+        jdbcTemplate.update(sql, schedule.getEmployeeId(),
+                            java.sql.Date.valueOf(schedule.getWorkDate()), startTimestamp, endTimestamp,
+                            schedule.getStatus());
 
         return schedule;
+    }
+
+    public int updateStatus(int scheduleId, int status, LocalDateTime expireTime) {
+        try {
+            String sql = "UPDATE Employee_Contract_Schedule SET status = ?, expire_time = ? WHERE schedule_id = ?";
+            int rowsAffected = jdbcTemplate.update(sql, status, expireTime != null ? Timestamp.valueOf(expireTime) : null, scheduleId);
+            
+            if (rowsAffected > 0) {
+                System.out.println("Status updated successfully for scheduleId: " + scheduleId + " to status: " + status);
+            } else {
+                System.out.println("No record found for scheduleId: " + scheduleId + " or update failed.");
+            }
+            return rowsAffected;
+        } catch (Exception e) {
+            System.err.println("Error updating status for scheduleId: " + scheduleId + ": " + e.getMessage());
+            e.printStackTrace();
+            return 0; 
+        }
+    }
+
+
+
+    public List<EmployeeContractSchedule> findByStatusAndExpireTimeIsNotNull(int status) {
+        String sql = "SELECT * FROM Employee_Contract_Schedule WHERE status = ? AND expire_time IS NOT NULL";
+        return jdbcTemplate.query(sql, new Object[]{status}, employeeContractScheduleRowMapper());
     }
 
     public List<EmployeeContractSchedule> findByEmployeeIdAndStatus(int employeeId, int status) {
         String sql = "SELECT * FROM Employee_Contract_Schedule WHERE employee_id = ? AND status = 0";
         return jdbcTemplate.query(sql, new Object[]{employeeId, status}, employeeContractScheduleRowMapper());
     }
+    
+    public int updateStatusRemove(int scheduleId, int status, LocalDateTime expireTime) {
+        try {
+            String sql = "UPDATE Employee_Contract_Schedule SET status = ?, expire_time = ? WHERE schedule_id = ?";
+            int rowsAffected = jdbcTemplate.update(sql, status, expireTime != null ? Timestamp.valueOf(expireTime) : null, scheduleId);
+
+            if (rowsAffected > 0) {
+                System.out.println("Status updated successfully for scheduleId: " + scheduleId);
+            } else {
+                System.out.println("No record found for scheduleId: " + scheduleId + " or update failed.");
+            }
+            return rowsAffected;
+        } catch (Exception e) {
+            System.err.println("Error updating status for scheduleId: " + scheduleId + ": " + e.getMessage());
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+
 }

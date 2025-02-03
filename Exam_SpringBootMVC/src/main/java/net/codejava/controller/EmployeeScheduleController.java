@@ -3,11 +3,16 @@ package net.codejava.controller;
 import net.codejava.model.EmployeeContractSchedule;
 import net.codejava.service.EmployeeContractScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("schedules/")
@@ -34,6 +39,24 @@ public class EmployeeScheduleController {
             return ResponseEntity.ok(schedules);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Đã có lỗi xảy ra: " + e.getMessage());
+        }
+    }
+    
+    @PutMapping("/updateSlot/{scheduleId}")
+    public ResponseEntity<Map<String, Object>> updateSlotStatus(@PathVariable int scheduleId, 
+                                    @RequestParam int status, 
+                                    @RequestParam(required = false) LocalDateTime expireTime) {
+    	Map<String, Object> response = new HashMap<>();
+        boolean success = employeeScheduleService.updateSlotStatus(scheduleId, status, expireTime);
+        
+        if (success) {
+            response.put("success", true);
+            response.put("message", "Status updated successfully.");
+            return ResponseEntity.ok(response); 
+        } else {
+            response.put("success", false);
+            response.put("message", "Failed to update slot status.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response); 
         }
     }
 }
