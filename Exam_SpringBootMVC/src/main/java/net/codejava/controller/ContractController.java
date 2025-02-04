@@ -310,19 +310,20 @@ public class ContractController {
             }
         }
 
-    @GetMapping("/{id}")
-    public String getContract(@PathVariable int id, Model model) {
-    	
-        Contracts contract = contractService.getContractById(id);
-        List<ContractDetails> details = contractDetailService.getContractDetailsByContractId(id); 
-
-        model.addAttribute("contract", contract);
-        model.addAttribute("details", details);
-        logger.info("Number of contract details found: {}", details.size());
-
-        return "customer/contract/detail";
-    }
-    
+		/*
+		 * @GetMapping("/{id}") public String getContract(@PathVariable int id, Model
+		 * model) {
+		 * 
+		 * Contracts contract = contractService.getContractById(id);
+		 * List<ContractDetails> details =
+		 * contractDetailService.getContractDetailsByContractId(id);
+		 * 
+		 * model.addAttribute("contract", contract); model.addAttribute("details",
+		 * details); logger.info("Number of contract details found: {}",
+		 * details.size());
+		 * 
+		 * return "customer/contract/detail"; }
+		 */
    
     @GetMapping("/details/create")
     public String showCreateContractDetailsForm(@RequestParam int contractId, Model model) {
@@ -337,12 +338,10 @@ public class ContractController {
         contractDetailService.createContractDetails(contractDetails);
         return "redirect:/contracts/" + contractId;
     }
-
-    @PostMapping("/{id}/delete")
-    public String deleteContract(@PathVariable int id) {
-        contractService.deleteContract(id);
-        return "redirect:/contracts";
-    }
+	/*
+	 * @PostMapping("/{id}/delete") public String deleteContract(@PathVariable int
+	 * id) { contractService.deleteContract(id); return "redirect:/contracts"; }
+	 */
     
     private static final String FILE_DIRECTORY = "uploads/contracts/";
 
@@ -373,7 +372,13 @@ public class ContractController {
     public String showPaymentPage(@PathVariable("contractId") int contractId, Model model) {
         // Lấy thông tin hợp đồng từ cơ sở dữ liệu
         Contracts contract = contractService.getContractById(contractId);
-        model.addAttribute("contract", contract);  // Truyền thông tin hợp đồng vào model
+        if (contract == null) {
+            logger.error("Không tìm thấy hợp đồng với contractId: {}", contractId);
+        } else {
+        	logger.info("Thông tin hợp đồng: {}", contract);
+            logger.info("Total Price của hợp đồng là: {}", contract.getTotalPrice());
+        }
+        model.addAttribute("contract", contract);  
 
         // Trả về trang payment
         return "customer/payment/create";

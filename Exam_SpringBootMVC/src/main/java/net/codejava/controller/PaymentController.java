@@ -1,6 +1,7 @@
 package net.codejava.controller;
 
 import net.codejava.model.Payments;
+import net.codejava.service.ContractService;
 import net.codejava.service.PaymentService;
 import net.codejava.service.VNPayService;
 import org.slf4j.Logger;
@@ -30,6 +31,8 @@ public class PaymentController {
 
     private PaymentService paymentService;
     private VNPayService vnPayService;
+    @Autowired
+    private ContractService contractService;
 
     @Autowired
     public PaymentController(PaymentService paymentService, VNPayService vnPayService) {
@@ -112,6 +115,7 @@ public class PaymentController {
 
                 // Lưu thanh toán vào cơ sở dữ liệu
                 paymentService.createPayment(payment);
+                contractService.updateContractPaymentStatus(contractId, 1); 
                 logger.info("Thanh toán đã được cập nhật vào cơ sở dữ liệu với transactionId: {}", transactionId);
             } catch (Exception e) {
                 logger.error("Lỗi khi lưu thanh toán vào cơ sở dữ liệu cho transactionId: {}", transactionId, e);

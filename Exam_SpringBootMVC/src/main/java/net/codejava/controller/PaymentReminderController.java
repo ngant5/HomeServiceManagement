@@ -61,33 +61,30 @@ public class PaymentReminderController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send email.");
         }
     }
-
-    // Phương thức lên lịch gửi nhắc nhở thanh toán định kỳ
-    @Scheduled(cron = "0 0 1,5 * * ?")  // Định kỳ vào ngày 1 và 5 của mỗi tháng lúc 00:00
-    public void sendMonthlyPaymentReminders() {
-        LocalDate today = LocalDate.now();
-
-        if (today.getDayOfMonth() == 1) {
-            // Ngày 1 của tháng: Gửi email nhắc nhở thanh toán cho tất cả hợp đồng "by_month"
-            List<Contracts> contracts = contractService.getAllContractsByType("by_month");
-            for (Contracts contract : contracts) {
-                LocalDate paymentDueDate = today.withDayOfMonth(10);  // Mặc định ngày thanh toán là ngày 10 của tháng
-                sendPaymentReminderEmail(contract, paymentDueDate);
-            }
-            logger.info("Sent payment reminders to all 'by_month' contracts for the 10th of the month.");
-        } else if (today.getDayOfMonth() == 5) {
-            // Ngày 5 của tháng: Kiểm tra các hợp đồng chưa thanh toán và gửi email
-            List<Contracts> contracts = contractService.getAllContractsByType("by_month");
-            for (Contracts contract : contracts) {
-                if (!isPaymentCompleted(contract)) {
-                    // Nếu hợp đồng chưa thanh toán, gửi email nhắc nhở
-                    LocalDate paymentDueDate = today.withDayOfMonth(10);  // Mặc định ngày thanh toán là ngày 10 của tháng
-                    sendPaymentReminderEmail(contract, paymentDueDate);
-                    logger.info("Sent payment reminder to contractId {} for overdue payment.", contract.getContractId());
-                }
-            }
-        }
-    }
+	/*
+	 * // Phương thức lên lịch gửi nhắc nhở thanh toán định kỳ
+	 * 
+	 * @Scheduled(cron = "0 0 1,5 * * ?") // Định kỳ vào ngày 1 và 5 của mỗi tháng
+	 * lúc 00:00 public void sendMonthlyPaymentReminders() { LocalDate today =
+	 * LocalDate.now();
+	 * 
+	 * if (today.getDayOfMonth() == 1) { // Ngày 1 của tháng: Gửi email nhắc nhở
+	 * thanh toán cho tất cả hợp đồng "by_month" List<Contracts> contracts =
+	 * contractService.getAllContractsByType("by_month"); for (Contracts contract :
+	 * contracts) { LocalDate paymentDueDate = today.withDayOfMonth(10); // Mặc định
+	 * ngày thanh toán là ngày 10 của tháng sendPaymentReminderEmail(contract,
+	 * paymentDueDate); } logger.
+	 * info("Sent payment reminders to all 'by_month' contracts for the 10th of the month."
+	 * ); } else if (today.getDayOfMonth() == 5) { // Ngày 5 của tháng: Kiểm tra các
+	 * hợp đồng chưa thanh toán và gửi email List<Contracts> contracts =
+	 * contractService.getAllContractsByType("by_month"); for (Contracts contract :
+	 * contracts) { if (!isPaymentCompleted(contract)) { // Nếu hợp đồng chưa thanh
+	 * toán, gửi email nhắc nhở LocalDate paymentDueDate = today.withDayOfMonth(10);
+	 * // Mặc định ngày thanh toán là ngày 10 của tháng
+	 * sendPaymentReminderEmail(contract, paymentDueDate);
+	 * logger.info("Sent payment reminder to contractId {} for overdue payment.",
+	 * contract.getContractId()); } } } }
+	 */
 
     // Phương thức kiểm tra thanh toán đã hoàn tất chưa
     private boolean isPaymentCompleted(Contracts contract) {

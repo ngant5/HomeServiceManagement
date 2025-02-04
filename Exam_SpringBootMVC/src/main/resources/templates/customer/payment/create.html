@@ -4,21 +4,28 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contract Detail</title>
+    <title>Contract Payment</title>
     <th:block th:insert="~{common/home_head_tag}"></th:block>
 </head>
 <body>
     <th:block th:insert="~{common/home_content_first}"></th:block>
 	<!-- Thêm input hidden chứa contractId -->
 	
-
+	
 	<section class="contained">
-		<ul>
+		<!--<ul>
 			<li><strong>One-time:</strong> A one-time payment made in full to initiate the contract.</li>
 			<li><strong>By Day:</strong> Multiple payments made over time, with each payment occurring on a specific day as per the contract.</li>
 			<li><strong>By Month:</strong> Recurring monthly payments made according to the terms of the contract.</li>
-		</ul>
+		</ul>-->
+		
+			<!-- Payment instructions -->
+			
+
 		<form id="paymentForm" th:action="@{/contracts/{contractId}/payment/create(contractId=${contractId})}" method="POST">
+			<input type="hidden" name="contractId" value="${contract.id}" />
+			<p>Please check the payment amount for the contract below. 
+							You can choose a suitable payment method such as VNPAY or bank transfer.</p>
 			<div class="row flex-just-center">
 				<div class="col-tri">
 					<div class="card-career">
@@ -26,21 +33,21 @@
 							<div class="input-wrapper">
 								<label for="paymentAmount">Amount:</label>
 								<span class="currency-symbol">$</span>
-								<input type="number" id="paymentAmount" name="amount" value="${contract.totalPrice}" max="${contract.totalPrice}" placeholder="Enter payment amount" required />
+								<input type="text" id="paymentAmount" name="amount" th:value="${contract.totalPrice}" th:max="${contract.totalPrice}" placeholder="Enter payment amount" readonly required />
 							</div>
 						</div>
-						<div class="payment-methods">
+						<div class="payment-methods ta-center mt-15">
 						       <!-- VNPAY Logo -->
 						       <label class="payment-methods">VNPAY
 						           <input type="radio" name="paymentMethod" value="VNPAY" checked />
 						           <!--<img src="http://localhost:8080/uploads/images/vnpay.png" alt="VNPAY" style="width: 100px; height: auto;" />-->
 						       </label>
 
-						       <!-- MOMO Logo -->
+						        <!--MOMO Logo 
 						       <label class="payment-methods">MOMO
 						           <input type="radio" name="paymentMethod" value="MOMO" />
-						           <!--<img src="http://localhost:8080/uploads/images/momo.png" alt="MOMO" style="width: 100px; height: auto;" />-->
-						       </label>
+						           <img src="http://localhost:8080/uploads/images/momo.png" alt="MOMO" style="width: 100px; height: auto;" />
+						       </label>-->
 							   <label>BANK TRANFER
 									<input type="radio" name="paymentMethod" value="BANK TRANFER"  />
 							   </label>
@@ -90,6 +97,11 @@
 			        }
 			    });
 
+				document.addEventListener("DOMContentLoaded", function() {
+				    console.log("Total Price from Thymeleaf: " + totalPrice);
+				    document.getElementById("paymentAmount").value = totalPrice;
+				    document.getElementById("paymentAmount").max = totalPrice;
+				});
 
 		</script>
 

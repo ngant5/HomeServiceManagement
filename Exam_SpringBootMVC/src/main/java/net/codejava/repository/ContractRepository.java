@@ -201,5 +201,9 @@ public class ContractRepository {
 
 		return contract;
 	}
-
+	
+	public void updateContractPaymentStatus(int contractId, int payment_status) {
+        String sql = "UPDATE Contracts SET payment_status = ? WHERE contract_id = ?";
+        jdbcTemplate.update(sql, payment_status, contractId);
+    }
 }

@@ -49,10 +49,10 @@ public class ContractService {
     public void updateContractStatus(int contractId, int contractStatus) {
         contractRepository.updateContractStatus(contractId, contractStatus);
     }
-
-    public List<Contracts> getAllContractsByType(String type) {
-        return contractRepository.findContractsByType(type);
-    }
+	/*
+	 * public List<Contracts> getAllContractsByType(String type) { return
+	 * contractRepository.findContractsByType(type); }
+	 */
     
     public String getCustomerEmailByContractId(int contractId) {
         // Lấy thông tin hợp đồng
@@ -64,10 +64,10 @@ public class ContractService {
         return null;
     }
 
-    
-    public void deleteContract(int contractId) {
-        contractRepository.deleteContract(contractId);
-    }
+	/*
+	 * public void deleteContract(int contractId) {
+	 * contractRepository.deleteContract(contractId); }
+	 */
 
 
     public void updateContractTotalPrice(int contractId, double totalPrice) {
@@ -111,6 +111,11 @@ public class ContractService {
             throw new RuntimeException("Error occurred while uploading the contract file.", e);
         }
     }
+
+    public void updateContractPaymentStatus(int contractId, int paymentStatus) {
+        contractRepository.updateContractPaymentStatus(contractId, paymentStatus);
+    }
+
 
 
 }
