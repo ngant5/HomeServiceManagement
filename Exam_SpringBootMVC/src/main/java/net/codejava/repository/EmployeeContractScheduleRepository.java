@@ -163,6 +163,14 @@ public class EmployeeContractScheduleRepository {
             return 0;
         }
     }
+    
+    public boolean updateContractDetailIdAndStatus(int scheduleId, int contractDetailId, int status) {
+        String sql = "UPDATE employee_contract_schedule SET contract_detail_id = ?, status = ? WHERE schedule_id = ?";
+        
+        int rowsUpdated = jdbcTemplate.update(sql, contractDetailId, status, scheduleId);
 
+        return rowsUpdated > 0; 
+    }
 
+    
 }

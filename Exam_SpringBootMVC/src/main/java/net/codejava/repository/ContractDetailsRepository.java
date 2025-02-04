@@ -38,21 +38,31 @@ public class ContractDetailsRepository {
         }
     	
         String sql = "INSERT INTO Contract_Details (contract_id, emp_service_id, employee_id, service_address, service_phone, start_date, end_date, status, hours_worked, total_price, contract_type) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"+
+                     "SELECT SCOPE_IDENTITY();"; 
         logger.info("Trying to insert contract detail with emp_service_id: {}", contractDetail.getEmpServiceId());
 
-        jdbcTemplate.update(sql, contractDetail.getContractId(), 
-        						 contractDetail.getEmpServiceId(), 
-        						 contractDetail.getEmployeeId(),
-        						 contractDetail.getServiceAddress(), 
-        						 contractDetail.getServicePhone(),
-        						 contractDetail.getStartDate(), 
-        						 contractDetail.getEndDate(),
-        						 contractDetail.getStatus(), 
-        						 contractDetail.getHoursWorked(),
-        						 contractDetail.getTotalPrice(), 
-        						 contractDetail.getContractType());;
+        Integer generatedId = jdbcTemplate.queryForObject(sql, Integer.class,
+                contractDetail.getContractId(),
+                contractDetail.getEmpServiceId(),
+                contractDetail.getEmployeeId(),
+                contractDetail.getServiceAddress(),
+                contractDetail.getServicePhone(),
+                contractDetail.getStartDate(),
+                contractDetail.getEndDate(),
+                contractDetail.getStatus(),
+                contractDetail.getHoursWorked(),
+                contractDetail.getTotalPrice(),
+                contractDetail.getContractType());
+
+        if (generatedId != null) {
+            contractDetail.setContractDetailId(generatedId);  
+            logger.info("Inserted contract detail with contractDetailId: {}", contractDetail.getContractDetailId());
+        } else {
+            logger.error("Failed to retrieve contractDetailId after insert.");
+        }
     }
+
 
     // Tạo danh sách chi tiết hợp đồng
     public void createContractDetails(List<ContractDetails> contractDetails) {

@@ -1,6 +1,7 @@
 package net.codejava.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,6 +37,7 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/contracts")
@@ -213,20 +215,21 @@ public class ContractController {
         
 
         @PostMapping("/checkout")
-        public String finalizeContract(@RequestParam String serviceAddress,
-                                       @RequestParam String servicePhone,
-                                       @RequestParam String startDate,
-                                       @RequestParam String endDate,
-                                       @RequestParam String hoursWorked,
-                                       @RequestParam String contractType,
-                                       @RequestParam String totalPrice,
-                                       @RequestParam Integer employeeId,
-                                       HttpSession session,
-                                       Model model) {
+        public ResponseEntity<Map<String, Object>> finalizeContract(
+			        							   @RequestParam String serviceAddress,
+			                                       @RequestParam String servicePhone,
+			                                       @RequestParam String startDate,
+			                                       @RequestParam String endDate,
+			                                       @RequestParam String hoursWorked,
+			                                       @RequestParam String contractType,
+			                                       @RequestParam String totalPrice,
+			                                       @RequestParam Integer employeeId,
+			                                       HttpSession session,
+			                                       Model model) {
         	Integer customerId = (Integer) session.getAttribute("customerId");
             if (customerId == null) {
                 logger.error("Error: customerId is not found in session.");
-                return "redirect:/customer/login";  
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("success", false, "message", "User not logged in"));
             }
             
             Integer contractId = (Integer) session.getAttribute("contractId");
@@ -235,69 +238,76 @@ public class ContractController {
             Double servicePrice = (Double) session.getAttribute("servicePrice");
             if (servicePrice == null) {
                 logger.error("Error: servicePrice is not found in session.");
-                return "redirect:/error"; // Nếu không có servicePrice trong session
-            } else {
-                logger.info("Service Price retrieved from session: {}", servicePrice);
-            }
-
-            logger.info("Finalizing contract for contractId: {} with empServiceId: {}", contractId, empServiceId);
-            
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false, "message", "Service price not found"));
+            } logger.info("Finalizing contract for contractId: {} with empServiceId: {}", contractId, empServiceId);
            
 
             if (contractId != null) {
-                // Tạo chi tiết hợp đồng
-                ContractDetails contractDetail = new ContractDetails();
-                contractDetail.setContractId(contractId);
-                contractDetail.setEmpServiceId(empServiceId);
-                contractDetail.setServiceAddress(serviceAddress);
-                contractDetail.setServicePhone(servicePhone);
-                contractDetail.setHoursWorked(hoursWorked);
-                contractDetail.setStatus(0);
-                contractDetail.setContractType(contractType);
-                contractDetail.setTotalPrice(totalPrice);
-                contractDetail.setEmployeeId(employeeId);
-                totalPrice = totalPrice.replace("$", "").trim();
-                if (!startDate.isEmpty()) {
-                    try {
-                        contractDetail.setStartDate(LocalDate.parse(startDate)); 
-                    } catch (DateTimeParseException e) {
-                        logger.error("Invalid start date format: {}", startDate);
-                        return "redirect:/error";  // Nếu startDate không hợp lệ
-                    }
-                }
+		                ContractDetails contractDetail = new ContractDetails();
+		                contractDetail.setContractId(contractId);
+		                contractDetail.setEmpServiceId(empServiceId);
+		                contractDetail.setServiceAddress(serviceAddress);
+		                contractDetail.setServicePhone(servicePhone);
+		                contractDetail.setHoursWorked(hoursWorked);
+		                contractDetail.setStatus(0);
+		                contractDetail.setContractType(contractType);
+		                contractDetail.setTotalPrice(totalPrice);
+		                contractDetail.setEmployeeId(employeeId);
+		                totalPrice = totalPrice.replace("$", "").trim();
+		                if (!startDate.isEmpty()) {
+		                    try {
+		                        contractDetail.setStartDate(LocalDate.parse(startDate)); 
+		                    } catch (DateTimeParseException e) {
+		                        logger.error("Invalid start date format: {}", startDate);
+		                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("success", false, "message", "Invalid start date"));
+		                    }
+		                }
 
-                if (!endDate.isEmpty()) {
-                    try {
-                        contractDetail.setEndDate(LocalDate.parse(endDate)); 
-                    } catch (DateTimeParseException e) {
-                        logger.error("Invalid end date format: {}", endDate);
-                        return "redirect:/error";  // Nếu endDate không hợp lệ
-                    }
-                }
+		                if (!endDate.isEmpty()) {
+		                    try {
+		                        contractDetail.setEndDate(LocalDate.parse(endDate)); 
+		                    } catch (DateTimeParseException e) {
+		                        logger.error("Invalid end date format: {}", endDate);
+		                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("success", false, "message", "Invalid end date"));
+		                        }
+		                	}
 
 
-                // Gọi API để tạo chi tiết hợp đồng
                 ResponseEntity<ContractDetails> response = contractDetailService.createContractDetail(contractDetail);
                 if (response.getStatusCode().is2xxSuccessful()) {
-                	logger.info("Contract detail created successfully.");
-                	
+                	ContractDetails createdContractDetail = response.getBody();if (createdContractDetail != null) {
+                        Integer contractDetailId = createdContractDetail.getContractDetailId();
+
+                        if (contractDetailId == null || contractDetailId <= 0) {
+                            logger.error("Invalid contractDetailId returned: {}", contractDetailId);
+                            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false, "message", "Invalid contractDetailId"));
+                        }
+                        session.setAttribute("contractDetailId", contractDetailId);
+                        logger.info("Contract detail created successfully with contractDetailId: {}", contractDetailId);
+                        
                 	    try {
                 	        // Chuyển totalPrice từ String sang Double
                 	        double totalPriceDouble = Double.parseDouble(totalPrice);
                 	        contractService.updateContractTotalPrice(contractId, totalPriceDouble);
                 	        logger.info("Contract updated with new totalPrice: {}", totalPriceDouble);
                 	    } catch (NumberFormatException e) {
-                	        logger.error("Invalid totalPrice format: {}", totalPrice); // Nếu không thể chuyển đổi thành double
-                	        return "redirect:/error"; // Quay lại trang lỗi nếu totalPrice không hợp lệ
+                	        logger.error("Invalid totalPrice format: {}", totalPrice); 
+                	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("success", false, "message", "Invalid totalPrice format"));
                 	    }
-                    return "customer/contract/success"; // Chuyển đến trang thành công
-                }else {
+                	    
+                	return ResponseEntity.ok(Map.of("success", true, "contractDetailId", contractDetailId));
+                	} else {
+                        logger.error("Failed to create contract detail. Response body is null.");
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false, "message", "Failed to create contract detail"));
+                    }
+                } else {
                     logger.error("Failed to create contract detail. Response status: {}", response.getStatusCode());
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false, "message", "Failed to create contract detail"));
                 }
             } else {
                 logger.warn("No contractId found. Cannot finalize contract.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("success", false, "message", "Contract ID not found"));
             }
-            return "redirect:/error"; // Chuyển đến trang lỗi nếu không tìm thấy contractId
         }
 
     @GetMapping("/{id}")
@@ -369,4 +379,3 @@ public class ContractController {
         return "customer/payment/create";
     }
 }
-

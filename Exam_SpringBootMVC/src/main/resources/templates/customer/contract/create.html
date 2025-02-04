@@ -100,6 +100,7 @@
        <p class="col-wide ta-center mlmr-a">
            Please fill out the form below to request more information or book a service.
        </p>
+	   
        <!-- FORM START -->
        <form id="contractForm" th:action="@{/contracts/checkout}" method="post" class="message-form mt-50 mb-25">
            <!-- Hidden Fields from session -->
@@ -194,6 +195,7 @@
   
 <script>
 	document.addEventListener('DOMContentLoaded', function () {
+		const contractForm = document.getElementById('contractForm');
 	    const showPopupBtn = document.getElementById('showPopup');
 	    const timePopup = document.getElementById('timePopup');
 	    const closePopupBtn = document.getElementById('closePopup');
@@ -209,7 +211,6 @@
 	    const employeeId = document.getElementById('employeeId').value;
 	    let selectedTimeSlots = [];
 
-	    // Hiển thị Popup chọn thời gian
 	    showPopupBtn.addEventListener('click', function () {
 	        if (!startDateInput.value) {
 	            alert('Vui lòng chọn ngày bắt đầu!');
@@ -515,6 +516,65 @@
 	        selectedTimeList.appendChild(listItem);
 	    });
 	}
+	
+	contractForm.addEventListener('submit', function(event) {
+	        event.preventDefault(); 
+			console.log("Form is being submitted...");
+
+	        const formData = new FormData(contractForm);
+			console.log("Form Data:", formData);
+
+	        fetch(contractForm.action, {
+	            method: 'POST',
+	            body: formData,
+	        })
+	        .then(response => response.json()) 
+	        .then(result => {
+	            console.log("Form submitted successfully:", result);
+				if (result.success && result.contractDetailId) {
+				            sessionStorage.setItem("contractDetailId", result.contractDetailId);
+							console.log("contractDetailId saved to sessionStorage:", result.contractDetailId);
+				        } else {
+				            console.error("Failed to get contractDetailId from response");
+				            return;
+				        }
+				const contractDetailId = sessionStorage.getItem("contractDetailId"); 
+				console.log("contractDetailId from sessionStorage:", contractDetailId);
+				        if (!contractDetailId) {
+				            console.error("contractDetailId is missing!");
+				            return;
+				        }
+
+
+				const scheduleIds = Object.keys(selectedSlots).join(',');
+				console.log("scheduleIds to send:", scheduleIds);
+
+	            const status = 2; 
+				
+				console.log("Sending update request to /schedules/updateSchedulesStatus with status:", status);
+	            fetch('/schedules/updateSchedulesStatus', {
+	                method: 'POST',
+	                headers: {
+	                    'Content-Type': 'application/x-www-form-urlencoded',
+	                },
+	                body: `scheduleIds=${scheduleIds}&contractDetailId=${contractDetailId}&status=${status}`,
+	            })
+	            .then(response => response.json()) 
+	            .then(data => {
+	                if (data.success) {
+	                    console.log("Schedules updated successfully.");
+	                } else {
+	                    console.error("Failed to update schedules.");
+	                }
+	            })
+	            .catch(error => {
+	                console.error("Error calling /updateSchedulesStatus:", error);
+	            });
+	        })
+	        .catch(error => {
+	            console.error("Error submitting form:", error);
+	        });
+	    });
 
 
 </script>

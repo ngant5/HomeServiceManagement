@@ -1,6 +1,8 @@
 package net.codejava.service;
 
 import net.codejava.model.EmployeeContractSchedule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.codejava.model.Employees;
 import net.codejava.repository.EmployeeContractScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ import java.util.Optional;
 
 @Service
 public class EmployeeContractScheduleService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(EmployeeContractScheduleService.class);
 
     @Autowired
     private EmployeeContractScheduleRepository scheduleRepository; 
@@ -152,5 +156,13 @@ public class EmployeeContractScheduleService {
         }
     }
 
+    public boolean updateContractDetailIdAndStatus(int scheduleId, int contractDetailId, int status) {
+        try {
+            return scheduleRepository.updateContractDetailIdAndStatus(scheduleId, contractDetailId, status);
+        } catch (Exception e) {
+            logger.error("Error updating contractDetailId and status for scheduleId: {}", scheduleId, e);
+            return false;
+        }
+    }
 
 }
