@@ -53,15 +53,22 @@
             text-align: center;
         }
 
-        .btn-secondary {
-            background-color: #6c757d; /* Màu xám cho nút "View File" */
-            color: white;
-        }
 
         .btn-info {
             background-color: #17a2b8; /* Màu xanh lam cho nút "View Detail" */
             color: white;
         }
+		
+		.btn-view-file {
+			background-color: #0069d9; 
+			color: white;
+		}
+
+		.btn-view-file:hover {
+			background-color: #0056b3; 
+			color: white;
+		}
+
 
         /* Hover effect for buttons */
         .btn:hover {
@@ -88,6 +95,21 @@
         .status-paid {
             color: #28a745; /* Màu xanh lá cho trạng thái "Paid" */
         }
+	
+		.btn-warning-active {
+		    background-color: #ffc107; /* Màu vàng */
+		    color: white;
+		}
+
+		.btn-warning-active:hover {
+		    background-color: #e0a800; 
+			color: white;
+		}
+
+		.btn-warning-inactive {
+		    background-color: #6c757d; 
+		    color: white;
+		}
 
         /* Responsive design */
         @media (max-width: 768px) {
@@ -113,21 +135,26 @@
     <th:block th:insert="~{common/home_content_first}"></th:block>
 
     <section>
+		<h2 style="text-align: center; font-size: 24px; color: #003366; margin-bottom: 20px;">
+		    Contract Status
+		</h2>
+
         <table>
             <thead>
                 <tr>
-                    <th>No.</th>
-                    <th>Price</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th>Contract</th>
-                    <th>Action</th>
+					<th>No.</th>
+					<th>Contract</th>
+					<th>Requested Date</th>
+					<th>Price</th>
+					<th>Status</th>
+					<th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 <!-- Lặp qua danh sách hợp đồng -->
                 <tr th:each="contract, iterStat : ${contracts}">
                     <td th:text="${iterStat.index + 1}"></td>
+					<td th:text="${contract.createdAt.toLocalDate().toString()}"></td>
                     <td th:text="'$' + ${contract.totalPrice}"></td>
                     <td>
                         <span class="status" th:switch="${contract.paymentStatus}">
@@ -145,7 +172,7 @@
                         	</span>
 						</span>
                     </td>
-                    <td th:text="${contract.createdAt.toLocalDate().toString()}"></td>
+                    
                     
                     <td>
                         <span th:switch="${contract.contractStatus}">
@@ -153,19 +180,24 @@
 							<span th:case="1">In Process</span>
 							<span th:case="2">
                                 <a th:href="@{/contracts/view-file/{contractId}(contractId=${contract.contractId})}"
-                                   class="btn btn-secondary"
+                                   class="btn btn-view-file"
                                    target="_blank">View File</a>
                             </span>
                             <span th:case="3">
                                 <a th:href="@{/contracts/view-file/{contractId}(contractId=${contract.contractId})}"
-                                   class="btn btn-secondary"
+                                   class="btn btn-view-file"
                                    target="_blank">View File</a>
                             </span>
                         </span>
                     </td>
                     <td>
                         <a th:href="@{'/contractDetails/' + ${contract.contractId}}" class="btn btn-info">View Detail</a>
-						<a th:href="@{'/employee-reviews/view/' + ${contract.contractId}}" class="btn btn-info">Reviews</a>
+						<a th:href="${contract.contractStatus == 4 ? '/employee-reviews/view/' + contract.contractId : '#'}" 
+						       class="btn"
+						       th:class="${contract.contractStatus == 4 ? 'btn-warning-active' : 'btn-warning-inactive'}"
+						       th:attr="attr=${contract.contractStatus != 4 ? 'onclick=return false;' : ''}">
+						        Review
+						    </a>
 					</td>
                 </tr>
             </tbody>

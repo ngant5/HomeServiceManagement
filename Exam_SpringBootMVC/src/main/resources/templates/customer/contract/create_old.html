@@ -100,6 +100,7 @@
        <p class="col-wide ta-center mlmr-a">
            Please fill out the form below to request more information or book a service.
        </p>
+	   
        <!-- FORM START -->
        <form id="contractForm" th:action="@{/contracts/checkout}" method="post" class="message-form mt-50 mb-25">
            <!-- Hidden Fields from session -->
@@ -194,6 +195,7 @@
   
 <script>
 	document.addEventListener('DOMContentLoaded', function () {
+		const contractForm = document.getElementById('contractForm');
 	    const showPopupBtn = document.getElementById('showPopup');
 	    const timePopup = document.getElementById('timePopup');
 	    const closePopupBtn = document.getElementById('closePopup');
@@ -209,7 +211,6 @@
 	    const employeeId = document.getElementById('employeeId').value;
 	    let selectedTimeSlots = [];
 
-	    // Hiển thị Popup chọn thời gian
 	    showPopupBtn.addEventListener('click', function () {
 	        if (!startDateInput.value) {
 	            alert('Vui lòng chọn ngày bắt đầu!');
@@ -291,7 +292,12 @@
 					            </button>
 
 	            `;
-	            popupTimeSlotList.appendChild(timeItem); // Thêm phần tử vào danh sách thời gian trong popup
+				const selectButton = timeItem.querySelector('.btn-add');
+				        selectButton.addEventListener('click', () => {
+				            onSelectSlot(slot);
+				        });
+
+	            popupTimeSlotList.appendChild(timeItem); 
 	        });
 	    }
 
@@ -413,6 +419,163 @@
 			});
 
 	});  
+	
+	let selectedSlots = {}; // Lưu trữ các lịch đã chọn theo scheduleId
+
+	// Hàm xử lý sự kiện chọn lịch
+	function onSelectSlot(slot) {
+	    const scheduleId = slot.scheduleId;
+		console.log("Selecting slot with scheduleId:", scheduleId);
+
+
+	    // Cập nhật trạng thái của lịch trong cơ sở dữ liệu
+	    updateSlotStatus(scheduleId, 1);  // Cập nhật status = 1 khi người dùng chọn lịch
+
+	    // Lưu thông tin lịch đã chọn và ghi nhận thời gian chọn
+	    selectedSlots[scheduleId] = {
+	        ...slot,
+	        selectedAt: new Date() // Ghi nhận thời gian chọn
+	    };
+
+	    addSelectedSlotToList(slot); // Thêm vào danh sách đã chọn
+	}
+
+	// Cập nhật trạng thái của slot
+	function updateSlotStatus(scheduleId, status) {
+		console.log(`Updating status for scheduleId ${scheduleId} to ${status} `);
+		    
+
+	    fetch(`http://localhost:8080/schedules/updateSlot/${scheduleId}?status=${status}`, {
+	        method: "PUT",
+	        headers: {
+	            "Content-Type": "application/json"
+	        }
+	    })
+	    .then(response => response.json())
+	    .then(data => {
+	        console.log("Server response:", data);
+	        if (data.success) {
+	            alert("Slot selected successfully!");
+	        } else {
+	            alert("Failed to update slot status: " + data.message);
+	        }
+	    })
+	    .catch(error => {
+	        console.error('Error updating slot status:', error);
+	        alert("An error occurred while updating slot status.");
+	    });
+	}
+
+	// Hàm hiển thị danh sách các lịch đã chọn
+	function addSelectedSlotToList(slot) {
+	    const selectedTimeList = document.getElementById('selectedTimeList'); // Giả sử có một phần tử danh sách để hiển thị
+	    const listItem = document.createElement('li');
+	    listItem.innerHTML = `
+	        <div class="item-times">
+	            Date: ${slot.workDate} from ${slot.startTime} to ${slot.endTime} (${slot.hoursWork.toFixed(2)} hours)
+	            <button type="button" class="remove-btn" onclick="onRemoveSlot(${slot.scheduleId})">Remove</button>
+	        </div>
+	    `;
+	    selectedTimeList.appendChild(listItem); // Thêm lịch vào danh sách hiển thị
+	}
+
+	// Hàm xử lý sự kiện xóa lịch đã chọn
+	function onRemoveSlot(scheduleId) {
+	    console.log("Removing slot with scheduleId:", scheduleId);
+	    updateSlotStatus(scheduleId, 0);
+
+	    // Xóa slot khỏi danh sách đã chọn
+	    delete selectedSlots[scheduleId];
+
+	    // Cập nhật lại giao diện
+	    updateSelectedTimeList();
+	}
+
+	// Cập nhật lại danh sách đã chọn sau khi xóa lịch
+	function updateSelectedTimeList() {
+	    const selectedTimeList = document.getElementById('selectedTimeList');
+	    selectedTimeList.innerHTML = '';  // Xóa nội dung hiện tại
+
+	    // Sắp xếp các lịch đã chọn theo ngày và giờ
+	    const sortedSlots = Object.values(selectedSlots).sort((a, b) => {
+	        if (a.workDate !== b.workDate) {
+	            return new Date(a.workDate) - new Date(b.workDate);
+	        }
+	        return a.startTime.localeCompare(b.startTime);
+	    });
+
+	    // Hiển thị lại danh sách các lịch đã chọn
+	    sortedSlots.forEach(slot => {
+	        const listItem = document.createElement('li');
+	        listItem.innerHTML = `
+	            <div class="item-times">
+	                Date: ${slot.workDate} from ${slot.startTime} to ${slot.endTime} (${slot.hoursWork.toFixed(2)} hours)
+	                <button type="button" class="remove-btn" onclick="onRemoveSlot(${slot.scheduleId})">Remove</button>
+	            </div>
+	        `;
+	        selectedTimeList.appendChild(listItem);
+	    });
+	}
+	
+	contractForm.addEventListener('submit', function(event) {
+	        event.preventDefault(); 
+			console.log("Form is being submitted...");
+
+	        const formData = new FormData(contractForm);
+			console.log("Form Data:", formData);
+
+	        fetch(contractForm.action, {
+	            method: 'POST',
+	            body: formData,
+	        })
+	        .then(response => response.json()) 
+	        .then(result => {
+	            console.log("Form submitted successfully:", result);
+				if (result.success && result.contractDetailId) {
+				            sessionStorage.setItem("contractDetailId", result.contractDetailId);
+							console.log("contractDetailId saved to sessionStorage:", result.contractDetailId);
+				        } else {
+				            console.error("Failed to get contractDetailId from response");
+				            return;
+				        }
+				const contractDetailId = sessionStorage.getItem("contractDetailId"); 
+				console.log("contractDetailId from sessionStorage:", contractDetailId);
+				        if (!contractDetailId) {
+				            console.error("contractDetailId is missing!");
+				            return;
+				        }
+
+
+				const scheduleIds = Object.keys(selectedSlots).join(',');
+				console.log("scheduleIds to send:", scheduleIds);
+
+	            const status = 2; 
+				
+				console.log("Sending update request to /schedules/updateSchedulesStatus with status:", status);
+	            fetch('/schedules/updateSchedulesStatus', {
+	                method: 'POST',
+	                headers: {
+	                    'Content-Type': 'application/x-www-form-urlencoded',
+	                },
+	                body: `scheduleIds=${scheduleIds}&contractDetailId=${contractDetailId}&status=${status}`,
+	            })
+	            .then(response => response.json()) 
+	            .then(data => {
+	                if (data.success) {
+	                    console.log("Schedules updated successfully.");
+	                } else {
+	                    console.error("Failed to update schedules.");
+	                }
+	            })
+	            .catch(error => {
+	                console.error("Error calling /updateSchedulesStatus:", error);
+	            });
+	        })
+	        .catch(error => {
+	            console.error("Error submitting form:", error);
+	        });
+	    });
+
 
 </script>
 
