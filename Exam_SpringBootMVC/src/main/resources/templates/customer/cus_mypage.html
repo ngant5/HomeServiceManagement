@@ -6,11 +6,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" href="../assets_admin/images/favicon.svg" type="image/x-icon" />
     <style th:replace="common/head_tag"></style>
-	
+	<th:block th:insert="~{common/home_head_tag}"></th:block>
     <title>Profile</title>
+    <style>
+      /* Tab navigation styles */
+      .tab-menu {
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 20px;
+      }
+      .tab-menu div {
+        padding: 10px 20px;
+        cursor: pointer;
+        font-weight: bold;
+        border: 1px solid #ddd;
+        border-radius: 5px 5px 0 0;
+        background-color:rgb(50, 67, 129);
+        margin-right: 10px;
+        transition: background-color 0.3s;
+      }
+      .tab-menu div.active {
+        color: white;
+		background-color:rgb(50, 67, 129)
+      }
+	  
+	  .tab-menu div:not(.active) {
+	      background-color: #f0f0f0; /* Màu nền khi tab chưa active */
+	      color: white; /* Màu chữ trắng khi chưa active */
+	    }
+
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+      }
+	  .content {
+	     display: flex;
+	     justify-content: center;  /* Căn giữa theo chiều ngang */
+	     align-items: center;      /* Căn giữa theo chiều dọc (nếu cần) */
+	     width: 100%;               /* Đặt chiều rộng là 80% */
+	     margin: 0 auto;           /* Căn giữa row theo chiều ngang */
+	   }
+	   .btn-primary:hover {
+	      background-color: #b3d9ff ; 
+	    }
+		
+		.btn-back {
+		  background-color: #6c757d; /* Màu xám đậm cho nút Back */
+		  color: white;  /* Chữ màu trắng */
+		  border: none;
+		  padding: 10px 20px;
+		  border-radius: 5px;
+		  font-weight: bold;
+		  transition: background-color 0.3s;
+		}
+
+		.btn-back:hover {
+		  background-color: #5a6268; /* Màu xám đậm hơn khi hover */
+		}
+
+    </style>
   </head>
   <body>
-	
+	<th:block th:insert="~{common/home_content_first}"></th:block>
     <!-- ========== section start ========== -->
     <section class="section">
       <div class="container-fluid">
@@ -19,61 +78,30 @@
           <div class="row align-items-center">
             <div class="col-md-6">
               <div class="title">
-                <a th:href="@{/index}" class="btn btn-primary">Back</a>
+                <a th:href="@{/index}" class="btn-back">Back</a>
               </div>
             </div>
           </div>
         </div>
         <!-- ========== title-wrapper end ========== -->
-		<div class="row">
-		          <div class="col-lg-4">
-		            <div class="card-style settings-card-1 mb-30">
-		              <div class="title mb-30 d-flex justify-content-between align-items-center">
-		                <h6>Change Password</h6>
-		              </div>
 
-		              <!-- Hiển thị thông tin hồ sơ -->
-		              <div class="profile-info">
-		                <!-- Cập nhật thông tin người dùng -->
-		                <form id="changePWForm" enctype="multipart/form-data">
-		                  <div class="col-12">
-		                    <div class="input-style-1">
-		                      <label for="currentPassword">Current Password*</label>
-		                      <input type="password" id="currentPassword" name="currentPassword" required placeholder="Current Password" />
-		                    </div>
-		                  </div>
-		                  <div class="col-12">
-		                    <div class="input-style-1">
-		                      <label for="newPassword">New Password*</label>
-		                      <input type="password" id="newPassword" name="newPassword"  required placeholder="New Password"/>
-		                    </div>
-		                  </div>
-		<div class="col-12">
-		                    <div class="input-style-1">
-		                      <label for="confirmPassword">Confirm New Password*</label>
-		                      <input type="password" id="confirmPassword" name="confirmPassword"  required placeholder="Confirm New Password"/>
-		                    </div>
-		                  </div>
+        <!-- Tab Menu -->
+        <div class="tab-menu">
+          <div id="viewProfileTab" class="active">Profile</div>
+          <div id="changePasswordTab">Password</div>
+        </div>
 
-		                  <div class="col-12">
-		                    <button type="submit" class="main-btn primary-btn btn-hover">
-		                      Change Password
-		                    </button>
-		                  </div>
-		                </form>
-		              </div>
-		            </div>
-		            <!-- end card -->
-		          </div>
-      
-          <div class="col-lg-8">
+        <!-- Tab Content -->
+        <div class="content">
+          <!-- View Profile Tab -->
+          <div id="viewProfileContent" class="tab-content active col-lg-12">
             <div class="card-style settings-card-1 mb-30">
               <div class="title mb-30 d-flex justify-content-between align-items-center">
                 <h6>My Profile</h6>
               </div>
 
-              <!-- Hiển thị thông tin hồ sơ -->
               <div class="profile-info">
+                <!-- Profile details (similar to original code) -->
                 <div class="d-flex align-items-center mb-30">
                   <div class="profile-image" th:if="${customer != null}">
                     <img th:src="@{'/uploads/images/' + ${customer.profileImage}}"
@@ -91,14 +119,14 @@
                   </div>
                 </div>
 
-                <!-- Thông tin người dùng (Email, Full Name, Phone không cho sửa) -->
+                <!-- User Info -->
                 <div class="input-style-1">
                   <label>Email</label>
                   <input type="email" placeholder="customer@example.com" th:value="${customer.email}" disabled/>
                 </div>
 
+                <!-- Full Name, Phone (disabled) -->
                 <div class="row">
-                  <!-- Full Name không cho sửa -->
                   <div class="col-12">
                     <div class="input-style-1">
                       <label for="fullname">Full Name*</label>
@@ -106,7 +134,6 @@
                     </div>
                   </div>
 
-                  <!-- Phone không cho sửa -->
                   <div class="col-12">
                     <div class="input-style-1">
                       <label for="phone">Phone*</label>
@@ -115,17 +142,15 @@
                   </div>
                 </div>
 
-                <!-- Cập nhật thông tin người dùng -->
+                <!-- Address and Profile Image Edit Form -->
                 <form id="updateProfileForm" enctype="multipart/form-data">
                   <div class="col-12">
-                    <!-- Address cho phép sửa -->
                     <div class="input-style-1">
                       <label for="address">Address*</label>
                       <input type="text" id="address" name="address" th:value="${customer.address}" required placeholder="Address" />
                     </div>
                   </div>
                   <div class="col-12">
-                    <!-- Profile Image cho phép sửa -->
                     <div class="input-style-1">
                       <label for="profileImage">Profile Image</label>
                       <input type="file" id="profileImage" name="profileImage"/>
@@ -139,42 +164,128 @@
                 </form>
               </div>
             </div>
-            <!-- end card -->
           </div>
-          <!-- end col -->
-        </div>
-        <!-- end row -->
-      </div>
-      <!-- end container -->
-    </section>
-    <!-- ========== section end ========== -->
 
+          <!-- Change Password Tab -->
+          <div id="changePasswordContent" class="tab-content col-lg-12">
+            <div class="card-style settings-card-1 mb-30">
+              <div class="title mb-30 d-flex justify-content-between align-items-center">
+                <h6>Change Password</h6>
+              </div>
+			  <!-- Notification message -->
+			  		  <div id="message" class="alert" style="display: none;" role="alert"></div>
+
+              <!-- Password Change Form -->
+              <div class="profile-info">
+                <form id="changePWForm" enctype="multipart/form-data">
+                  <div class="col-12">
+                    <div class="input-style-1">
+                      <label for="currentPassword">Current Password*</label>
+                      <input type="password" id="currentPassword" name="currentPassword" required placeholder="Current Password" />
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="input-style-1">
+                      <label for="newPassword">New Password*</label>
+                      <input type="password" id="newPassword" name="newPassword" required placeholder="New Password"/>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="input-style-1">
+                      <label for="confirmPassword">Confirm New Password*</label>
+                      <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm New Password"/>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <button type="submit" class="main-btn primary-btn btn-hover">
+                      Change Password
+                    </button>
+                  </div>
+                </form>
+              </div>
+			 
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- JavaScript -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
       $(document).ready(function() {
-        // Xử lý sự kiện submit của form
+        // Tab click event handler
+        $('#viewProfileTab').on('click', function() {
+          $('.tab-menu div').removeClass('active');
+          $(this).addClass('active');
+          $('.tab-content').removeClass('active');
+          $('#viewProfileContent').addClass('active');
+        });
+
+        $('#changePasswordTab').on('click', function() {
+          $('.tab-menu div').removeClass('active');
+          $(this).addClass('active');
+          $('.tab-content').removeClass('active');
+          $('#changePasswordContent').addClass('active');
+        });
+
+        // Profile update form submission
         $('#updateProfileForm').on('submit', function(e) {
-          e.preventDefault(); // Ngừng hành động submit mặc định của form
-
-          // Tạo đối tượng FormData từ form
+          e.preventDefault(); // Prevent form submission
           var formData = new FormData(this);
-
-          // Gửi request AJAX
           $.ajax({
-            url: '/customer/profile/update', // Đảm bảo URL khớp với controller
+            url: '/customer/profile/update',
             type: 'POST',
             data: formData,
-            processData: false, // Không chuyển đổi dữ liệu của file
-            contentType: false, // Không thêm content-type vào header
+            processData: false,
+            contentType: false,
             success: function(response) {
               alert("Profile updated successfully!");
-              location.reload(); // Tải lại trang để cập nhật thông tin mới
+              location.reload(); 
             },
             error: function(xhr, status, error) {
               alert("Error: " + xhr.responseText);
             }
           });
         });
+		$(document).ready(function() {
+		    // Khi form thay đổi mật khẩu được submit
+		    $('#changePWForm').on('submit', function(e) {
+		        e.preventDefault(); // Ngừng hành động mặc định của form (không reload trang)
+
+		        // Lấy các giá trị từ form
+		        var currentPassword = $('#currentPassword').val();
+		        var newPassword = $('#newPassword').val();
+		        var confirmPassword = $('#confirmPassword').val();
+
+		        // Kiểm tra nếu mật khẩu mới và mật khẩu xác nhận trùng khớp
+		        if (newPassword !== confirmPassword) {
+		            $('#message').removeClass('alert-success').addClass('alert-danger').text("New passwords do not match.").show();
+		            return; // Dừng lại nếu mật khẩu không khớp
+		        }
+
+		        // Gửi AJAX đến server
+		        $.ajax({
+		            url: '/customer/profile/change-password',  // Đường dẫn đến controller xử lý
+		            type: 'POST',
+		            data: {
+		                currentPassword: currentPassword,
+		                newPassword: newPassword,
+		                confirmPassword: confirmPassword
+		            },
+		            success: function(response) {
+		                // Hiển thị thông báo thành công nếu thành công
+		                $('#message').removeClass('alert-danger').addClass('alert-success').text(response.message).show();
+		            },
+		            error: function(xhr, status, error) {
+		                // Hiển thị thông báo lỗi nếu có lỗi xảy ra
+		                var errorMessage = xhr.responseJSON ? xhr.responseJSON.error : "Something went wrong.";
+		                $('#message').removeClass('alert-success').addClass('alert-danger').text(errorMessage).show();
+		            }
+		        });
+		    });
+		});
       });
     </script>
   </body>

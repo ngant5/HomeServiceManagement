@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/customer/profile")
@@ -36,7 +38,8 @@ public class CustomerProfileController {
 	 @GetMapping("/view") public String viewMyPage(Model model, HttpSession session) {
 		 Customers customer = getCustomerFromSession(session); 
 		 if (customer== null) { return "redirect:/customer/login"; }
-		 model.addAttribute("customer", customer); return "customer/cus_mypage"; }
+		 model.addAttribute("customer", customer); 
+		 return "customer/cus_mypage"; }
 	 
 
     @GetMapping("/info")
@@ -101,32 +104,36 @@ public class CustomerProfileController {
     }
 
     @PostMapping("/change-password")
-    public String changePassword(@RequestParam("currentPassword") String currentPassword,
-                                 @RequestParam("newPassword") String newPassword,
-                                 @RequestParam("confirmPassword") String confirmPassword,
-                                 HttpSession session, Model model) {
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> changePassword(@RequestParam("currentPassword") String currentPassword,
+                                                               @RequestParam("newPassword") String newPassword,
+                                                               @RequestParam("confirmPassword") String confirmPassword,
+                                                               HttpSession session) {
         Customers customer = getCustomerFromSession(session);
 
+        Map<String, String> response = new HashMap<>();
+
         if (customer == null) {
-            return "redirect:/customer/auth/login";
+            response.put("error", "User is not logged in.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
 
         if (!newPassword.equals(confirmPassword)) {
-            model.addAttribute("error", "New passwords do not match.");
-            return "customer/cus_change_password";
+            response.put("error", "New passwords do not match.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
         boolean success = customerService.changePassword(customer, currentPassword, newPassword);
 
         if (success) {
-            model.addAttribute("message", "Password changed successfully.");
-            return "redirect:/customer/index";
+            response.put("message", "Password changed successfully.");
+            return ResponseEntity.ok(response);
         } else {
-            model.addAttribute("error", "Current password is incorrect.");
-            return "customer/cus_change_password";
+            response.put("error", "Current password is incorrect.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
-
+    
     @GetMapping("/forgot-password")
     public String showForgotPasswordForm(@RequestParam(required = false) String sent, Model model) {
     	if (sent != null && sent.equals("true")) {
