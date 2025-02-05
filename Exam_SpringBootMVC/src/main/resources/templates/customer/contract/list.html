@@ -155,7 +155,7 @@
                 <tr th:each="contract, iterStat : ${contracts}">
                     <td th:text="${iterStat.index + 1}"></td>
 					<td th:text="${contract.createdAt.toLocalDate().toString()}"></td>
-                    <td th:text="'$' + ${contract.totalPrice}"></td>
+                    <td th:text="${contract.totalPrice} + '₫'"></td>
                     <td>
                         <span class="status" th:switch="${contract.paymentStatus}">
                             <span th:case="0">

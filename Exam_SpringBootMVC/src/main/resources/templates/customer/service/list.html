@@ -30,7 +30,7 @@
 					<div class="service-image-container">
 					  	<img th:src="@{'/uploads/images/' + ${service.serviceImage}}" alt="Service Image" class="service-image">
 					</div>
-					<p class="service-price" th:text="'$' + ${service.servicePrice}	+ ' per hour'"> </p>
+					<p class="service-price" th:text="${service.servicePrice}	+ '₫ per hour'"> </p>
 					<a th:href="@{/service/{id}(id=${service.serviceId})}" class="btn-bg2 border-round mt-15">
 						Choose Employee
 					</a>

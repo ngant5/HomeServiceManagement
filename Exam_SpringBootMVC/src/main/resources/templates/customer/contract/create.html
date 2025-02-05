@@ -90,6 +90,42 @@
 			  .remove-btn:focus {
 			      outline: none;
 			  }
+			  
+			  #successPopup {
+			      position: fixed;
+			      top: 0;
+			      left: 0;
+			      width: 100%;
+			      height: 100%;
+			      background-color: rgba(0, 0, 0, 0.5); /* Nền mờ */
+			      display: none;
+			      justify-content: center;
+			      align-items: center;
+			      z-index: 1000; /* Đảm bảo nó nổi bật trên các phần tử khác */
+			  }
+
+			  .popup-content {
+			      background-color: white;
+			      padding: 20px;
+			      border-radius: 8px;
+			      text-align: center;
+			      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+			      width: 300px;
+			  }
+
+			  #closePopupButton {
+			      padding: 10px 20px;
+			      background-color: #4CAF50;
+			      color: white;
+			      border: none;
+			      border-radius: 4px;
+			      cursor: pointer;
+			  }
+
+			  #closePopupButton:hover {
+			      background-color: #45a049;
+			  }
+
    </style>
 
 </head>
@@ -108,7 +144,7 @@
            <input type="hidden" name="employeeId" id="employeeId" th:value="${employeeId}" />
            <input type="hidden" name="contractId" th:value="${session.contractId}" />
            <input type="hidden" name="empServiceId" th:value="${session.empServiceId}" />
-           <input type="text" name="servicePrice" th:value="${servicePrice}" />
+           <input type="hidden" name="servicePrice" th:value="${servicePrice}" />
            <div class="row">
                <div class="col-balance map-embed">
                    <h2 class="fs-h4 fc-primary mb-15">Please select your service time below:</h2>
@@ -136,7 +172,6 @@
                            <!-- Start Date -->
                            <span class="fs-h4 mb-15 mt-25 fc-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Please select the date you would like the service to begin.">Select Service Date:</span>
                            <div class="input-group">
-                               <i class="bi bi-calendar-event"></i>
                                <input type="date" id="popupStartDate" required data-bs-toggle="tooltip" data-bs-placement="top" title="Click to select the service start date." />
 							   
 							   <ul id="popupTimeSlotList"></ul> <!-- Đây là phần hiển thị dữ liệu API -->
@@ -187,6 +222,13 @@
                </div>
            </div>
        </form>
+	   <div id="successPopup" style="display: none;">
+	       <div class="popup-content">
+	           <p>Request submitted successfully!</p>
+	           <button id="closePopupButton"  th:attr="data-url=@{/contracts}">View Request</button>
+	       </div>
+	   </div>
+
        <!-- FORM END -->
    </section>
    <!-- ========== section end ========== -->
@@ -367,7 +409,7 @@
 			hoursWorkedInput.value = totalHours.toFixed(2);
 			const servicePrice = parseFloat(servicePriceInput.value); 
 	        const totalPrice = totalHours * servicePrice;
-	        totalPriceDisplay.value = `$${totalPrice.toFixed(2)}`;
+	        totalPriceDisplay.value = `${totalPrice.toFixed(2)}`;
 
 	        // Cập nhật hidden input để gửi lên server
 	        selectedTimesInput.value = JSON.stringify(selectedTimeSlots);
@@ -563,6 +605,7 @@
 	            .then(data => {
 	                if (data.success) {
 	                    console.log("Schedules updated successfully.");
+						document.getElementById('successPopup').style.display = 'flex';
 	                } else {
 	                    console.error("Failed to update schedules.");
 	                }
@@ -575,6 +618,12 @@
 	            console.error("Error submitting form:", error);
 	        });
 	    });
+		
+		document.getElementById('closePopupButton').addEventListener('click', function() {
+		    document.getElementById('successPopup').style.display = 'none';
+			var contractUrl = this.getAttribute('data-url');
+			window.location.href = contractUrl;
+		});
 
 
 </script>
