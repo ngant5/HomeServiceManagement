@@ -24,15 +24,16 @@
 
 		<form id="paymentForm" th:action="@{/contracts/{contractId}/payment/create(contractId=${contractId})}" method="POST">
 			<input type="hidden" name="contractId" value="${contract.id}" />
-			<p>Please check the payment amount for the contract below.</p>
+			<p>Please check the payment amount for the contract below. 
+							You can choose a suitable payment method such as VNPAY or bank transfer.</p>
 			<div class="row flex-just-center">
 				<div class="col-tri">
 					<div class="card-career">
 						<div class="ta-center mt-15">
 							<div class="input-wrapper">
 								<label for="paymentAmount">Amount:</label>
+								<span class="currency-symbol"></span>
 								<input type="text" id="paymentAmount" name="amount" th:value="${contract.totalPrice}" th:max="${contract.totalPrice}" placeholder="Enter payment amount" readonly required />
-								<span class="currency-symbol">₫</span>
 							</div>
 						</div>
 						<div class="payment-methods ta-center mt-15">

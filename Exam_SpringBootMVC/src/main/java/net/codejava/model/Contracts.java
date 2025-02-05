@@ -11,7 +11,7 @@ public class Contracts {
     private int customerId; 
     private int contractStatus;
     private double totalPrice;
-    private int paymentStatus;
+    private Integer paymentStatus;
     private LocalDateTime createdAt;
     private String contractFile;
     private ContractDetails contractDetail;
@@ -60,11 +60,11 @@ public class Contracts {
     	this.totalPrice = totalPrice; 
     }
     
-    public int getPaymentStatus() { 
+    public Integer getPaymentStatus() { 
     	return paymentStatus; 
     }
     
-    public void setPaymentStatus(int paymentStatus) { 
+    public void setPaymentStatus(Integer paymentStatus) { 
     	this.paymentStatus = paymentStatus; 
     }
     

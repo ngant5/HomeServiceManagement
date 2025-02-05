@@ -76,14 +76,22 @@
     <p>Your payment for contract ID: <strong th:text="${contractId}"></strong> has been processed successfully.</p>
 
     <table>
-		<tr>
-		   	<th>Amount Paid:</th>
-		   	<td th:text="${contract.totalPrice} + ' VND'"></td> 
-		</tr>
         <tr>
-            <th>Status:</th>
-			<td><span th:text="${contract.paymentStatus == 1 ? 'Paid' : 'Not Paid'}"></span></td> <!-- Display payment status -->
+            <th>Transaction ID:</th>
+            <td th:text="${transactionId}"></td> <!-- Display transactionId -->
         </tr>
+        <tr>
+            <th>Contract Number:</th>
+            <td th:text="${orderId}"></td> <!-- Display orderId -->
+        </tr>
+        <tr>
+            <th>Amount Paid:</th>
+            <td th:text="${totalPrice} + ' VND'"></td> <!-- Display total price with 'VND' -->
+        </tr>
+        <!--<tr>
+            <th>Payment Time:</th>
+            <td th:text="${paymentTime}"></td>  Display paymentTime 
+        </tr>-->
     </table>
     <br>
     <a href="/contracts">Back to contract list</a>

@@ -65,6 +65,10 @@ public class ContractRepository {
 		if (contract.getCustomerId() == 0 || contract.getTotalPrice() <= 0 || contract.getCreatedAt() == null) {
 			throw new IllegalArgumentException("Invalid contract details provided.");
 		}
+		
+		if (contract.getPaymentStatus() == null) {
+	        contract.setPaymentStatus(0);
+	    }
 
 		String sql = "INSERT INTO Contracts (customer_id, contract_status, total_price, payment_status, created_at, contract_file) "
 				+ "OUTPUT INSERTED.contract_id VALUES (?, ?, ?, ?, ?, ?)";

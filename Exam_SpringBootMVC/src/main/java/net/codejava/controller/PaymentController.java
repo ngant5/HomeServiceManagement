@@ -1,5 +1,6 @@
 package net.codejava.controller;
 
+import net.codejava.model.Contracts;
 import net.codejava.model.Payments;
 import net.codejava.service.ContractService;
 import net.codejava.service.PaymentService;
@@ -83,11 +84,13 @@ public class PaymentController {
         String paymentTime = request.getParameter("vnp_PayDate");
         String transactionId = request.getParameter("vnp_TransactionNo");
         String totalPrice = request.getParameter("vnp_Amount");
+        BigDecimal amount = new BigDecimal(totalPrice).divide(BigDecimal.valueOf(100));
         
         logger.info("vnp_OrderInfo: {}", orderInfo);
         logger.info("vnp_PayDate: {}", paymentTime);
         logger.info("vnp_TransactionNo: {}", transactionId);
         logger.info("vnp_Amount: {}", totalPrice);
+        logger.info("Processed amount: {}", amount); 
         
         LocalDateTime paymentDate = null;
 
@@ -107,7 +110,7 @@ public class PaymentController {
             try {
                 Payments payment = new Payments();
                 payment.setContractId(contractId);
-                payment.setAmount(new BigDecimal(totalPrice));
+                payment.setAmount(amount);
                 payment.setPaymentDate(paymentDate);  
                 payment.setStatus("SUCCESS"); 
                 payment.setPaymentMethod("VNPAY"); 
@@ -126,12 +129,23 @@ public class PaymentController {
 
         // Thêm các thông tin vào model để hiển thị
         model.addAttribute("orderId", orderInfo);
-        model.addAttribute("totalPrice", totalPrice);
+        model.addAttribute("totalPrice", amount);
         model.addAttribute("paymentTime", paymentTime);
         model.addAttribute("transactionId", transactionId);
 
         // Chuyển hướng tới trang thành công nếu thanh toán thành công
-        return paymentStatus == 1 ? "customer/payment/payment-success" : "customer/payment/payment-fail";
+        return paymentStatus == 1 ? "customer/payment/success" : "customer/payment/payment-fail";
+    }
+    
+    @GetMapping("/payment-success")
+    public String paymentSuccess(@PathVariable("contractId") int contractId, Model model) {
+        Contracts contract = contractService.getContractById(contractId);
+        if (contract != null) {
+            model.addAttribute("contract", contract);
+        } else {
+            return "redirect:/contracts";
+        }
+        return "customer/payment/payment-success";
     }
 
 }

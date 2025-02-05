@@ -159,10 +159,10 @@
                     <td>
                         <span class="status" th:switch="${contract.paymentStatus}">
                             <span th:case="0">
-								<a th:href="@{'/contracts/' + ${contract.contractId} + '/payment'}" class="status-requested">Pay Now</a>
+								<a th:href="@{/contracts/{contractId}/payment(contractId=${contract.contractId})}" class="status-requested">Pay Now</a>
 							</span>
                             <span th:case="1">
-								<a th:href="@{'/contracts/' + ${contract.contractId} + '/payment'}" class="status-confirmed">Payment Done</a>
+								<a th:href="@{'/contracts/' + ${contract.contractId} + '/payment/payment-success'}" class="status-confirmed">Payment Done</a>
 							</span>
                             <span th:case="*">
 								<a th:href="@{'/contracts/' + ${contract.contractId} + '/payment'}" class="btn btn-secondary">Contact the responsible person for verification</a> <!-- Fallback case if status is unknown -->
