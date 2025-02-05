@@ -10,6 +10,11 @@
     <th:block th:insert="~{common/home_head_tag}"></th:block>
 
     <style>
+		.done-text {
+		    color: green; 
+		    font-weight: bold;
+		}
+
         /* General styling for the table */
         table {
             width: 80%; /* Chiều rộng bảng chiếm 80% của màn hình */
@@ -136,8 +141,9 @@
 
     <section>
 		<h2 style="text-align: center; font-size: 24px; color: #003366; margin-bottom: 20px;">
-		    Contract Status
+		    Contract List
 		</h2>
+		
 
         <table>
             <thead>
@@ -184,7 +190,18 @@
                                 <a th:href="@{/contracts/view-file/{contractId}(contractId=${contract.contractId})}"
                                    class="btn btn-view-file"
                                    target="_blank">View File</a>
+								   <form th:action="@{'/contracts/' + ${contract.contractId} + '/complete'}" method="post" style="display:inline;">
+								   		<button type="submit" class="btn btn-success">Mark as Completed</button>
+								   </form>
                             </span>
+							<span th:case="4">
+							    <a th:href="@{/contracts/view-file/{contractId}(contractId=${contract.contractId})}"
+							       class="btn btn-view-file"
+							       target="_blank">View File</a>
+							    <span class="done-text">Done</span>
+							</span>
+
+							
                         </span>
                     </td>
                     <td>
@@ -194,7 +211,7 @@
 						       th:class="${contract.contractStatus == 4 ? 'btn-warning-active' : 'btn-warning-inactive'}"
 						       th:attr="attr=${contract.contractStatus != 4 ? 'onclick=return false;' : ''}">
 						        Review
-						    </a>
+						</a>
 					</td>
                 </tr>
             </tbody>
