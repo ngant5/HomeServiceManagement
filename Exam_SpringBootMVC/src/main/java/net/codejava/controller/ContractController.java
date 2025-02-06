@@ -386,8 +386,8 @@ public class ContractController {
     @PostMapping("/{contractId}/complete")
     public String confirmContractCompletion(@PathVariable("contractId") int contractId, Model model) {
         try {
-            contractService.updateContractStatus(contractId, 4);
-            logger.info("Contract ID {} status updated to completed (4)", contractId);
+            contractService.updateContractStatus(contractId, 5);
+            logger.info("Contract ID {} status updated to completed (5)", contractId);
             model.addAttribute("successMessage", "The contract has been successfully marked as completed!");
         } catch (Exception e) {
             logger.error("Error occurred while updating contract status for contract ID {}: {}", contractId, e.getMessage());
