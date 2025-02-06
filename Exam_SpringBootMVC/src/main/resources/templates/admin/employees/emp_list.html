@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="../assets_admin/images/favicon.svg" type="image/x-icon" />
+    <title>Employee List</title>
+	<th:block th:insert="~{common/head_tag}"></th:block>
+</head>
+<body>
+	<th:block th:insert="~{common/ad_content_first}"></th:block>
+	
+	 <!-- ========== section start ========== -->
+      <section class="section">
+        <div class="container-fluid">
+          <!-- ========== title-wrapper start ========== -->
+          <div class="title-wrapper pt-30">
+            <div class="row align-items-center">
+              <div class="col-md-6">
+                <div class="title">
+                  <h2>Employee Management</h2>
+                </div>
+              </div>
+              <!-- end col -->
+              <div class="col-md-6">
+                <div class="breadcrumb-wrapper">
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item">
+                        <a href="#0">Dashboard</a>
+                      </li>
+                      <li class="breadcrumb-item active" aria-current="page">
+                        eCommerce
+                      </li>
+                    </ol>
+                  </nav>
+                </div>
+              </div>
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+          <!-- ========== title-wrapper end ========== -->
+          <div class="row">
+            
+            <div class="col-lg-12">
+              <div class="card-style mb-30">
+                <div class="title d-flex flex-wrap align-items-center justify-content-between">
+                  <div class="left">
+                    <h6 class="text-medium mb-30"></h6>
+                  </div>
+                  <div class="right">
+					<div class="button-container">
+					  <button type="button" onclick="addEmployee()" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+					    Add Employee
+					  </button>
+					</div>
+                    <!-- end select -->
+                  </div>
+                </div>
+                <!-- End Title -->
+                <div class="table-responsive">
+                  <table class="table top-selling-table">
+                    <thead>
+                      <tr>
+                        <th>
+                          <h6 class="text-sm text-medium">No.</h6>
+                        </th>
+                        <th class="min-width">
+                          <h6 class="text-sm text-medium">
+                            Name 
+                          </h6>
+                        </th>
+						<th class="min-width">
+							<h6 class="text-sm text-medium">
+						 	Email 
+							</h6>
+						</th>
+						<th class="min-width">
+							<h6 class="text-sm text-medium">
+							 Phone
+							</h6>
+						</th>
+						<th class="min-width">
+							<h6 class="text-sm text-medium">
+							Address
+							</h6>
+						</th>															
+						<th class="min-width">
+						 	<h6 class="text-sm text-medium">
+						    	Experience Years
+							</h6>
+						</th>
+						<th class="min-width">
+						 	<h6 class="text-sm text-medium">
+						    	Salary
+							</h6>
+						</th>
+						<th class="min-width">
+						 	<h6 class="text-sm text-medium">
+						    	Birthday
+							</h6>
+						</th>	
+
+                        <th>
+                          <h6 class="text-sm text-medium text-end">
+                            Actions 
+                          </h6>
+                        </th>
+                      </tr>
+                    </thead>
+					<tbody>
+						<tr th:each="employee, stat : ${employees}" th:classappend="${employee.status == 0} ? 'text-muted' : ''">
+						    <td th:text="${stat.count}"></td> 
+						    <td th:text="${employee.fullname}"></td>
+						    <td th:text="${employee.email}"></td>
+						    <td th:text="${employee.phone}"></td>
+						    <td th:text="${employee.address}"></td>
+						    <td th:text="${employee.experienceYears}"></td>
+						    <td th:text="${employee.salary}"></td>
+						    <td th:text="${employee.birthday}"></td>
+						
+						    <td>
+						        <div class="action justify-content-end">
+						            <button class="more-btn ml-10 dropdown-toggle" id="moreAction1" data-bs-toggle="dropdown" aria-expanded="false">
+						                <i class="lni lni-more-alt"></i>
+						            </button>
+						            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction1">
+						                <li class="dropdown-item">
+						                    <form th:action="@{/admin/employees/deleteStatus/{employeeId}(employeeId=${employee.employeeId})}" method="post" onsubmit="return confirm('Are you sure you want to delete this employee?');">
+						                        <button type="submit" class="btn btn-link text-gray p-0" style="text-decoration: none;" name="status" value="0" th:if="${employee.status == 1}">Remove</button>
+						                    </form>
+						                </li>
+						                <!-- Edit Button -->
+										<li class="dropdown-item">
+										    <a href="#editEmployeeModal" data-bs-toggle="modal" class="text-gray" 
+										       th:onclick="'openEditModal(' + ${employee.employeeId} + ', ' + ${employee.experienceYears} + ')'" 
+										       style="font-size: 18px;">Edit</a>
+										</li>
+						
+						            </ul>
+						        </div>
+						    </td>
+						</tr>
+						
+						<!-- Edit Employee Modal -->
+						<div class="modal fade" id="editEmployeeModal" tabindex="-1" aria-labelledby="editEmployeeModalLabel" aria-hidden="true">
+						    <div class="modal-dialog">
+						        <div class="modal-content">
+						            <div class="modal-header">
+						                <h5 class="modal-title" id="editEmployeeModalLabel">Edit Experience Years</h5>
+						                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						            </div>
+						            <div class="modal-body">
+						                <!-- Form with dynamic action -->
+						                <form id="editEmployeeForm" method="post">
+						                    <input type="hidden" id="employeeId" name="employeeId">
+						                    <div class="mb-3">
+						                        <label for="experienceYears" class="form-label">Experience Years</label>
+						                        <input type="number" class="form-control" id="experienceYears" name="experienceYears" required>
+						                    </div>
+						                    <button type="submit" class="btn btn-primary">Save Changes</button>
+						                </form>
+						            </div>
+						        </div>
+						    </div>
+						</div>
+					</tbody>
+                  </table>
+                  <!-- End Table -->
+                </div>
+              </div>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+        <!-- end container -->
+      </section>
+      <!-- ========== section end ========== -->
+      
+    <th:block th:insert="~{common/ad_content_footer}"></th:block>
+    <script>
+	  function addEmployee() {
+	    alert('Redirecting to Add Employee page...');
+	    // Thêm logic để chuyển hướng hoặc thực hiện chức năng thêm Employee
+	  }
+	  function confirmDelete(element) {
+		    const url = element.getAttribute('data-href');
+		    Swal.fire({
+		        title: 'Are you sure?',
+		        text: "This action cannot be undone!",
+		        icon: 'warning',
+		        showCancelButton: true,
+		        confirmButtonColor: '#3085d6',
+		        cancelButtonColor: '#d33',
+		        confirmButtonText: 'Yes, delete it!'
+		    }).then((result) => {
+		        if (result.isConfirmed) {
+		            window.location.href = url;
+		        }
+		    });
+		}
+	  function openEditModal(employeeId, experienceYears) {
+		    // Set the hidden input field for employeeId
+		    document.getElementById("employeeId").value = employeeId;
+		    
+		    // Set the experienceYears field with the value of the employee's experience years
+		    document.getElementById("experienceYears").value = experienceYears;
+
+		    // Set the action URL dynamically (this will update the form's action attribute)
+		    var formAction = "/admin/employees/updateExperience/" + employeeId;
+		    document.getElementById("editEmployeeForm").action = formAction;
+		}
+
+
+
+
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

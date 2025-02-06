@@ -15,6 +15,7 @@ public class Contracts {
     private LocalDateTime createdAt;
     private String contractFile;
     private ContractDetails contractDetail;
+    private Integer employeeId;
     
     private String paymentStatusText;
     private String contractStatusText;
@@ -108,5 +109,13 @@ public class Contracts {
     
     public void setContractStatusText(String contractStatusText) {
         this.contractStatusText = contractStatusText;
+    }
+    
+    public Integer getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Integer employeeId) {
+        this.employeeId = employeeId;
     }
 }

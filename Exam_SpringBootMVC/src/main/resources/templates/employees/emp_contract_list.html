@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="shortcut icon" href="/assets_admin//images/favicon.svg" type="image/x-icon" />
+	<style th:replace="common/head_tag"></style>
+    <title>Employee Contracts</title>
+</head>
+<body>
+	<div  th:replace="common/emp_content_first"></div>
+    <section class="section">
+        <div class="container-fluid">
+            <div class="search-form-wrapper mb-30">
+                <form id="searchForm">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="startDate" class="form-label">Start Date</label>
+                            <input type="date" id="startDate" name="startDate" class="form-control" th:value="${startDate}" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="endDate" class="form-label">End Date</label>
+                            <input type="date" id="endDate" name="endDate" class="form-control" th:value="${endDate}" />
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table top-selling-table">
+						<thead>
+						<tr>
+							<th class="text-center">
+								<h6 class="text-sm text-medium">No.</h6>
+							</th>
+							<th class="min-width">
+								<h6 class="text-sm text-medium">Customer Name</h6>
+							</th>
+							<th class="min-width">
+								<h6 class="text-sm text-medium">Total Price</h6>
+							</th>
+							<th class="text-center">
+								<h6 class="text-sm text-medium">Payment Status</h6>
+							</th>
+							<th class="min-width">
+								<h6 class="text-sm text-medium">Status</h6>
+							</th>
+							<th class="min-width">
+								<h6 class="text-sm text-medium">Start Date</h6>
+							</th>
+							<th class="min-width">
+								<h6 class="text-sm text-medium">End Date</h6>
+							</th>
+							<th class="text-center">
+								<h6 class="text-sm text-medium">Actions</h6>
+							</th>
+						</tr>
+					</thead>
+                <tbody>
+                    <!-- Lọc hợp đồng của nhân viên -->
+						<tr th:each="contract, iterStat : ${contracts}">
+							<td th:text="${iterStat.index + 1}"></td>
+							<td th:each="customer : ${customers}"
+								th:if="${contract.customerId == customer.customerId}"
+								th:text="${customer.fullname}"></td>
+							<td th:text="${contract.totalPrice}"></td>
+							<td th:text="${contract.paymentStatus == 0 ? 'Requested' : 
+		                       contract.paymentStatus == 1 ? 'Confirmed' : 
+		                       contract.paymentStatus == 2 ? 'Done' : 
+		                       'Unknown'}"></td>
+							<td th:text="${contract.contractStatus == 0 ? 'Requested' : 
+		                       contract.contractStatus == 1 ? 'Confirmed by Employee' :
+		                       contract.contractStatus == 2 ? 'Contract Creating' : 
+		                       contract.contractStatus == 3 ? 'Contract Created' : 
+		                       contract.contractStatus == 4 ? 'In Progress' : 
+		                       contract.contractStatus == 5 ? 'Done' : 
+		                       'Unknown'}"></td>
+							<td th:text="${#temporals.format(contract.contractDetail.startDate, 'yyyy-MM-dd')}"></td>
+							<td th:text="${#temporals.format(contract.contractDetail.endDate, 'yyyy-MM-dd')}"></td>
+							<td>
+					            <form th:action="@{/employees/updateStatus/{contractId}(contractId=${contract.contractId})}" method="post">
+					                <span th:if="${contract.contractStatus == 0}" style="font-size: 0.8rem; color: #6c757d; white-space: normal;">
+					                    Wait for<br>Employee<br>Confirm
+					                </span>        
+					                <button type="submit" class="btn btn-success mt-2" name="status" value="2" th:if="${contract.contractStatus == 1}">Approve</button>	         
+					            </form>
+					        </td>
+						</tr>
+					</tbody>
+            </table>
+        </div>
+    </div>
+            </section>
+    <div th:replace="common/ad_content_footer"></div>
+</body>
+</html>

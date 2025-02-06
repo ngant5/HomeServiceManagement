@@ -1,6 +1,7 @@
 package net.codejava.controller;
 
 import net.codejava.model.EmployeeContractSchedule;
+import net.codejava.model.EmployeeSchedule;
 import net.codejava.model.Employees;
 import net.codejava.service.EmployeeContractScheduleService;
 import net.codejava.service.EmployeeService;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,24 +102,66 @@ public class EmployeeContractScheduleController {
         }
     }
 
-    @PutMapping("/off/{scheduleId}")
-    public ResponseEntity<?> deleteSchedule(@PathVariable int scheduleId) {
+	/*
+	 * @PutMapping("/off/{scheduleId}") public ResponseEntity<?>
+	 * deleteSchedule(@PathVariable int scheduleId) { try {
+	 * Optional<EmployeeContractSchedule> schedule =
+	 * employeeScheduleService.getScheduleById(scheduleId);
+	 * 
+	 * if (schedule.isEmpty()) { return
+	 * ResponseEntity.status(404).body("No schedule found with ID " + scheduleId); }
+	 * 
+	 * EmployeeContractSchedule existingSchedule = schedule.get();
+	 * existingSchedule.setStatus(0);
+	 * 
+	 * employeeScheduleService.saveSchedule(existingSchedule);
+	 * 
+	 * return ResponseEntity.ok("The schedule with ID " + scheduleId +
+	 * " has been updated with the new status.");
+	 * 
+	 * } catch (Exception e) { return
+	 * ResponseEntity.status(500).body("An error occurred: " + e.getMessage()); } }
+	 */
+    
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllSchedules(@RequestParam(required = false) String date) {
         try {
-            Optional<EmployeeContractSchedule> schedule = employeeScheduleService.getScheduleById(scheduleId);
+            LocalDate workDate = (date != null) ? LocalDate.parse(date) : LocalDate.now();
+            List<EmployeeSchedule> schedules = employeeScheduleService.getSchedulesByDate(workDate);
 
-            if (schedule.isEmpty()) {
-                return ResponseEntity.status(404).body("No schedule found with ID " + scheduleId);
+            if (schedules.isEmpty()) {
+                return ResponseEntity.ok("Không có lịch làm việc vào ngày đã chọn.");
             }
 
-            EmployeeContractSchedule existingSchedule = schedule.get();
-            existingSchedule.setStatus(0);  
-
-            employeeScheduleService.saveSchedule(existingSchedule);
-
-            return ResponseEntity.ok("The schedule with ID " + scheduleId + " has been updated with the new status.");
-
+            return ResponseEntity.ok(schedules);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
+            return ResponseEntity.status(500).body("Đã xảy ra lỗi: " + e.getMessage());
         }
     }
+    
+    @GetMapping("/list")
+    public String showScheduleForm() {
+        return "admin/employees/emp_schedule";  
+    }
+
+    @PutMapping("/off/{scheduleId}")
+    public ResponseEntity<?> updateScheduleStatus(
+            @PathVariable int scheduleId, 
+            @RequestBody Map<String, Integer> request) {
+        try {
+            int newStatus = request.get("status");
+            boolean isUpdated = employeeScheduleService.updateScheduleStatus(scheduleId, newStatus);
+
+            if (isUpdated) {
+            	 return ResponseEntity.ok("updated");
+            } else {
+                return ResponseEntity.status(404).body("Không tìm thấy lịch làm việc với ID " + scheduleId);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Đã xảy ra lỗi: " + e.getMessage());
+        }
+    }
+
+    
+
 }

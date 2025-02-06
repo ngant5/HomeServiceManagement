@@ -1,6 +1,8 @@
 package net.codejava.service;
 
 import net.codejava.model.EmployeeContractSchedule;
+import net.codejava.model.EmployeeSchedule;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.codejava.model.Employees;
@@ -163,6 +165,14 @@ public class EmployeeContractScheduleService {
             logger.error("Error updating contractDetailId and status for scheduleId: {}", scheduleId, e);
             return false;
         }
+    }
+    
+    public List<EmployeeSchedule> getSchedulesByDate(LocalDate workDate) {
+        return scheduleRepository.findSchedulesByWorkDate(workDate);
+    }
+
+    public boolean updateScheduleStatus(int scheduleId, int newStatus) {
+        return scheduleRepository.updateScheduleStatus(scheduleId, newStatus);
     }
 
 }

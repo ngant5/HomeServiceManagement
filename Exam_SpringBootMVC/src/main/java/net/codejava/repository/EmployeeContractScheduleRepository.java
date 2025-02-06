@@ -1,6 +1,8 @@
 package net.codejava.repository;
 
 import net.codejava.model.EmployeeContractSchedule;
+import net.codejava.model.EmployeeSchedule;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -11,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -171,6 +174,33 @@ public class EmployeeContractScheduleRepository {
 
         return rowsUpdated > 0; 
     }
+    
+    public List<EmployeeSchedule> findSchedulesByWorkDate(LocalDate workDate) {
+        String sql = "SELECT ecs.schedule_id, e.fullname, e.phone, ecs.work_date, ecs.start_time, ecs.end_time, ecs.status " +
+                     "FROM Employees e " +
+                     "INNER JOIN Employee_Contract_Schedule ecs ON e.employee_id = ecs.employee_id " +
+                     "WHERE ecs.work_date = ? " +
+                     "ORDER BY ecs.work_date";
 
+        return jdbcTemplate.query(sql, new Object[]{workDate}, (rs, rowNum) -> {
+        	int scheduleId = rs.getInt("schedule_id");
+            String fullname = rs.getString("fullname");
+            String phone = rs.getString("phone");
+            LocalDate date = rs.getDate("work_date").toLocalDate();
+            LocalTime startTime = rs.getTime("start_time").toLocalTime();
+            LocalTime endTime = rs.getTime("end_time").toLocalTime();
+            int status = rs.getInt("status");
+
+            return new EmployeeSchedule(scheduleId, fullname, phone, date, startTime, endTime, status);
+        });
+    }
+
+    public boolean updateScheduleStatus(int scheduleId, int newStatus) {
+        String sql = "UPDATE Employee_Contract_Schedule SET status = ? WHERE schedule_id = ?";
+        
+        int rowsAffected = jdbcTemplate.update(sql, newStatus, scheduleId);
+        
+        return rowsAffected > 0;
+    }
     
 }
