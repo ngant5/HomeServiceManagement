@@ -6,47 +6,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contract Payment</title>
     <th:block th:insert="~{common/home_head_tag}"></th:block>
+	<style>
+		.input-container {
+		    display: flex;
+		    align-items: center;
+		}
+
+		#paymentAmount {
+		    padding-right: 20px; 
+		    text-align: right;
+		}
+
+		.currency-symbol {
+		    margin-left: -20px; 
+		    font-size: 18px;  
+		    color: black; 
+		}
+		
+		#submitButton:disabled {
+			    background-color: grey; 
+			    color: white;          
+			    cursor: not-allowed;    
+			}
+
+
+	</style>
 </head>
 <body>
     <th:block th:insert="~{common/home_content_first}"></th:block>
-	<!-- Thêm input hidden chứa contractId -->
-	
-	
 	<section class="contained">
-		<!--<ul>
-			<li><strong>One-time:</strong> A one-time payment made in full to initiate the contract.</li>
-			<li><strong>By Day:</strong> Multiple payments made over time, with each payment occurring on a specific day as per the contract.</li>
-			<li><strong>By Month:</strong> Recurring monthly payments made according to the terms of the contract.</li>
-		</ul>-->
-		
-			<!-- Payment instructions -->
-			
-
 		<form id="paymentForm" th:action="@{/contracts/{contractId}/payment/create(contractId=${contractId})}" method="POST">
 			<input type="hidden" name="contractId" value="${contract.id}" />
-			<p>Please check the payment amount for the contract below.</p>
 			<div class="row flex-just-center">
 				<div class="col-tri">
-					<div class="card-career">
-						<div class="ta-center mt-15">
-							<div class="input-wrapper">
+					<div class="payment-methods mt-8">
+						<h3>Payment Information Form</h3>
+							<p>Please check the amount before making the payment.</p>
 								<label for="paymentAmount">Amount:</label>
-								<input type="text" id="paymentAmount" name="amount" th:value="${contract.totalPrice}" th:max="${contract.totalPrice}" placeholder="Enter payment amount" readonly required />
+									<input type="text" id="paymentAmount" name="amount" th:value="${contract.totalPrice}" th:max="${contract.totalPrice}" placeholder="Enter payment amount" readonly required />
 								<span class="currency-symbol">₫</span>
-							</div>
-						</div>
-						<div class="payment-methods ta-center mt-15">
+
+						<div class="payment-methods mt-15">
 						       <!-- VNPAY Logo -->
 						       <label class="payment-methods">VNPAY
 						           <input type="radio" name="paymentMethod" value="VNPAY" checked />
-						           <!--<img src="http://localhost:8080/uploads/images/vnpay.png" alt="VNPAY" style="width: 100px; height: auto;" />-->
 						       </label>
 
-						        <!--MOMO Logo 
-						       <label class="payment-methods">MOMO
-						           <input type="radio" name="paymentMethod" value="MOMO" />
-						           <img src="http://localhost:8080/uploads/images/momo.png" alt="MOMO" style="width: 100px; height: auto;" />
-						       </label>-->
 							   <label>BANK TRANFER
 									<input type="radio" name="paymentMethod" value="BANK TRANFER"  />
 							   </label>
@@ -54,7 +59,7 @@
 
 						   <!-- Nút submit -->
 						   <div class="ta-center mt-15">
-						       <button type="submit" class="ta-center mt-15 btn-bg1">Payment</button>
+						       <button type="submit" id="submitButton" class="ta-center mt-15 btn-bg1">Payment</button>
 						   </div>
 					</div>
 				</div>
@@ -66,43 +71,23 @@
 	</section>
 
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+	        // Đợi trang tải xong
+	        $(document).ready(function() {
+	            $('input[name="paymentMethod"]').on('change', function() {
+	                if ($('input[name="paymentMethod"]:checked').val() === "BANK TRANFER") {
+						alert("Please send the transfer receipt to customer support");
+	                    $('#submitButton').prop('disabled', true);
+	                } else {
+	                    // Nếu lựa chọn là "VNPAY", bật lại nút submit
+	                    $('#submitButton').prop('disabled', false);
+	                }
+	            });
+	        });
+	    </script>
 
-		<!-- Thêm đoạn script để debug contractId -->
-		<script type="text/javascript">
-			function debugContractId() {
-				// Lấy giá trị contractId từ hidden input
-				var contractId = document.querySelector('input[name="contractId"]').value;
-				console.log("contractId = " + contractId);
 
-				// In ra URL mà form sẽ gửi đi
-				var actionUrl = document.getElementById("paymentForm").action;
-				console.log("Form action URL: " + actionUrl);
 
-				// Debug thông tin tham số form
-				var formData = new FormData(document.getElementById("paymentForm"));
-				console.log("Form Data:");
-				for (var pair of formData.entries()) {
-					console.log(pair[0] + ": " + pair[1]);
-				}
-			}
-			
-
-			    document.getElementById("paymentAmount").addEventListener("input", function() {
-			        let amountInput = this;
-			        let maxAmount = parseFloat(amountInput.getAttribute("max"));
-			        if (parseFloat(amountInput.value) > maxAmount) {
-			            alert("The payment amount cannot exceed the contract's total price.");
-			            amountInput.value = maxAmount;  // Reset the value to max amount if it exceeds
-			        }
-			    });
-
-				document.addEventListener("DOMContentLoaded", function() {
-				    console.log("Total Price from Thymeleaf: " + totalPrice);
-				    document.getElementById("paymentAmount").value = totalPrice;
-				    document.getElementById("paymentAmount").max = totalPrice;
-				});
-
-		</script>
 
 	<!-- ========== section end ========== -->
 

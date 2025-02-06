@@ -70,8 +70,8 @@ public class ContractService {
 	 */
 
 
-    public void updateContractTotalPrice(int contractId, double totalPrice) {
-        contractRepository.updateTotalPrice(contractId, totalPrice);
+    public void updateContractTotalPrice(int contractId, double totalPrice, int employeeId) {
+        contractRepository.updateTotalPrice(contractId, totalPrice, employeeId);
     }
 
     // Phương thức upload file hợp đồng

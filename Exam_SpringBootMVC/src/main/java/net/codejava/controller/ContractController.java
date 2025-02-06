@@ -125,7 +125,6 @@ public class ContractController {
                 // Bước 3: Tạo hợp đồng
                 int contractId = contractService.createContract(contract, servicePrice);
                 System.out.println("Contract created successfully with contractId: " + contractId);
-                
                 // Bước 4: Lưu contractId vào session
                 session.setAttribute("contractId", contractId);
                 session.setAttribute("empServiceId", empServiceId);
@@ -288,7 +287,7 @@ public class ContractController {
                 	    try {
                 	        // Chuyển totalPrice từ String sang Double
                 	        double totalPriceDouble = Double.parseDouble(totalPrice);
-                	        contractService.updateContractTotalPrice(contractId, totalPriceDouble);
+                	        contractService.updateContractTotalPrice(contractId, totalPriceDouble, employeeId);
                 	        logger.info("Contract updated with new totalPrice: {}", totalPriceDouble);
                 	    } catch (NumberFormatException e) {
                 	        logger.error("Invalid totalPrice format: {}", totalPrice); 
