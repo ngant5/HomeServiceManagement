@@ -3,179 +3,234 @@
 <head>
     <title>Employee Reviews</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-	    <style>
-	        .star-rating {
-	            display: flex;
-	            cursor: pointer;
-	        }
-	        .star {
-	            font-size: 30px;
-	            color: #ccc; /* Màu sắc khi sao chưa được chọn */
-	            margin-right: 5px;
-	        }
-	        .star.selected {
-	            color: gold; /* Màu sắc khi sao được chọn */
-	        }
-	    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+	<th:block th:insert="~{common/home_head_tag}"></th:block>
+    <style>
+		#backButton {
+		    padding: 10px 20px;
+		    font-size: 1rem;
+		    border: none;
+		    border-radius: 5px;
+		    cursor: pointer;
+		    transition: background-color 0.3s, color 0.3s;
+		}
+
+		#backButton:hover {
+		    background-color: #B0B0B0 ;
+		    color: #333333   ;
+		}
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 60%;
+            max-width: 900px;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+        }
+        .star-rating {
+            display: flex;
+            justify-content: center;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        .star {
+            font-size: 30px;
+            color: #ccc;
+            margin-right: 5px;
+            transition: color 0.3s;
+        }
+        .star.selected {
+            color: gold;
+        }
+        label {
+            font-size: 1rem;
+            color: #555;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            min-height: 100px;
+            resize: vertical;
+        }
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+            color: white;
+        }
+        #cancelButton {
+            background-color: #f44336;
+            color: white;
+        }
+        #cancelButton:hover {
+            background-color: #d32f2f;
+        }
+    </style>
 </head>
 <body>
-	<h1>Employee Reviews for Contract ID: <span th:text="${contractId}"></span></h1>
+	<th:block th:insert="~{common/home_content_first}"></th:block>
+<section>
 
-	<!-- Hiển thị các Emp Service ID -->
-	<h3>Employee Names:</h3>
-	    <ul>
-	        <li th:each="employeeName : ${employeeNames}">
-	            <span th:text="${employeeName}">Employee Name</span>
-	        </li>
-	    </ul>
-	<ul>
-	    <li th:each="employeeInfo : ${employeeInfoList}">
-	        <span th:text="${employeeInfo.employeeId}">Employee ID</span> - 
-	        <span th:text="${employeeInfo.employeeName}">Employee Full Name</span>
-	    </li>
-	</ul>
+	<div class="container">
+	    <h6>Reviews for Contract #<span th:text="${contractId}"></span></h6>
 
-	<!-- Hiển thị các đánh giá nhân viên -->
-	<h3>Employee Reviews:</h3>
-	<ul>
-	    <li th:each="review : ${employeeReviews}">
-			<div class="star-rating">
-			                <!-- Lặp qua 5 sao, đánh dấu sao đã chọn với class "selected" -->
-			                <i class="star fas fa-star" th:class="${review.rating >= 1} ? ' selected' : ''"></i>
-			                <i class="star fas fa-star" th:class="${review.rating >= 2} ? ' selected' : ''"></i>
-			                <i class="star fas fa-star" th:class="${review.rating >= 3} ? ' selected' : ''"></i>
-			                <i class="star fas fa-star" th:class="${review.rating >= 4} ? ' selected' : ''"></i>
-			                <i class="star fas fa-star" th:class="${review.rating >= 5} ? ' selected' : ''"></i>
-			            </div>
-	        <span th:text="${review.comment}">Comment</span> - 
-	        <span th:text="${review.rating}">Rating</span> -
-			<span th:text="${#dates.format(review.CreatedAt, 'yyyy-MM-dd')}"></span>
-	    </li>
-	</ul>
+		<h6>
+		    Employee Names:
+		    <span th:each="employeeName : ${employeeNames}" th:text="${employeeName}" style="display:inline; margin-right: 10px;"></span>
+		</h6>
 
-	
-	<form id="reviewForm" th:action="@{/employee-reviews/submit}" method="POST">
-	    <input type="hidden" name="contractDetailId" th:value="${contractDetailId}" />
-	    <input type="hidden" name="employeeId" th:value="${employeeId}" />
+	    <!-- Hiển thị form tạo hoặc cập nhật đánh giá -->
+	    <div th:if="${hasReview}">
+	       <!-- <h3>Update Review:</h3>-->
+	        <form id="reviewForm" th:action="@{/employee-reviews/submit}" method="POST">
+	            <input type="hidden" name="contractDetailId" th:value="${contractDetailId}" />
+	            <input type="hidden" name="employeeId" th:value="${employeeId}" />
+	            <input type="hidden" id="rating" name="rating" th:value="${existingReview.rating}" required />
 
-		<input type="hidden" id="rating" name="rating" value="0" required /> <!-- Sử dụng input hidden để lưu rating -->
+				<label for="rating">Rating:</label>
+				<div class="star-rating">
+					<i class="star fas fa-star" data-value="1" th:attr="class='star fas fa-star ' + (${existingReview.rating >= 1} ? 'selected' : '')"></i>
+					<i class="star fas fa-star" data-value="2" th:attr="class='star fas fa-star ' + (${existingReview.rating >= 2} ? 'selected' : '')"></i>
+					<i class="star fas fa-star" data-value="3" th:attr="class='star fas fa-star ' + (${existingReview.rating >= 3} ? 'selected' : '')"></i>
+					<i class="star fas fa-star" data-value="4" th:attr="class='star fas fa-star ' + (${existingReview.rating >= 4} ? 'selected' : '')"></i>
+					<i class="star fas fa-star" data-value="5" th:attr="class='star fas fa-star ' + (${existingReview.rating >= 5} ? 'selected' : '')"></i>	
+				</div>
+	            <label for="comment">Comment:</label>
+	            <textarea id="comment" name="comment" required th:text="${existingReview.comment}"></textarea>
 
-		        <label for="rating">Rating:</label>
-		        <div class="star-rating">
-		            <!-- Các biểu tượng sao -->
-		            <i class="star fas fa-star" data-value="1"></i>
-		            <i class="star fas fa-star" data-value="2"></i>
-		            <i class="star fas fa-star" data-value="3"></i>
-		            <i class="star fas fa-star" data-value="4"></i>
-		            <i class="star fas fa-star" data-value="5"></i>
-		        </div>
+	            <div class="button-group">
+	                <button type="submit">Update</button>
+	                <button type="button" id="backButton" onclick="goBack()">Back</button>
+	            </div>
+	        </form>
+	    </div>
 
-	    <br/><br/>
+	    <div th:if="${!hasReview}">
+	        <h3>Create Review:</h3>
+	        <form id="reviewFormCreate" th:action="@{/employee-reviews/submit}" method="POST">
+	            <input type="hidden" name="contractDetailId" th:value="${contractDetailId}" />
+	            <input type="hidden" name="employeeId" th:value="${employeeId}" />
+	            <input type="hidden" id="rating" name="rating" value="0" required />
 
-	    <label for="comment">Comment:</label>
-	    <textarea id="comment" name="comment" required></textarea>
+	            <label for="rating">Rating:</label>
+	            <div class="star-rating">
+	                <i class="star fas fa-star" data-value="1"></i>
+	                <i class="star fas fa-star" data-value="2"></i>
+	                <i class="star fas fa-star" data-value="3"></i>
+	                <i class="star fas fa-star" data-value="4"></i>
+	                <i class="star fas fa-star" data-value="5"></i>
+	            </div>
 
-	    <br/><br/>
+	            <label for="comment">Comment:</label>
+	            <textarea id="comment" name="comment" required></textarea>
 
-				<button type="button" id="submitButtonReview" th:if="${!hasReview}" onclick="toggleSubmitButton('submit')">Review</button>
-		       <button type="button" id="submitButtonUpdate" th:if="${hasReview}" onclick="toggleSubmitButton('update')">Update Review</button>
+	            <div class="button-group">
+	                <button type="submit">Create</button>
+	                <button type="button" id="cancelButton" onclick="cancelReview()">Cancel</button>
+	            </div>
+	        </form>
+	    </div>
+	</div>
+</section>
 
-		       <!-- Nút "Cancel" cho Review và Update -->
-		       <button type="button" id="cancelButton" style="display:none;" onclick="cancelReview()">Cancel</button>
 
-		       <!-- Nút "Submit" và "Submit Update" -->
-		       <button type="submit" id="submitButtonSubmit" th:unless="${hasReview}" style="display:none;">Submit Review</button>
-		       <button type="submit" id="submitButtonSubmitUpdate" th:if="${hasReview}" style="display:none;">Submit Update</button>
-  	
-	</form>
-	
-    <div id="responseMessage"></div> <!-- Để hiển thị kết quả trả về -->
-
-    <script>
-		$(document).ready(function() {
-		            // Khi người dùng chọn sao, cập nhật giá trị rating
-		            $(".star").click(function() {
-		                var ratingValue = $(this).data("value");  // Lấy giá trị từ thuộc tính data-value của sao
-		                $("#rating").val(ratingValue);  // Cập nhật giá trị rating ẩn
-		                updateStarSelection(ratingValue);  // Cập nhật màu sắc của sao đã chọn
-		            });
-
-		            // Cập nhật màu sắc của các sao khi người dùng chọn
-		            function updateStarSelection(selectedRating) {
-		                $(".star").each(function() {
-		                    var starValue = $(this).data("value");
-		                    if (starValue <= selectedRating) {
-		                        $(this).addClass("selected");  // Thêm class "selected" để đổi màu sao
-		                    } else {
-		                        $(this).removeClass("selected");  // Xóa class "selected" nếu sao chưa được chọn
-		                    }
-		                });
-		            }
-
-		            // Kiểm tra giá trị rating ban đầu nếu có
-		            var initialRating = $("#rating").val();
-		            if (initialRating) {
-		                updateStarSelection(initialRating);
-		            }
-		        });
-
-		        function toggleSubmitButton(actionType) {
-		            // Ẩn/hiện nút dựa trên hành động
-		            if (actionType === 'submit') {
-		                $("#submitButtonReview").hide();
-		                $("#submitButtonSubmit").show();
-		                $("#cancelButton").show();  // Hiển thị nút Cancel
-		            } else if (actionType === 'update') {
-		                $("#submitButtonUpdate").hide();
-		                $("#submitButtonSubmitUpdate").show();
-		                $("#cancelButton").show();  // Hiển thị nút Cancel
-		            }
+<script>
+    $(document).ready(function() {
+		var rating = /*[[${existingReview.rating}]]*/ 0; 
+		$(".star").each(function() {
+		        var starValue = $(this).data("value");
+		        if (starValue <= rating) {
+		            $(this).addClass("selected");  // Đánh dấu sao đã chọn
 		        }
-
-		        // Hàm hủy bỏ (hủy bỏ Review hoặc Update)
-		        function cancelReview() {
-		            // Đặt lại tất cả các giá trị ban đầu
-		            $("#reviewForm")[0].reset();
-		            $(".star").removeClass("selected"); // Xóa màu sao đã chọn
-		            $("#cancelButton").hide(); // Ẩn nút Cancel
-		            $("#submitButtonSubmit").hide(); // Ẩn nút Submit Review
-		            $("#submitButtonSubmitUpdate").hide(); // Ẩn nút Submit Update
-		            $("#submitButtonReview").show(); // Hiển thị lại nút Review
-		            $("#submitButtonUpdate").show(); // Hiển thị lại nút Update Review
-		        }
-
-        $("#reviewForm").submit(function(event) {
-            event.preventDefault();  // Ngừng việc gửi form mặc định
-
-            // Thu thập dữ liệu từ form
-            var formData = $(this).serialize(); // Thu thập tất cả các input trong form
-            console.log(formData);  // Kiểm tra dữ liệu form
-
-            // Kiểm tra xem rating có hợp lệ không
-            var rating = $("#rating").val();
-            if (!rating || isNaN(rating) || rating < 1 || rating > 5) {
-                alert("Please enter a valid rating between 1 and 5.");
-                return;  // Dừng lại nếu rating không hợp lệ
-            }
-
-            // Gửi dữ liệu AJAX đến server
-            $.ajax({
-                url: '/employee-reviews/submit',  // Đảm bảo URL đúng với controller
-                type: 'POST',
-                data: formData,
-                success: function(response) {
-                    // Hiển thị kết quả trả về (nếu có)
-                    $("#responseMessage").html("<p>Review submitted successfully!</p>");
-                    // Có thể thêm logic để làm mới phần danh sách đánh giá ở đây nếu cần
-                },
-                error: function(xhr, status, error) {
-                    // Hiển thị thông báo lỗi nếu có
-                    $("#responseMessage").html("<p style='color:red;'>Error occurred: " + xhr.responseText + "</p>");
-                    console.log(xhr);  // Kiểm tra thêm thông tin lỗi từ response
+		    });
+			
+        function updateStarSelection(selectedRating) {
+            $(".star").each(function() {
+                var starValue = $(this).data("value");
+                if (starValue <= selectedRating) {
+                    $(this).addClass("selected");  
+                } else {
+                    $(this).removeClass("selected");  
                 }
             });
+        }
+
+        $(".star").click(function() {
+            var ratingValue = $(this).data("value");
+            $("#rating").val(ratingValue);
+            updateStarSelection(ratingValue);
         });
-    </script>
+
+        var initialRating = $("#rating").val();
+        if (initialRating) {
+            updateStarSelection(initialRating);
+        }
+    });
+
+    function cancelReview() {
+        $("#reviewForm")[0].reset();
+        $(".star").removeClass("selected");
+        $("#cancelButton").hide();
+    }
+	$("#reviewForm").submit(function(event) {
+	            event.preventDefault();  // Ngừng gửi form thông qua submit mặc định
+	            
+	            var formData = $(this).serialize();  // Lấy tất cả dữ liệu của form
+	            
+	            // Gửi yêu cầu AJAX
+	            $.ajax({
+	                url: $(this).attr('action'),  // Lấy URL từ thuộc tính action của form
+	                type: $(this).attr('method'), // GET hoặc POST
+	                data: formData,  // Dữ liệu của form
+	                success: function(response) {
+	                    alert(response);  // Hiển thị thông báo thành công từ controller
+	                    // Nếu cần, có thể làm mới trang hoặc xử lý thêm
+	                },
+	                error: function(xhr, status, error) {
+	                    alert("An error occurred: " + error);  // Hiển thị thông báo lỗi nếu có lỗi
+	                }
+	            });
+	        });
+
+</script>
+
 </body>
 </html>

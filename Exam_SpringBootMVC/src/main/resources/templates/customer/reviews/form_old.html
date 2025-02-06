@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Employee Reviews</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 60%;
+            max-width: 900px;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+        }
+        .star-rating {
+            display: flex;
+            justify-content: center;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        .star {
+            font-size: 30px;
+            color: #ccc;
+            margin-right: 5px;
+            transition: color 0.3s;
+        }
+        .star.selected {
+            color: gold;
+        }
+        label {
+            font-size: 1rem;
+            color: #555;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            min-height: 100px;
+            resize: vertical;
+        }
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+            color: white;
+        }
+        #cancelButton {
+            background-color: #f44336;
+            color: white;
+        }
+        #cancelButton:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Employee Reviews for Contract ID: <span th:text="${contractId}"></span></h1>
+
+    <h3>Employee Names:</h3>
+    <ul>
+        <li th:each="employeeName : ${employeeNames}">
+            <span th:text="${employeeName}">Employee Name</span>
+        </li>
+    </ul>
+
+    <!-- Hiển thị form tạo hoặc cập nhật đánh giá -->
+    <div th:if="${hasReview}">
+        <h3>Update Review:</h3>
+        <form id="reviewForm" th:action="@{/employee-reviews/submit}" method="POST">
+            <input type="hidden" name="contractDetailId" th:value="${contractDetailId}" />
+            <input type="hidden" name="employeeId" th:value="${employeeId}" />
+            <input type="hidden" id="rating" name="rating" th:value="${existingReview.rating}" required />
+
+            <label for="rating">Rating:</label>
+            <div class="star-rating">
+                <i class="star fas fa-star" data-value="1" th:class="${existingReview.rating >= 1} ? ' selected' : ''"></i>
+                <i class="star fas fa-star" data-value="2" th:class="${existingReview.rating >= 2} ? ' selected' : ''"></i>
+                <i class="star fas fa-star" data-value="3" th:class="${existingReview.rating >= 3} ? ' selected' : ''"></i>
+                <i class="star fas fa-star" data-value="4" th:class="${existingReview.rating >= 4} ? ' selected' : ''"></i>
+                <i class="star fas fa-star" data-value="5" th:class="${existingReview.rating >= 5} ? ' selected' : ''"></i>
+            </div>
+
+            <label for="comment">Comment:</label>
+            <textarea id="comment" name="comment" required th:text="${existingReview.comment}"></textarea>
+
+            <div class="button-group">
+                <button type="submit">Update Review</button>
+                <button type="button" id="cancelButton" onclick="cancelReview()">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <div th:if="${!hasReview}">
+        <h3>Create Review:</h3>
+        <form id="reviewFormCreate" th:action="@{/employee-reviews/submit}" method="POST">
+            <input type="hidden" name="contractDetailId" th:value="${contractDetailId}" />
+            <input type="hidden" name="employeeId" th:value="${employeeId}" />
+            <input type="hidden" id="rating" name="rating" value="0" required />
+
+            <label for="rating">Rating:</label>
+            <div class="star-rating">
+                <i class="star fas fa-star" data-value="1"></i>
+                <i class="star fas fa-star" data-value="2"></i>
+                <i class="star fas fa-star" data-value="3"></i>
+                <i class="star fas fa-star" data-value="4"></i>
+                <i class="star fas fa-star" data-value="5"></i>
+            </div>
+
+            <label for="comment">Comment:</label>
+            <textarea id="comment" name="comment" required></textarea>
+
+            <div class="button-group">
+                <button type="submit">Create Review</button>
+                <button type="button" id="cancelButton" onclick="cancelReview()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $(".star").click(function() {
+            var ratingValue = $(this).data("value");
+            $("#rating").val(ratingValue);
+            updateStarSelection(ratingValue);
+        });
+
+        function updateStarSelection(selectedRating) {
+            $(".star").each(function() {
+                var starValue = $(this).data("value");
+                if (starValue <= selectedRating) {
+                    $(this).addClass("selected");
+                } else {
+                    $(this).removeClass("selected");
+                }
+            });
+        }
+
+        var initialRating = $("#rating").val();
+        if (initialRating) {
+            updateStarSelection(initialRating);
+        }
+    });
+
+    function cancelReview() {
+        $("#reviewForm")[0].reset();
+        $(".star").removeClass("selected");
+        $("#cancelButton").hide();
+    }
+</script>
+
+</body>
+</html>
