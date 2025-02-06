@@ -18,9 +18,7 @@
           <div class="title-wrapper pt-30">
             <div class="row align-items-center">
               <div class="col-md-6">
-                <div class="title">
-                  <h2>eCommerce Dashboard</h2>
-                </div>
+
               </div>
               <!-- end col -->
               <div class="col-md-6">
@@ -28,10 +26,10 @@
                   <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                       <li class="breadcrumb-item">
-                        <a href="#0">Dashboard</a>
+                        <a href="#0">Happy Clean</a>
                       </li>
                       <li class="breadcrumb-item active" aria-current="page">
-                        eCommerce
+                        Admin Management
                       </li>
                     </ol>
                   </nav>
@@ -48,7 +46,7 @@
               <div class="card-style mb-30">
                 <div class="title d-flex flex-wrap align-items-center justify-content-between">
                   <div class="left">
-                    <h6 class="text-medium mb-30">Sales History</h6>
+                    <h6 class="text-medium mb-30">Customer Management</h6>
                   </div>
                   <div class="right">
                     <div class="select-style-1">
@@ -72,40 +70,42 @@
                         </th>
                         <th class="min-width">
                           <h6 class="text-sm text-medium">
-                            Customer Name <i class="lni lni-arrows-vertical"></i>
+                            Customer Name </i>
                           </h6>
                         </th>
 						<th class="min-width">
 							<h6 class="text-sm text-medium">
-						 	Email <i class="lni lni-arrows-vertical"></i>
+						 	Email </i>
 							</h6>
 						</th>
 						<th class="min-width">
 							<h6 class="text-sm text-medium">
-							 Phone <i class="lni lni-arrows-vertical"></i>
+							 Phone </i>
 							</h6>
 						</th>
 						<th class="min-width">
 							<h6 class="text-sm text-medium">
-							Address <i class="lni lni-arrows-vertical"></i>
+							Address </i>
 							</h6>
 						</th>
 																								
-						<th class="min-width">
-						 	<h6 class="text-sm text-medium">
-						    	Status <i class="lni lni-arrows-vertical"></i>
-							</h6>
-						</th>
-                       
+						
 						<th>
 							<h6 class="text-sm text-medium">
-							Created At <i class="lni lni-arrows-vertical"></i>
+							Created At </i>
 							</h6>
 						</th>
 
+						<th class="min-width">
+							<h6 class="text-sm text-medium">
+								Status </i>
+							</h6>
+						</th>
+						                       
+												
                         <th>
                           <h6 class="text-sm text-medium text-end">
-                            Actions <i class="lni lni-arrows-vertical"></i>
+                            Actions </i>
                           </h6>
                         </th>
                       </tr>
@@ -117,12 +117,13 @@
 					        <td th:text="${customer.email}"></td> <!-- Email khách hàng -->
 					        <td th:text="${customer.phone}"></td> <!-- Số điện thoại -->
 					        <td th:text="${customer.address}"></td> <!-- Địa chỉ khách hàng -->
-					        <td th:text="${customer.status == 0 ? 'Inactive' : 
-					                       customer.status == 1 ? 'Active' : 
-					                       'Unknown'}"></td> <!-- Trạng thái khách hàng -->
+					       
 
 							<td th:text="${#temporals.format(customer.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
-
+							<td th:text="${customer.status == 0 ? 'Inactive' : 
+										   customer.status == 1 ? 'Active' : 
+											'Unknown'}">
+						 	</td> 
 					        <td>
 					            <div class="action justify-content-end">
 					                <button class="more-btn ml-10 dropdown-toggle" id="moreAction1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -130,7 +131,7 @@
 					                </button>
 					                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction1">
 					                    <li class="dropdown-item">
-					                        <a href="#0" class="text-gray">Remove</a>
+					                        <a href="#0" class="text-gray">Inactive</a>
 					                    </li>
 					                    <li class="dropdown-item">
 					                        <a href="#0" class="text-gray">Edit</a>

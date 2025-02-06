@@ -129,7 +129,7 @@
 						            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction1">
 						                <li class="dropdown-item">
 						                    <form th:action="@{/admin/employees/deleteStatus/{employeeId}(employeeId=${employee.employeeId})}" method="post" onsubmit="return confirm('Are you sure you want to delete this employee?');">
-						                        <button type="submit" class="btn btn-link text-gray p-0" style="text-decoration: none;" name="status" value="0" th:if="${employee.status == 1}">Remove</button>
+						                        <button type="submit" class="btn btn-link text-gray p-0" style="text-decoration: none;" name="status" value="0" th:if="${employee.status == 1}">Inactive</button>
 						                    </form>
 						                </li>
 						                <!-- Edit Button -->
