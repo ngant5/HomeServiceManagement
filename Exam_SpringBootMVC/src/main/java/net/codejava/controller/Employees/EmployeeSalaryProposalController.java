@@ -36,6 +36,6 @@ public class EmployeeSalaryProposalController {
 
         int result = salaryProposalService.createProposal(proposal);
         model.addAttribute("message", result > 0 ? "Proposal submitted successfully" : "Failed to submit proposal");
-        return "employees/emp_update_info";
+        return "redirect:/employees/updateInfo";
     }
 }

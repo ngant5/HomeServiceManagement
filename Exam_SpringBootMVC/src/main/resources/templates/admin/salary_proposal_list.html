@@ -11,7 +11,6 @@
 </head>
 <body>
 	<div th:replace="common/ad_content_first"></div>
-	<!-- admin/salary-proposal-list.html -->
 	<section class="section">
 		<div class="container-fluid pt-35">
 
@@ -20,6 +19,7 @@
 					<div class="title mb-30">
 						<h2>Employee Services List</h2>
 					</div>
+
 					<table class="table">
 					<thead>
 						<tr>
@@ -36,17 +36,23 @@
 							<td th:text="${proposal.proposedSalary}"></td>
 							<td th:text="${proposal.fromDate}"></td>
 							<td th:text="${proposal.toDate}"></td>
-							<td th:text="${proposal.approvalStatus}"></td>
+							<td>
+							    <span th:if="${proposal.approvalStatus == 0}">Pending</span>
+							    <span th:if="${proposal.approvalStatus == 1}" style="color: green;">Approved</span>
+							    <span th:if="${proposal.approvalStatus == 2}" style="color: red;">Rejected</span>
+							</td>
+
 							<td th:text="${proposal.refusalReason}"></td>
 							<td>
 								<form action="/admin/salary-proposals/review" method="post">
 									<input type="hidden" name="proposalId"
 										th:value="${proposal.proposalId}" />
-									<button type="submit" name="action" value="approve">Approve</button>
-									<button type="submit" name="action" value="reject">Reject</button>
-									<input type="text" name="refusalReason"
+									<button type="submit" name="action" th:if="${proposal.approvalStatus == 0}" value="approve">Approve</button>
+									<button type="submit" name="action" th:if="${proposal.approvalStatus == 0}" value="reject">Reject</button>
+									<input type="text" th:if="${proposal.approvalStatus == 0}" name="refusalReason"
 										placeholder="Reason if rejected" />
 								</form>
+								 <span th:if="${proposal.approvalStatus == 2 or proposal.approvalStatus == 1}" style="color: red;">Done</span>
 							</td>
 						</tr>
 					</tbody>
@@ -57,5 +63,22 @@
 		</div>
 	</section>
 	<div th:replace="common/ad_content_footer"></div>
+	<script>
+	document.addEventListener("DOMContentLoaded", function () {
+	    document.querySelectorAll("form").forEach(form => {
+	        form.addEventListener("submit", function (event) {
+	            let action = event.submitter.value; 
+	            let refusalReason = form.querySelector("input[name='refusalReason']");
+	
+	            if (action === "reject" && (!refusalReason || refusalReason.value.trim() === "")) {
+	                event.preventDefault();
+	                alert("Please enter a refusal reason before rejecting.");
+	            }
+	        });
+	    });
+	});
+	</script>
+
+	
 </body>
 </html>

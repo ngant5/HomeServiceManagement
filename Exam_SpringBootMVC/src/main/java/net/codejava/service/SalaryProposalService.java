@@ -27,4 +27,5 @@ public class SalaryProposalService {
     public int reviewProposal(int proposalId, int approvalStatus, String refusalReason) {
         return salaryProposalRepository.updateProposalStatus(proposalId, approvalStatus, refusalReason);
     }
+
 }

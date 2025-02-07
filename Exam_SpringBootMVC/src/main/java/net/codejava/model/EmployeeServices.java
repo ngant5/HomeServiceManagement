@@ -7,6 +7,7 @@ public class EmployeeServices {
     private String details;
     private Employees employee;
     private Services service;
+    private int status;
 
     // Getters and Setters
     public int getEmpServiceId() {
@@ -57,4 +58,11 @@ public class EmployeeServices {
         this.service = service; 
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 }

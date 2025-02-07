@@ -170,6 +170,7 @@ public class EmployeesController {
         
         model.addAttribute("products", employeeService.getAllEmployees());
         Employees employee = (Employees) session.getAttribute("employee");
+        session.setAttribute("employeeId", employee.getEmployeeId());
         model.addAttribute("employee", employee);
         model.addAttribute("session", session);
         return "employees/emp_index";
@@ -200,7 +201,7 @@ public class EmployeesController {
            
                 HttpSession session = request.getSession();
                 session.setAttribute("employee", employee);
-                
+                session.setAttribute("employeeId", employee.getEmployeeId());
                 logger.info("User authenticated: " + email + ", UserType: " + employee.getUserType());
                 
              
@@ -313,7 +314,7 @@ public class EmployeesController {
         // Check if the new passwords match
         if (!newPassword.equals(confirmPassword)) {
             model.addAttribute("error", "New passwords do not match.");
-            return "employees/emp_update_profile";
+            return "redirect:/employees/updateInfo";
         }
 
         // Try to change the password
@@ -321,10 +322,10 @@ public class EmployeesController {
 
         if (success) {
             model.addAttribute("message", "Password changed successfully.");
-            return "employees/emp_update_info"; // You can redirect to dashboard if needed
+            return "redirect:/employees/updateInfo";// You can redirect to dashboard if needed
         } else {
             model.addAttribute("error", "Current password is incorrect.");
-            return "employees/emp_update_info";
+            return "redirect:/employees/updateInfo";
         }
     }
     

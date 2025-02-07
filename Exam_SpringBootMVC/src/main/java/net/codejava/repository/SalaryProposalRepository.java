@@ -52,9 +52,14 @@ public class SalaryProposalRepository {
         });
     }
     	
-    // Update proposal status and refusal reason if applicable
     public int updateProposalStatus(int proposalId, int approvalStatus, String refusalReason) {
+        if (approvalStatus == 1) {
+            String updateOldProposals = "UPDATE Salary_Proposals SET approval_status = 2 WHERE employee_id = (SELECT employee_id FROM Salary_Proposals WHERE proposal_id = ?) AND proposal_id <> ?";
+            jdbcTemplate.update(updateOldProposals, proposalId, proposalId);
+        }
+
         String sql = "UPDATE Salary_Proposals SET approval_status = ?, refusal_reason = ? WHERE proposal_id = ?";
         return jdbcTemplate.update(sql, approvalStatus, refusalReason, proposalId);
     }
+
 }

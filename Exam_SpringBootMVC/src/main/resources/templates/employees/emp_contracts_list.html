@@ -81,12 +81,21 @@
 		                       'Unknown'}"></td>
 							<td th:text="${#temporals.format(contract.contractDetail.startDate, 'yyyy-MM-dd')}"></td>
 							<td th:text="${#temporals.format(contract.contractDetail.endDate, 'yyyy-MM-dd')}"></td>
-							<td>
+							<td >
 					            <form th:action="@{/employees/updateStatus/{contractId}(contractId=${contract.contractId})}" method="post">
-					                <span th:if="${contract.contractStatus == 0}" style="font-size: 0.8rem; color: #6c757d; white-space: normal;">
-					                    Wait for<br>Employee<br>Confirm
-					                </span>        
-					                <button type="submit" class="btn btn-success mt-2" name="status" value="2" th:if="${contract.contractStatus == 1}">Approve</button>	         
+					                <span th:if="${contract.contractStatus == 2}" style="font-size: 0.8rem; color: #6c757d; white-space: normal;">
+					                    In Progress
+					                </span>    
+					                <span th:if="${contract.contractStatus == 4}" style="font-size: 0.8rem; color: #6c757d; white-space: normal;">
+					                    Done
+					                </span>
+					                <span th:if="${contract.contractStatus == 5}" style="font-size: 0.8rem; color: #6c757d; white-space: normal;">
+					                    Complete
+					                </span>
+					                <button type="submit" class="btn btn-success mt-2" name="status" value="2" th:if="${contract.contractStatus == 1}">Comfirm</button>
+					                	 
+					                <button type="submit" class="btn btn-success mt-2" name="status" value="4" th:if="${contract.contractStatus == 3}">Done</button>	
+					                         
 					            </form>
 					        </td>
 						</tr>

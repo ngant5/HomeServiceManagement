@@ -30,6 +30,7 @@ public class EmployeeServicesController {
     @GetMapping
     public String listEmployeeServices(Model model) {
         List<EmployeeServices> employeeServices = employeeServicesService.findAll();
+        System.out.println("Employee Services: " + employeeServices);
         model.addAttribute("employeeServices", employeeServices);
         return "/employee_service/employee_service_list";
     }

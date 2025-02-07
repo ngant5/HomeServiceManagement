@@ -6,10 +6,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="shortcut icon" href="../assets_admin//images/favicon.svg" type="image/x-icon" />
   <style th:replace="common/head_tag"></style>
-  <title>Profile</title>
+  <style>
+    /* Mặc định là các tab ở trạng thái inactive */
+    .tab-menu {
+      display: flex;
+      border-bottom: 2px solid #ddd;
+      margin-bottom: 20px;
+    }
+
+    .tab-menu .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.3s;
+      color: #777;
+      font-weight: bold;
+    }
+
+    .tab-menu .tab.active {
+      background-color: #007bff; /* Màu nền khi tab được chọn */
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+
+
+  <title>My Profile</title>
 </head>
 <body>
-  <div th:replace="common/emp_content_first"></div>
+	<div th:replace="common/emp_content_first"></div>
         <div th:if="${errorMessage}" class="alert alert-danger">
             <span th:text="${errorMessage}"></span>
         </div>
@@ -20,7 +52,7 @@
         <div class="row align-items-center">
           <div class="col-md-6">
             <div class="title">
-              <h2>Profile</h2>
+              <h2>My Profile</h2>
             </div>
           </div>
           <div class="col-md-6" >
@@ -29,234 +61,285 @@
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item"><a href="#0">Dashboard</a></li>
                   <li class="breadcrumb-item"><a href="#0">Pages</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Settings</li>
+                  <li class="breadcrumb-item active" aria-current="page">My Profile</li>
                 </ol>
               </nav>
             </div>
           </div>
         </div>
       </div>
-
+	  <div class="tab-menu">
+	  	  <div class="tab active" data-tab="1">My Profile</div>
+	  	  <div class="tab" data-tab="2">Update Profile</div>
+	  	  <div class="tab" data-tab="3">Add Services</div>
+	  	  <div class="tab" data-tab="4">Employee Services List</div>
+	  	  <div class="tab" data-tab="5">Salary Proposal</div>
+	  	</div>
       <div class="row">
         <!-- Profile Information -->
-        <div class="col-lg-6" >
-          <div class="card-style settings-card-1 mb-30" >
-            <div class="title mb-30 d-flex justify-content-between align-items-center">
-              <h6>My Profile</h6>
-            </div>
-            <div class="profile-info">
-              <div class="d-flex align-items-center mb-30">
-                <div class="profile-image" th:if="${employee != null}">
-                  <img th:src="@{'/uploads/' + ${employee.profileImage}}" 
-                       class="card-img-top" 
-                       alt="Employee Profile Image"  
-                       height="75"  
-                       onerror="this.src='http://via.placeholder.com/75';" />
-                  <div class="update-image"> 
-                    <label for="profileImage" class="lni lni-cloud-upload"></label>
-                    <input type="file" />
-                  </div>
-                </div>
-                <div class="profile-meta">
-                  <h5 class="text-bold text-dark mb-10" th:text="${employee.fullname}"></h5>
-                </div>
-              </div>
-              <div class="input-style-1">
-                <label>Email</label>
-                <input type="email" placeholder="admin@example.com" th:value="${employee.email}" disabled/>
-              </div>
-              <div class="input-style-1">
-                <form action="#" th:action="@{/employees/change-password}" method="post">
-                  <div>
-                    <label for="currentPassword">Current Password:</label>
-                    <input type="password" id="currentPassword" name="currentPassword" required />
-                  </div>
-                  <div>
-                    <label for="newPassword">New Password:</label>
-                    <input type="password" id="newPassword" name="newPassword" required />
-                  </div>
-                  <div>
-                    <label for="confirmPassword">Confirm New Password:</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" required />
-                  </div>
-                  <div class="mt-4">
-                    <button type="submit" class="main-btn primary-btn btn-hover">Update Password</button>
-                  </div>
-                </form>
-                
-              </div>
-            </div>
-            
-          </div>
-        </div>
+        <div class="tab-content tab-1 active">
+			<div class="col-lg-12" >
+			          <div class="card-style settings-card-1 mb-30" >
+			            <div class="title mb-30 d-flex justify-content-between align-items-center">
+			              <h6>My Profile</h6>
+			            </div>
+			            <div class="profile-info">
+			              <div class="d-flex align-items-center mb-30">
+			                <div class="profile-image" th:if="${employee != null}">
+			                  <img th:src="@{'/uploads/' + ${employee.profileImage}}" 
+			                       class="card-img-top" 
+			                       alt="Employee Profile Image"  
+			                       height="75"  
+			                       onerror="this.src='https://dummyimage.com/75x75';" />
+			                  <div class="update-image"> 
+			                    <label for="profileImage" class="lni lni-cloud-upload"></label>
+			                    <input type="file" />
+			                  </div>
+			                </div>
+			                <div class="profile-meta">
+			                  <h5 class="text-bold text-dark mb-10" th:text="${employee.fullname}"></h5>
+			                </div>
+			              </div>
+			              <div class="input-style-1">
+			                <label>Email</label>
+			                <input type="email" placeholder="admin@example.com" th:value="${employee.email}" disabled/>
+			              </div>
+			              <div class="input-style-1">
+			                <form action="#" th:action="@{/employees/change-password}" method="post">
+			                  <div>
+			                    <label for="currentPassword">Current Password:</label>
+			                    <input type="password" id="currentPassword" name="currentPassword" required />
+			                  </div>
+			                  <div>
+			                    <label for="newPassword">New Password:</label>
+			                    <input type="password" id="newPassword" name="newPassword" required />
+			                  </div>
+			                  <div>
+			                    <label for="confirmPassword">Confirm New Password:</label>
+			                    <input type="password" id="confirmPassword" name="confirmPassword" required />
+			                  </div>
+			                  <div class="mt-4">
+			                    <button type="submit" class="main-btn primary-btn btn-hover">Update Password</button>
+			                  </div>
+			                </form>
+			                
+			              </div>
+			            </div>
+			            
+			          </div>
+			        </div>
+		</div>
 
         <!-- Profile Update Form with Service Selection -->
-        <div class="col-lg-6">
-          <div class="card-style settings-card-2 mb-30">
-            <div class="title mb-30">
-              <h6>Update Profile</h6>
-            </div>
-            <form action="/employees/updateInfo" method="post" enctype="multipart/form-data">
-              <div class="row">
-                <div class="col-12">
-                  <div class="input-style-1">
-                    <label for="fullname">Full Name*</label>
-                    <input type="text" id="fullname" name="fullname" th:value="${employee.fullname}" required placeholder="Full Name" />
-                  </div>
-                </div>
-                <div class="col-12">
-                  <div class="input-style-1">
-                    <label for="phone">Phone*</label>
-                    <input type="text" id="phone" name="phone" th:value="${employee.phone}" required placeholder="Phone" />
-                  </div>
-                </div>
-                <div class="col-12">
-                  <div class="input-style-1">
-                    <label for="address">Address*</label>
-                    <input type="text" id="address" name="address" th:value="${employee.address}" required placeholder="Address" />
-                  </div>
-                </div>
-                <div class="col-12">
-                  <div class="input-style-1">
-                    <label for="profileImage">Profile Image</label>
-                    <input type="file" id="profileImage" name="profileImage"/>
-                  </div>
-                </div>
-                <div class="col-xxl-4">
-                  <div class="input-style-1">
-                    <label>Experience Years</label>
-                    <input type="text" placeholder="Experience Years" />
-                  </div>
-                </div>
-                <div class="col-xxl-4">
-                  <div class="input-style-1">
-                    <label>Salary</label>
-                    <input type="text"  th:each="proposal : ${proposals}" th:if="${proposal.employeeId == employee.employeeId and proposal.approvalStatus == 1}" th:value="${proposal.proposedSalary} + '$'" placeholder="Salary" />
-                  </div>
-                </div>
-                <div class="col-xxl-4">
-                  <div class="input-style-1">
-                    <label>Birthday</label>
-                    <input type="date" id="birthday" name="birthday" placeholder="Birthday" th:value="${employee.birthday}"/>
-                  </div>
-                </div>
-                <div class="col-12">
-                  <div class="input-style-1">
-                    <label>Bio</label>
-                    <textarea placeholder="Type here" rows="3" id="bio" name="bio" th:text="${employee.bio}"></textarea>
-                  </div>
-                </div>
-              </div>
-              <div class="col-12">
-                <button type="submit" class="main-btn primary-btn btn-hover" onclick="showToast('Profile updated successfully!')">Update Profile</button>
-                <div id="toast-container" class="toast-container"></div>
-              </div>
-            </form>
-          </div>
-        </div>
-     <div class="col-lg-6">
-   <div class="card-style settings-card-2 mb-30">
-      <div class="title mb-30">
-         <h6>Add Services</h6>
-      </div>
-
-      <form th:action="@{/employees/services/add}" method="post">
-         <div class="row">
-            <div class="col-12" hidden>
-               <div class="input-style-1">
-                  <label for="employeeId">Employee ID</label>
-                  <input type="number" id="employeeId" name="employeeId" th:value="${employee.employeeId}"/>
-               </div>
-            </div>
-            <div class="col-12">
-               <div class="select-style-1">
-                  <label for="service">Services*</label>
-                  <div class="select-position">
-                     <select class="light-bg" name="serviceId" id="serviceId">
-                        <option value="" disabled selected>Select Services</option>
-                        <option th:each="service : ${services}" 
-                            th:value="${service.serviceId}" 
-                            th:text="${service.serviceName}">
-                        </option>
-                     </select>
-                  </div>
-               </div>
-            </div>
-            <div class="col-12">
-               <div class="input-style-1">
-                  <label for="address">Details</label>
-                  <textarea placeholder="Type here" rows="3" id="details" name="details"></textarea>
-               </div>
-            </div>
-         </div>
-         <div class="col-12">
-            <button type="submit" class="main-btn primary-btn btn-hover">Add</button>
-            <div id="toast-container" class="toast-container"></div>
-         </div>
-      </form>
-   </div>
-</div>
-
-
-
-
-<div class="col-lg-6">
-    <div class="card-style settings-card-2 mb-30">
-        <div class="title mb-30">
-            <h6>Employee Services List</h6>
-        </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Service Name</th>
-                    <th scope="col">Details</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="employeeService : ${employeeServices}">
-                    <td  th:each="service : ${services}" th:if="${employeeService.serviceId == service.serviceId}" th:text="${service.serviceName}">Service Name</td>
-                    <td th:text="${employeeService.details}">Details</td>
-			        <td>
-<!-- 			            <a th:href="@{/employees/services/edit(serviceId=${employeeService.serviceId}, employeeId=${employeeId})}" class="btn btn-warning btn-sm">Edit</a>
-			            <form action="/employees/services/delete" method="post" style="display:inline;">
-			                <input type="hidden" name="serviceId" th:value="${employeeService.serviceId}"/>
-			                <input type="hidden" name="employeeId" th:value="${employeeId}"/>
-			                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-			            </form> -->
-			        </td>		
-                </tr>
-                <tr th:if="${#lists.isEmpty(employeeServices)}">
-                    <td colspan="3" class="text-center">No services found.</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-        <div class="col-lg-6">
-          <div class="card-style settings-card-2 mb-30">
-            <div class="title mb-30">
-              <h6>Salary Proposal</h6>
-            </div>
-            	<div class="input-style-1">
-        	<!-- employee/salary-proposal-form.html -->
-				<form action="/employees/salary-proposal/submit" method="post">
-				    <input type="hidden" name="employeeId" th:value="${employee.employeeId}" />
-				    <label for="proposedSalary">Proposed Salary:</label>
-				    <input type="number" name="proposedSalary" required step="1" />
-				    <label for="fromDate">From Date:</label>
-				    <input type="date" name="fromDate" required />
-				    <label for="toDate">To Date:</label>
-				    <input type="date" name="toDate" required />
-				    <button type="submit" class="main-btn primary-btn btn-hover mt-2">Submit Proposal</button>
-				</form>
-				</div>
-		    </div>
+        <div class="tab-content tab-2">
+			<div class="col-lg-12">
+			          <div class="card-style settings-card-2 mb-30">
+			            <div class="title mb-30">
+			              <h6>Update Profile</h6>
+			            </div>
+			            <form action="/employees/updateInfo" method="post" enctype="multipart/form-data">
+			              <div class="row">
+			                <div class="col-12">
+			                  <div class="input-style-1">
+			                    <label for="fullname">Full Name*</label>
+			                    <input type="text" id="fullname" name="fullname" th:value="${employee.fullname}" required placeholder="Full Name" />
+			                  </div>
+			                </div>
+			                <div class="col-12">
+			                  <div class="input-style-1">
+			                    <label for="phone">Phone*</label>
+			                    <input type="text" id="phone" name="phone" th:value="${employee.phone}" required placeholder="Phone" />
+			                  </div>
+			                </div>
+			                <div class="col-12">
+			                  <div class="input-style-1">
+			                    <label for="address">Address*</label>
+			                    <input type="text" id="address" name="address" th:value="${employee.address}" required placeholder="Address" />
+			                  </div>
+			                </div>
+			                <div class="col-12">
+			                  <div class="input-style-1">
+			                    <label for="profileImage">Profile Image</label>
+			                    <input type="file" id="profileImage" name="profileImage"/>
+			                  </div>
+			                </div>
+			                <div class="col-xxl-4">
+			                  <div class="input-style-1">
+			                    <label>Experience Years</label>
+								<input type="text" id="experienceYears" name="experienceYears" th:value="${employee.experienceYears}" placeholder="Experience Years" readonly />
+			                  </div>
+			                </div>
+			                <div class="col-xxl-4">
+			                  <div class="input-style-1">
+			                    <label>Salary</label>
+			                    <input type="text"  th:each="proposal : ${proposals}" th:if="${proposal.employeeId == employee.employeeId and proposal.approvalStatus == 1}" th:value="${proposal.proposedSalary} + 'VND'" placeholder="Salary" />
+			                  </div>
+			                </div>
+			                <div class="col-xxl-4">
+			                  <div class="input-style-1">
+			                    <label>Birthday</label>
+			                    <input type="date" id="birthday" name="birthday" placeholder="Birthday" th:value="${employee.birthday}"/>
+			                  </div>
+			                </div>
+			                <div class="col-12">
+			                  <div class="input-style-1">
+			                    <label>Bio</label>
+			                    <textarea placeholder="Type here" rows="3" id="bio" name="bio" th:text="${employee.bio}"></textarea>
+			                  </div>
+			                </div>
+			              </div>
+			              <div class="col-12">
+			                <button type="submit" class="main-btn primary-btn btn-hover" onclick="showToast('Profile updated successfully!')">Update Profile</button>
+			                <div id="toast-container" class="toast-container"></div>
+			              </div>
+			            </form>
+			          </div>
+			        </div>
 		</div>
+
+	<div class="tab-content tab-3">		
+	     <div class="col-lg-12">
+	   <div class="card-style settings-card-2 mb-30">
+	      <div class="title mb-30">
+	         <h6>Add Services</h6>
+	      </div>
+
+	      <form th:action="@{/employees/services/add}" method="post">
+	         <div class="row">
+	            <div class="col-12" hidden>
+	               <div class="input-style-1">
+	                  <label for="employeeId">Employee ID</label>
+	                  <input type="number" id="employeeId" name="employeeId" th:value="${employee.employeeId}"/>
+	               </div>
+	            </div>
+	            <div class="col-12">
+	               <div class="select-style-1">
+	                  <label for="service">Services*</label>
+	                  <div class="select-position">
+	                     <select class="light-bg" name="serviceId" id="serviceId">
+	                        <option value="" disabled selected>Select Services</option>
+	                        <option th:each="service : ${services}" 
+	                            th:value="${service.serviceId}" 
+	                            th:text="${service.serviceName}">
+	                        </option>
+	                     </select>
+	                  </div>
+	               </div>
+	            </div>
+	            <div class="col-12">
+	               <div class="input-style-1">
+	                  <label for="address">Details</label>
+	                  <textarea placeholder="Type here" rows="3" id="details" name="details"></textarea>
+	               </div>
+	            </div>
+	         </div>
+	         <div class="col-12">
+	            <button type="submit" class="main-btn primary-btn btn-hover">Add</button>
+	            <div id="toast-container" class="toast-container"></div>
+	         </div>
+	      </form>
+	   </div>
+	</div>
+
+</div>
+
+<div class="tab-content tab-4" id="employeeServicesTabContent">
+	<div class="col-lg-12">
+	    <div class="card-style settings-card-2 mb-30">
+	        <div class="title mb-30">
+	            <h6>Employee Services List</h6>
+	        </div>
+	        <!-- Sử dụng lớp CSS mới để áp dụng quy tắc -->
+	        <div class="custom-table-wrapper">
+	            <table class="table custom-table">
+	                <thead>
+	                    <tr>
+	                        <th scope="col">Service Name</th>
+	                        <th scope="col">Details</th>                 
+	                        <th scope="col">Actions</th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                    <tr th:each="employeeService : ${employeeServices}" th:if="${employeeService.status == 1}">
+	                        <td th:each="service : ${services}" th:if="${employeeService.serviceId == service.serviceId}" th:text="${service.serviceName}">Service Name</td>
+	                        <td th:text="${employeeService.details}">Details</td>
+	                        <td>
+	                            <form th:action="@{/employees/services/updateStatus}" method="post">
+	                                <input type="hidden" name="id" th:value="${employeeService.empServiceId}" />
+	                                <input type="hidden" name="status" th:value="${employeeService.status == 1 ? 0 : 1}" />
+	                                <button type="submit" class="btn btn-warning" th:text="${employeeService.status == 1 ? 'Deactivate' : 'Activate'}"></button>
+	                            </form>
+	                        </td>
+	                    </tr>
+	                    <tr th:if="${#lists.isEmpty(employeeServices)}">
+	                        <td colspan="3" class="text-center">No services found.</td>
+	                    </tr>
+	                </tbody>
+	            </table>
+	        </div>
+	    </div>
+	</div>
+
+</div>
+
+
+<div class="tab-content tab-5">
+	<div class="col-lg-12">
+	  <div class="card-style settings-card-2 mb-30">
+	    <div class="title mb-30">
+	      <h6>Salary Proposal</h6>
+	    </div>
+	    	<div class="input-style-1">
+		<!-- employee/salary-proposal-form.html -->
+			<form action="/employees/salary-proposal/submit" method="post">
+			    <input type="hidden" name="employeeId" th:value="${employee.employeeId}" />
+			    <label for="proposedSalary">Proposed Salary:</label>
+			    <input type="number" name="proposedSalary" required step="1" />
+			    <label for="fromDate">From Date:</label>
+			    <input type="date" name="fromDate" required />
+			    <label for="toDate">To Date:</label>
+			    <input type="date" name="toDate" required />
+			    <button type="submit" class="main-btn primary-btn btn-hover mt-2">Submit Proposal</button>
+			</form>
+			</div>
+	    </div>
+	</div>
+</div>
       </div>
     </div>
   </section>
 
   <div th:replace="common/ad_content_footer"></div>
+  <script>
+    // Lấy tất cả các tab và tab-content
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    // Lặp qua các tab để gán sự kiện click
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetTab = tab.getAttribute('data-tab');
+
+        // Xóa class 'active' khỏi tất cả các tab và tab-content
+        tabs.forEach(t => t.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
+
+        // Thêm class 'active' vào tab và tab-content tương ứng
+        tab.classList.add('active');
+        document.querySelector(`.tab-${targetTab}`).classList.add('active');
+      });
+    });
+	
+	document.querySelector('[data-tab="4"]').addEventListener('click', function() {
+	    fetch('/employees/services/list')  
+	        .then(response => response.text())  
+	        .then(data => {
+	            document.getElementById('employeeServicesTabContent').innerHTML = data;
+	        })
+	        .catch(error => console.error('Error loading employee services:', error));
+	});
+
+  </script>
+
 </body>
 </html>
