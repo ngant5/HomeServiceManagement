@@ -23,7 +23,7 @@
 		         </form>
 
 		         <div class="upload-btn" th:if="${contract.contractStatus == 2}">
-		             <form id="uploadForm" enctype="multipart/form-data">
+		             <form th:id="'uploadForm_' + ${contract.contractId}" enctype="multipart/form-data">
 		                 <span class="d-block mt-2">
 		                     <span th:if="${contract.contractFile != null && contract.contractFile != ''}">
 		                         <a target="_blank" th:href="@{/admin/contracts/view-file/{contractId}(contractId=${contract.contractId})}" class="text-info" th:text="${contract.contractFile}"></a>
@@ -33,12 +33,12 @@
 		                     </span>
 		                 </span>
 
-		                 <label for="contractFile" class="btn btn-secondary mt-2" id="fileButton">
+		                 <label th:for="'contractFile_' + ${contract.contractId}" class="btn btn-secondary mt-2" th:id="'fileButton_' + ${contract.contractId}">
 		                     Choose File
 		                 </label>
-		                 <input type="file" id="contractFile" name="contractFile" accept=".pdf" style="display: none;" />
-		                 <input type="hidden" id="contractId" name="contractId" th:value="${contract.contractId}" />
-		                 <button type="submit" class="btn btn-secondary mt-2" id="uploadButton" disabled>Upload</button>
+		                 <input type="file" th:id="'contractFile_' + ${contract.contractId}" name="contractFile" accept=".pdf" style="display: none;" />
+		                 <input type="hidden" th:id="'contractId_' + ${contract.contractId}" name="contractId" th:value="${contract.contractId}" />
+		                 <button type="submit" class="btn btn-secondary mt-2" th:id="'uploadButton_' + ${contract.contractId}" disabled>Upload</button>
 		             </form>
 		             <div id="uploadMessage"></div>
 		         </div>
@@ -48,4 +48,5 @@
 		         </div>
 		     </td>
     </tr>
-
+	
+	

@@ -63,11 +63,11 @@
 						    </tr>
 						</thead>
 						<tbody id="contractTableBody" th:if="${contracts != null && !contracts.isEmpty()}">
-						    <tr th:replace="admin/contracts/partials/search_have_results :: contractTable"></tr>
+							<tr th:replace="~{admin/contracts/partials/search_have_results :: contractTable}"></tr>
 						</tbody>
 
 						<tbody id="contractNoResultsBody" th:if="${contracts == null || contracts.isEmpty()}">
-						    <tr th:replace="admin/contracts/partials/search_no_result :: contractNoTable"></tr>
+							<tr th:replace="~{admin/contracts/partials/search_no_result :: contractNoTable}"></tr>
 						</tbody>
 
 						

@@ -1,9 +1,12 @@
 $(document).ready(function() {
     // Upload file handling
-    $("#contractFile").change(function() {
+     $("input[type='file']").change(function() {
         var fileInput = $(this)[0];
-        var uploadButton = $("#uploadButton");
-        var fileName = $("#fileName");
+		var form = $(this).closest("form");
+		var formId = form.attr("id");
+		var contractId = $(this).closest("form").find("input[name='contractId']").val();
+		var uploadButton = $("#" + formId + " button[type='submit']"); 
+		var fileName = $("#" + formId + " span");
 
         if (fileInput.files.length > 0) {
             fileName.text(fileInput.files[0].name);
@@ -16,12 +19,24 @@ $(document).ready(function() {
         }
     });
 
-    $("#uploadForm").submit(function(event) {
+    $("form[id^='uploadForm']").submit(function(event) {
         event.preventDefault();
-        var formData = new FormData();
-        var fileInput = $("#contractFile")[0].files[0];
-        formData.append("contractFile", fileInput);
-        var contractId = $("#contractId").val();
+		var form = $(this); 
+		var formId = form.attr("id"); 
+
+		var formData = new FormData();
+		var fileInput = $(this).find("input[type='file']")[0].files[0];
+		var contractId = $(this).find("input[name='contractId']").val();
+
+		    // Kiểm tra tệp và contractId có hợp lệ không
+		    if (!fileInput || !contractId) {
+		        alert("Contract ID or file is missing");
+		        return;
+		    }
+
+		    formData.append("contractFile", fileInput); // Thêm tệp vào formData
+		 
+
         var uploadUrl = "/admin/contracts/" + contractId + "/uploadFile";  
 
         $.ajax({
@@ -31,14 +46,14 @@ $(document).ready(function() {
             contentType: false,
             processData: false,
             success: function(response) {
-                $("#uploadMessage").html("<div class='alert alert-success'>" + response + "</div>");
-                setTimeout(function() {
-                    location.reload();
-                }, 2000);
+				form.find("#uploadMessage").html("<div class='alert alert-success'>" + response + "</div>");
+				                setTimeout(function() {
+				                    location.reload();
+				                }, 1000);
             },
             error: function(xhr, status, error) {
                 var errorMessage = xhr.responseText || "An error occurred";
-                $("#uploadMessage").html("<div class='alert alert-danger'>" + errorMessage + "</div>");
+                $("#" + formId + " #uploadMessage").html("<div class='alert alert-danger'>" + errorMessage + "</div>");
             }
         });
     });

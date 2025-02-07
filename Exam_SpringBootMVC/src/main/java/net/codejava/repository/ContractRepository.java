@@ -139,9 +139,9 @@ public class ContractRepository {
         }
     }
 
-	public void updateTotalPrice(int contractId, double totalPrice, int employe_id) {
-	    String sql = "UPDATE Contracts SET total_price = ?, employe_id = ? WHERE contract_id = ?";
-	    jdbcTemplate.update(sql, totalPrice, employe_id,  contractId);
+	public void updateTotalPrice(int contractId, double totalPrice, int employee_id) {
+	    String sql = "UPDATE Contracts SET total_price = ?, employee_id = ? WHERE contract_id = ?";
+	    jdbcTemplate.update(sql, totalPrice, employee_id,  contractId);
 	}
 
 	public void updateContractFile(Contracts contract) {
