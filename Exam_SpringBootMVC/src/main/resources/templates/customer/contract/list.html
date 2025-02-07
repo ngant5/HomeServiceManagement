@@ -239,11 +239,11 @@
 																					class="btn btn-view-file"
 																					target="_blank">View File</a>
 							                <span th:case="0">
-							                    <p>Vui lòng thanh toán.</p>
+							                    <p>Please make payment </p>
 							                </span>
 							                <span th:case="1">
 							                    <form th:action="@{'/contracts/' + ${contract.contractId} + '/ConfirmContract'}" method="post" style="display:inline;">
-							                        <button type="submit" class="btn btn-success">Xác nhận hợp đồng</button>
+							                        <button type="submit" class="btn btn-success">Confirm Contract.</button>
 							                    </form>
 							                </span>
 							            </span>

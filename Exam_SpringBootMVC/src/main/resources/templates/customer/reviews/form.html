@@ -123,7 +123,7 @@
 	        <form id="reviewForm" th:action="@{/employee-reviews/submit}" method="POST">
 	            <input type="hidden" name="contractDetailId" th:value="${contractDetailId}" />
 	            <input type="hidden" name="employeeId" th:value="${employeeId}" />
-	            <input type="hidden" id="rating" name="rating" th:value="${existingReview.rating}" required />
+				<input type="hidden" id="rating" name="rating" th:value="${existingReview != null ? existingReview.rating : 0}" required />
 
 				<label for="rating">Rating:</label>
 				<div class="star-rating">
@@ -174,7 +174,7 @@
 
 <script>
     $(document).ready(function() {
-		var rating = /*[[${existingReview.rating}]]*/ 0; 
+		var rating = /*[[${existingReview != null ? existingReview.rating : 0}]]*/ 0;
 		$(".star").each(function() {
 		        var starValue = $(this).data("value");
 		        if (starValue <= rating) {
@@ -221,14 +221,23 @@
 	                type: $(this).attr('method'), // GET hoặc POST
 	                data: formData,  // Dữ liệu của form
 	                success: function(response) {
-	                    alert(response);  // Hiển thị thông báo thành công từ controller
-	                    // Nếu cần, có thể làm mới trang hoặc xử lý thêm
+						alert("Review submitted successfully!");  
+						$("#reviewForm")[0].reset(); 
+						location.reload();
+
 	                },
 	                error: function(xhr, status, error) {
 	                    alert("An error occurred: " + error);  // Hiển thị thông báo lỗi nếu có lỗi
 	                }
 	            });
 	        });
+			
+			function goBack() {
+			    window.history.back();  
+			}
+			function cancelReview() {
+			    window.history.back();  
+			}
 
 </script>
 

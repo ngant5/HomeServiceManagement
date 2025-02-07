@@ -15,13 +15,14 @@
         <td th:text="${#temporals.format(contract.contractDetail.startDate, 'yyyy-MM-dd')}"></td>
         <td th:text="${#temporals.format(contract.contractDetail.endDate, 'yyyy-MM-dd')}"></td>
 		<td>
-		         <form th:action="@{/admin/contracts/updateStatus/{contractId}(contractId=${contract.contractId})}" method="post">
-		             <span th:if="${contract.contractStatus == 0}" style="font-size: 0.8rem; color: #6c757d; white-space: normal;">
-		                 Wait for<br>Employee<br>Confirm
-		             </span>        
-		             <button type="submit" class="btn btn-success mt-2" name="status" value="2" th:if="${contract.contractStatus == 1}">Approve</button>	         
+		         <form th:action="@{/admin/contracts/updateStatus/{contractId}(contractId=${contract.contractId})}" method="post">      
+		             <button type="submit" class="btn btn-success mt-2" name="status" value="1" th:if="${contract.contractStatus == 0}">Approve</button>	         
 		         </form>
-
+<div>
+	<span th:if="${contract.contractStatus == 1}" style="font-size: 0.8rem; color: #6c757d; white-space: normal;">
+			                 Wait for<br>Employee<br>Confirm
+			             </span>  
+</div>
 		         <div class="upload-btn" th:if="${contract.contractStatus == 2}">
 		             <form th:id="'uploadForm_' + ${contract.contractId}" enctype="multipart/form-data">
 		                 <span class="d-block mt-2">
