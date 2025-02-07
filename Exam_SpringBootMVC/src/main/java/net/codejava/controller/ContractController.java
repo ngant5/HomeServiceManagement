@@ -395,4 +395,18 @@ public class ContractController {
         }
         return "redirect:/contracts";
     }
+    
+    @PostMapping("/{contractId}/ConfirmContract")
+    public String ConfirmContract(@PathVariable("contractId") int contractId, Model model) {
+        try {
+            contractService.updateContractStatus(contractId, 3);
+            logger.info("Contract ID {} status updated to completed (5)", contractId);
+            model.addAttribute("successMessage", "The contract has been successfully marked as completed!");
+        } catch (Exception e) {
+            logger.error("Error occurred while updating contract status for contract ID {}: {}", contractId, e.getMessage());
+            e.printStackTrace();
+            return "error-page"; 
+        }
+        return "redirect:/contracts";
+    }
 }

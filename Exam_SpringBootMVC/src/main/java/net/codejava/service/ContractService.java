@@ -115,6 +115,8 @@ public class ContractService {
     public void updateContractPaymentStatus(int contractId, int paymentStatus) {
         contractRepository.updateContractPaymentStatus(contractId, paymentStatus);
     }
+    
+    
 
 
 
