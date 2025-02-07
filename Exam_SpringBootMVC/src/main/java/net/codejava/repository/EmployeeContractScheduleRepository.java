@@ -28,8 +28,15 @@ public class EmployeeContractScheduleRepository {
     }
 
     public int[] insertBatch(List<EmployeeContractSchedule> schedules) {
+		/*
+		 * String sql =
+		 * "INSERT INTO Employee_Contract_Schedule (employee_id, work_date, start_time, end_time, status, hours_work) "
+		 * + "VALUES (?, ?, ?, ?, ?, ?)";
+		 */
+        
         String sql = "INSERT INTO Employee_Contract_Schedule (employee_id, work_date, start_time, end_time, status, hours_work) " +
-                     "VALUES (?, ?, ?, ?, ?, ?)";
+                "SELECT ?, ?, ?, ?, ?, ? FROM Employees WHERE user_type = 'EMPLOYEE' AND employee_id = ?";
+
 
         return jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
@@ -50,6 +57,7 @@ public class EmployeeContractScheduleRepository {
 
                 ps.setInt(5, schedule.getStatus());
                 ps.setInt(6, schedule.getHoursWork());  
+                ps.setInt(7, schedule.getEmployeeId());
 
             }
         });
@@ -179,7 +187,7 @@ public class EmployeeContractScheduleRepository {
         String sql = "SELECT ecs.schedule_id, e.fullname, e.phone, ecs.work_date, ecs.start_time, ecs.end_time, ecs.status " +
                      "FROM Employees e " +
                      "INNER JOIN Employee_Contract_Schedule ecs ON e.employee_id = ecs.employee_id " +
-                     "WHERE ecs.work_date = ? " +
+                     "WHERE ecs.work_date = ? AND e.user_type = 'EMPLOYEE' " +
                      "ORDER BY ecs.work_date";
 
         return jdbcTemplate.query(sql, new Object[]{workDate}, (rs, rowNum) -> {
