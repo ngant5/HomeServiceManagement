@@ -1,5 +1,6 @@
 package net.codejava.repository;
 
+import net.codejava.model.EmployeeServiceList;
 import net.codejava.model.EmployeeServices;
 import net.codejava.model.Employees;
 import net.codejava.model.Services;
@@ -227,6 +228,26 @@ public class EmployeeServicesRepository {
             employee.setEmployeeId(rs.getInt("employee_id"));
             employee.setFullname(rs.getString("fullname"));
             return employee;
+        });
+    }
+    
+    public List<EmployeeServiceList> getEmployeeServices(Long employeeId) {
+        String sql = "SELECT es.emp_service_id, es.employee_id, es.service_id, es.details, es.status, " +
+                     "s.service_name, s.service_description " +
+                     "FROM Employee_Services es " +
+                     "JOIN Services s ON es.service_id = s.service_id " +
+                     "WHERE es.employee_id = ? AND es.status = 1";
+
+        return jdbcTemplate.query(sql, new Object[]{employeeId}, (rs, rowNum) -> {
+            EmployeeServiceList service = new EmployeeServiceList();
+            service.setEmpServiceId(rs.getLong("emp_service_id"));
+            service.setEmployeeId(rs.getLong("employee_id"));
+            service.setServiceId(rs.getLong("service_id"));
+            service.setDetails(rs.getString("details"));
+            service.setStatus(rs.getInt("status"));
+            service.setServiceName(rs.getString("service_name"));
+            service.setServiceDescription(rs.getString("service_description"));
+            return service;
         });
     }
 

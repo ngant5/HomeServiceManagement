@@ -1,5 +1,6 @@
 package net.codejava.controller.Employees;
 
+import net.codejava.model.EmployeeServiceList;
 import net.codejava.model.EmployeeServices;
 import net.codejava.model.Employees;
 import net.codejava.model.Services;
@@ -8,6 +9,7 @@ import net.codejava.service.EmployeeServicesService;
 import net.codejava.service.ServiceService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -83,4 +85,18 @@ public class EmployeeServicesController {
         employeeServicesService.deleteById(id);
         return "redirect://employees/services?success=delete";
     }
+    
+    @GetMapping("/list")
+    @ResponseBody
+    public List<EmployeeServiceList> getEmployeeServices(@RequestParam("employeeId") Long employeeId) {
+        if (employeeId == null || employeeId <= 0) {
+            throw new IllegalArgumentException("Invalid Employee ID.");
+        }
+        
+        List<EmployeeServiceList> employeeServices = employeeServicesService.getEmployeeServices(employeeId);
+        return employeeServices; 
+    }
+    
+
+
 }

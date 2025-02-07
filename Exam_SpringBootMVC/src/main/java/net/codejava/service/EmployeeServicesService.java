@@ -1,6 +1,7 @@
 package net.codejava.service;
 
 import net.codejava.model.Employees;
+import net.codejava.model.EmployeeServiceList;
 import net.codejava.model.EmployeeServices;
 import net.codejava.repository.EmployeeServicesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,6 +107,10 @@ public class EmployeeServicesService {
             }
         }
         return employeesList;
+    }
+  
+    public List<EmployeeServiceList> getEmployeeServices(Long employeeId) {
+        return employeeServicesRepository.getEmployeeServices(employeeId);
     }
 
 }

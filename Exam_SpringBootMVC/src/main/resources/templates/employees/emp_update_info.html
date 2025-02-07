@@ -68,6 +68,8 @@
           </div>
         </div>
       </div>
+	  <input type="hidden" id="employeeId" th:value="${session.employeeId}" />
+
 	  <div class="tab-menu">
 	  	  <div class="tab active" data-tab="1">My Profile</div>
 	  	  <div class="tab" data-tab="2">Update Profile</div>
@@ -310,36 +312,98 @@
   </section>
 
   <div th:replace="common/ad_content_footer"></div>
+  <div th:replace="common/ad_content_footer"></div>
+
   <script>
-    // Lấy tất cả các tab và tab-content
-    const tabs = document.querySelectorAll('.tab');
-    const tabContents = document.querySelectorAll('.tab-content');
+      // Lấy tất cả các tab và tab-content
+      const tabs = document.querySelectorAll('.tab');
+      const tabContents = document.querySelectorAll('.tab-content');
 
-    // Lặp qua các tab để gán sự kiện click
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        const targetTab = tab.getAttribute('data-tab');
+      // Lặp qua các tab để gán sự kiện click
+      tabs.forEach(tab => {
+          tab.addEventListener('click', () => {
+              const targetTab = tab.getAttribute('data-tab');
 
-        // Xóa class 'active' khỏi tất cả các tab và tab-content
-        tabs.forEach(t => t.classList.remove('active'));
-        tabContents.forEach(content => content.classList.remove('active'));
+              // Xóa class 'active' khỏi tất cả các tab và tab-content
+              tabs.forEach(t => t.classList.remove('active'));
+              tabContents.forEach(content => content.classList.remove('active'));
 
-        // Thêm class 'active' vào tab và tab-content tương ứng
-        tab.classList.add('active');
-        document.querySelector(`.tab-${targetTab}`).classList.add('active');
+              // Thêm class 'active' vào tab và tab-content tương ứng
+              tab.classList.add('active');
+              document.querySelector(`.tab-${targetTab}`).classList.add('active');
+
+              // Nếu là tab 4 (Employee Services List), gửi AJAX để tải dữ liệu dịch vụ của nhân viên
+              if (targetTab === '4') {
+                  const employeeId = document.getElementById('employeeId').value; // Đảm bảo `employeeId` đã được xác định
+                  console.log("Employee ID:", employeeId);
+
+                  if (!employeeId) {
+                      console.error('Employee ID not found');
+                      return;
+                  }
+
+                  // Gửi yêu cầu fetch để lấy dữ liệu từ server
+                  fetch(`/employees/services/list?employeeId=${employeeId}`)
+                      .then(response => response.json())  // Chắc chắn là JSON
+                      .then(data => {
+                          console.log(data);  // In dữ liệu JSON để kiểm tra
+
+                          // Xử lý dữ liệu và hiển thị nó trong tab menu
+                          const employeeServicesTabContent = document.getElementById('employeeServicesTabContent');
+                          
+						  let htmlContent = `
+						              <table class="table custom-table">
+						                  <thead>
+						                      <tr>
+						                          <th scope="col">Service Name</th>
+						                          <th scope="col">Details</th>
+						                          <th scope="col">Actions</th>
+						                      </tr>
+						                  </thead>
+						                  <tbody>
+						          `;
+
+						          // Duyệt qua dữ liệu và tạo các hàng trong bảng
+						          data.forEach(service => {
+						              htmlContent += `
+						                  <tr>
+						                      <td>${service.serviceName}</td>
+						                      <td>${service.serviceDescription || 'No details available'}</td>
+						                      <td>
+						                          <form action="/employees/services/updateStatus" method="post">
+						                              <input type="hidden" name="id" value="${service.empServiceId}" />
+						                              <input type="hidden" name="status" value="${service.status == 1 ? 0 : 1}" />
+						                              <button type="submit" class="btn btn-warning">${service.status == 1 ? 'Deactivate' : 'Activate'}</button>
+						                          </form>
+						                      </td>
+						                  </tr>
+						              `;
+						          });
+
+						          // Nếu không có dịch vụ, hiển thị thông báo
+						          if (data.length === 0) {
+						              htmlContent += `
+						                  <tr>
+						                      <td colspan="3" class="text-center">No services found.</td>
+						                  </tr>
+						              `;
+						          }
+
+						          htmlContent += `
+						                  </tbody>
+						              </table>
+						          `;
+
+
+                          // Đưa nội dung vào tab menu
+                          employeeServicesTabContent.innerHTML = htmlContent;
+                      })
+                      .catch(error => console.error('Error loading employee services:', error));
+              }
+          });
       });
-    });
-	
-	document.querySelector('[data-tab="4"]').addEventListener('click', function() {
-	    fetch('/employees/services/list')  
-	        .then(response => response.text())  
-	        .then(data => {
-	            document.getElementById('employeeServicesTabContent').innerHTML = data;
-	        })
-	        .catch(error => console.error('Error loading employee services:', error));
-	});
-
   </script>
+
 
 </body>
 </html>
