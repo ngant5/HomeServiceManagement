@@ -34,8 +34,8 @@ public class SalaryProposalRepository {
         String sql = "SELECT * FROM Salary_Proposals";
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             SalaryProposals proposal = new SalaryProposals();
-            proposal.setProposalId(rs.getInt("proposal_id"));
-            proposal.setEmployeeId(rs.getInt("employee_id"));
+            proposal.setProposalId(rs.getLong("proposal_id"));
+            proposal.setEmployeeId(rs.getLong("employee_id"));
             proposal.setProposedSalary(rs.getInt("proposed_salary"));
             
             // Retrieve from_date and to_date as LocalDate
@@ -62,4 +62,8 @@ public class SalaryProposalRepository {
         return jdbcTemplate.update(sql, approvalStatus, refusalReason, proposalId);
     }
 
+    public int updateSalary(Long employeeId, double salary) {
+        String sql = "UPDATE Employees SET salary = ? WHERE employee_id = ?";
+        return jdbcTemplate.update(sql, salary, employeeId);
+    }
 }

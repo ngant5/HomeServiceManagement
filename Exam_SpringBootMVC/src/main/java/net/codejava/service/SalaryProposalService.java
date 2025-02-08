@@ -27,5 +27,22 @@ public class SalaryProposalService {
     public int reviewProposal(int proposalId, int approvalStatus, String refusalReason) {
         return salaryProposalRepository.updateProposalStatus(proposalId, approvalStatus, refusalReason);
     }
+    
+    public boolean updateSalary(Long employeeId, double salary) {
+        int result = salaryProposalRepository.updateSalary(employeeId, salary);
+        return result > 0;  
+    }
+
+    public double getProposedSalary(Long employeeId) {
+        List<SalaryProposals> proposals = salaryProposalRepository.getAllProposals();
+        
+        for (SalaryProposals proposal : proposals) {
+            if (proposal.getEmployeeId().equals(employeeId) && proposal.getApprovalStatus() == 1) {
+                return proposal.getProposedSalary();  
+            }
+        }
+        
+        return 0;  
+    }
 
 }

@@ -10,57 +10,89 @@
     <th:block th:insert="~{common/ad_content_first}"></th:block>
 
     <!-- ========== section start ========== -->
-    <section class="section">
-        <div class="container-fluid">
-            <!-- ========== title-wrapper start ========== -->
-            <div class="title-wrapper pt-30">
-                <div class="row align-items-center">
-                    
-                    <!-- end col -->
-                    <div class="col-md-6">
-                        <div class="breadcrumb-wrapper">
-                            <nav aria-label="breadcrumb">
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item">
-                                        <a href="#0">Dashboard</a>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">
-                                        Employee Work Schedule Management
-                                    </li>
-                                </ol>
-                            </nav>
-                        </div>
-                    </div>
-                    <!-- end col -->
-                </div>
-                <!-- end row -->
+	<!-- ========== section start ========== -->
+	<section class="section">
+	  <div class="container-fluid">
+	    <!-- ========== title-wrapper start ========== -->
+	    <div class="title-wrapper pt-30">
+	      <div class="row align-items-center">
+	        <div class="col-md-6">
+	          <div class="title">
+	            <h2>Employee Management</h2>
+	          </div>
+	        </div>
+	        <!-- end col -->
+	        <div class="col-md-6">
+	          <div class="breadcrumb-wrapper">
+	            <nav aria-label="breadcrumb">
+	              <ol class="breadcrumb">
+	                <li class="breadcrumb-item">
+	                  <a href="#0">Dashboard</a>
+	                </li>
+					<li class="breadcrumb-item active" aria-current="page">
+					 	 Admin
+						 </li>
+						 <li class="breadcrumb-item active" aria-current="page">
+						Employees
+					</li>
+					<li class="breadcrumb-item active" aria-current="page">
+									   Schedule
+						</li>
+	              </ol>
+	            </nav>
+	          </div>
+	        </div>
+	        <!-- end col -->
+	      </div>
+	      <!-- end row -->
+	    </div>
+	    <!-- ========== title-wrapper end ========== -->
 
-                    <h6>Employee Schedules</h6>
-					<form id="scheduleForm">
-					                                        <div class="form-group">
-					                                            <label for="monthYearPicker">Select Month and Year</label>
-					                                            <!-- Sử dụng input type="month" -->
-					                                            <input type="month" id="monthYearPicker" class="form-control" required>
-																<button type="button" class="btn btn-primary mt-3" onclick="createSchedulesForAllEmployees()">Tạo lịch</button>
-																				                                    
-															</div>
-					                                       </form>
-                    <!-- Calendar Picker -->
-                    <label for="datePicker">Select Date </label>
-                    <input type="date" id="datePicker" name="date" th:value="${today}">
+	    <div class="row">
+	      <div class="col-lg-12">
+	        <div class="card-style mb-30">
+	          <div class="title d-flex flex-wrap align-items-center justify-content-between">
+	            <div class="left">
+	              <h6 class="text-medium mb-30"></h6>
+	            </div>
+	            <div class="right">
+	              <div class="button-container">
+	                <button type="button" onclick="addEmployee()" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+	                  Add Schedule
+	                </button>
+					<div id="addSchedulePopup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center;">
+					    <div style="background-color: white; padding: 20px; border-radius: 5px; width: 300px; text-align: center;">
+					        <h4>Add Schedule</h4>
+					        <form id="scheduleForm">
+					            <div class="form-group">
+					                <label for="monthYearPicker">Select Month and Year</label>
+					                <input type="month" id="monthYearPicker" class="form-control" required>
+					            </div>
+					            <button type="button" class="btn btn-primary mt-3" onclick="createSchedulesForAllEmployees()">Add</button>
+					            <button type="button" onclick="closeAddSchedulePopup()" class="btn btn-secondary mt-3">Cancel</button>
+					        </form>
+					    </div>
+					</div>
+	              </div>
+	            </div>
+	          </div>
+	          <!-- End Title -->
+			  <label for="datePicker">Select Date </label>
+			                      <input type="date" id="datePicker" name="date" th:value="${today}">
 
-                    <button onclick="getSchedules()">View Employee Work Schedule</button>
+			                      <button onclick="getSchedules()">View Employee Work Schedule</button>
 
-                    <div id="scheduleList"></div>
-                </div>
-                <!-- end col -->
-            </div>
-            <!-- end row -->
-        </div>
-        <!-- end container -->
-    </section>
-    <!-- ========== section end ========== -->
+			                      <div id="scheduleList"></div>
 
+	        </div>
+	      </div>
+	      <!-- End Col -->
+	    </div>
+	    <!-- End Row -->
+	  </div>
+	  <!-- end container -->
+	</section>
+	<!-- ========== section end ========== -->
     <th:block th:insert="~{common/ad_content_footer}"></th:block>
 	
     <script>
@@ -133,7 +165,7 @@
 		                .then(response => response.json())
 		                .then(data => {
 		                    var scheduleList = document.getElementById('scheduleList');
-							if (Array.isArray(data)) {
+							if (Array.isArray(data) && data.length > 0) {
 							                scheduleList.innerHTML = `
 							                    <table class="table table-striped">
 							                        <thead>
@@ -214,7 +246,22 @@
 							    })
 							    .catch(error => console.error('Lỗi:', error));
 							}
+							function addEmployee() {
+							    console.log("Add Employee button clicked");
+							    // Hiển thị popup thêm lịch
+							    showAddSchedulePopup(); // Chuyển gọi đến hàm hiển thị popup
+							}
 
+
+							// Show the Add Schedule Popup
+							function showAddSchedulePopup() {
+							    document.getElementById('addSchedulePopup').style.display = 'flex';
+							}
+
+							// Close the Add Schedule Popup
+							function closeAddSchedulePopup() {
+							    document.getElementById('addSchedulePopup').style.display = 'none';
+							}
 
     </script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

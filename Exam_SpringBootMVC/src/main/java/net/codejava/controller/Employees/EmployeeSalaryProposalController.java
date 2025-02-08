@@ -22,7 +22,7 @@ public class EmployeeSalaryProposalController {
     }
 
     @PostMapping("/submit")
-    public String submitProposal(@RequestParam int employeeId, 
+    public String submitProposal(@RequestParam Long employeeId, 
                                  @RequestParam int proposedSalary, 
                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate, 
                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate, 

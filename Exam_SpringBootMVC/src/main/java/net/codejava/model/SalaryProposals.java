@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class SalaryProposals {
-    private int proposalId;
-    private int employeeId; 
-    private int proposedSalary;
+    private Long proposalId;
+    private Long employeeId; 
+    private double proposedSalary;
     private LocalDate fromDate;
     private LocalDate toDate;
     private int approvalStatus;
@@ -18,7 +18,7 @@ public class SalaryProposals {
 	public SalaryProposals() {
 		super();
 	}
-	public SalaryProposals(int proposalId, int employeeId, int proposedSalary, LocalDate fromDate, LocalDate toDate,
+	public SalaryProposals(Long proposalId, Long employeeId, double proposedSalary, LocalDate fromDate, LocalDate toDate,
 			int approvalStatus, LocalDateTime createdAt, String refusalReason) {
 		super();
 		this.proposalId = proposalId;
@@ -30,22 +30,22 @@ public class SalaryProposals {
 		this.createdAt = createdAt;
 		this.refusalReason = refusalReason;
 	}
-	public int getProposalId() { 
+	public Long getProposalId() { 
     	return proposalId; 
     	}
-    public void setProposalId(int proposalId) {
+    public void setProposalId(Long proposalId) {
     	this.proposalId = proposalId; 
     	}
-    public int getEmployeeId() {
+    public Long getEmployeeId() {
     	return employeeId; 
     	}
-    public void setEmployeeId(int employeeId) { 
+    public void setEmployeeId(Long employeeId) { 
     	this.employeeId = employeeId;
     	}
-    public int getProposedSalary() { 
+    public double getProposedSalary() { 
     	return proposedSalary; 
     	}
-    public void setProposedSalary(int proposedSalary) {
+    public void setProposedSalary(double proposedSalary) {
     	this.proposedSalary = proposedSalary;
     	}
     public LocalDate getFromDate() {

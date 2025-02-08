@@ -37,27 +37,61 @@ public class EmployeeContractScheduleController {
  	public String showAddSchedulePage() {
        	return "admin/ad_addschedule"; 
 	}
-   
-    
+	/*
+	 * 
+	 * @PostMapping("/createForAllEmployees") public ResponseEntity<?>
+	 * createScheduleForAllEmployees(@RequestParam("month") int
+	 * month, @RequestParam("year") int year) { try { boolean scheduleExists =
+	 * employeeScheduleService.isScheduleExist(month, year); if (scheduleExists) {
+	 * logger.info("The schedule has been created for the month: " + month +
+	 * ", year: " + year); return ResponseEntity.status(400).
+	 * body("The schedule has already been created for the month " + month +
+	 * " year " + year); }
+	 * 
+	 * logger.debug("Creating schedule for the month:  " + month + ", year: " +
+	 * year); employeeScheduleService.createSchedulesForAllEmployees(month, year);
+	 * 
+	 * logger.info("The schedule has been created for all employees."); return
+	 * ResponseEntity.ok("The schedule has been created for all employees.");
+	 * 
+	 * } catch (Exception e) { return
+	 * ResponseEntity.status(500).body("An error occurred: " + e.getMessage()); } }
+	 */
+
  	@PostMapping("/createForAllEmployees")
-    public ResponseEntity<?> createScheduleForAllEmployees(@RequestParam("month") int month, @RequestParam("year") int year) {
-        try {
-            boolean scheduleExists = employeeScheduleService.isScheduleExist(month, year);
-            if (scheduleExists) {
-                logger.info("The schedule has been created for the month: " + month + ", year: " + year);
-                return ResponseEntity.status(400).body("The schedule has already been created for the month " + month + " year " + year);
-            }
+ 	public ResponseEntity<?> createScheduleForAllEmployees(@RequestParam("month") int month, @RequestParam("year") int year) {
+ 	    try {
+ 	        // Log debug khi nhận được yêu cầu
+ 	        logger.debug("Received request to create schedule for month: {}, year: {}", month, year);
+ 	        
+ 	        // Kiểm tra xem lịch đã tồn tại cho tháng và năm này chưa
+ 	        boolean scheduleExists = employeeScheduleService.isScheduleExist(month, year);
+ 	        
+ 	        // Log debug khi kiểm tra lịch tồn tại
+ 	        logger.debug("Checking if schedule exists for month: {}, year: {}. Result: {}", month, year, scheduleExists);
+ 	        
+ 	        if (scheduleExists) {
+ 	            // Nếu lịch đã tồn tại, trả về lỗi
+ 	            logger.info("Schedule already exists for month: {}, year: {}", month, year);
+ 	            return ResponseEntity.status(400).body("Lịch đã được tạo cho tháng " + month + " năm " + year);
+ 	        }
 
-            logger.debug("Creating schedule for the month:  " + month + ", year: " + year);
-            employeeScheduleService.createSchedulesForAllEmployees(month, year);
+ 	        // Log debug khi bắt đầu tạo lịch
+ 	        logger.debug("Creating schedule for all employees for month: {}, year: {}", month, year);
+ 	        
+ 	        // Nếu chưa có lịch, tiến hành tạo lịch
+ 	        employeeScheduleService.createSchedulesForAllEmployees(month, year);
+ 	        
+ 	        // Log debug khi tạo lịch thành công
+ 	        logger.debug("Schedule created successfully for all employees for month: {}, year: {}", month, year);
 
-            logger.info("The schedule has been created for all employees.");
-            return ResponseEntity.ok("The schedule has been created for all employees.");
-
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
-        }
-    }
+ 	        return ResponseEntity.ok("Lịch đã được tạo cho tất cả nhân viên.");
+ 	    } catch (Exception e) {
+ 	        // Log lỗi nếu có ngoại lệ
+ 	        logger.error("An error occurred while creating schedule for month: {}, year: {}", month, year, e);
+ 	        return ResponseEntity.status(500).body("Đã xảy ra lỗi: " + e.getMessage());
+ 	    }
+ 	}
 
 
     @GetMapping("/{employeeId}/date")
