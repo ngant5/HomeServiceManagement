@@ -236,7 +236,7 @@ public class EmployeeServicesRepository {
                      "s.service_name, s.service_description " +
                      "FROM Employee_Services es " +
                      "JOIN Services s ON es.service_id = s.service_id " +
-                     "WHERE es.employee_id = ? AND es.status = 1";
+                     "WHERE es.employee_id = ?";
 
         return jdbcTemplate.query(sql, new Object[]{employeeId}, (rs, rowNum) -> {
             EmployeeServiceList service = new EmployeeServiceList();
@@ -252,5 +252,10 @@ public class EmployeeServicesRepository {
     }
 
 
+    public boolean updateServiceStatus(Long empServiceId, int status) {
+        String sql = "UPDATE Employee_Services SET status = ? WHERE emp_service_id = ?";
+        int rowsAffected = jdbcTemplate.update(sql, status, empServiceId);
+        return rowsAffected > 0;  
+    }
 
 }

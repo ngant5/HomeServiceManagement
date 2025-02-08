@@ -246,12 +246,12 @@
 </div>
 
 <div class="tab-content tab-4" id="employeeServicesTabContent">
-	<div class="col-lg-12">
+<!--	<div class="col-lg-12">
 	    <div class="card-style settings-card-2 mb-30">
 	        <div class="title mb-30">
 	            <h6>Employee Services List</h6>
 	        </div>
-	        <!-- Sử dụng lớp CSS mới để áp dụng quy tắc -->
+	         Sử dụng lớp CSS mới để áp dụng quy tắc 
 	        <div class="custom-table-wrapper">
 	            <table class="table custom-table">
 	                <thead>
@@ -280,7 +280,7 @@
 	            </table>
 	        </div>
 	    </div>
-	</div>
+	</div>-->
 
 </div>
 
@@ -312,98 +312,127 @@
   </section>
 
   <div th:replace="common/ad_content_footer"></div>
-  <div th:replace="common/ad_content_footer"></div>
-
   <script>
-      // Lấy tất cả các tab và tab-content
-      const tabs = document.querySelectorAll('.tab');
-      const tabContents = document.querySelectorAll('.tab-content');
+	// Lấy tất cả các tab và tab-content
+	const tabs = document.querySelectorAll('.tab');
+	const tabContents = document.querySelectorAll('.tab-content');
 
-      // Lặp qua các tab để gán sự kiện click
-      tabs.forEach(tab => {
-          tab.addEventListener('click', () => {
-              const targetTab = tab.getAttribute('data-tab');
+	// Lặp qua các tab để gán sự kiện click
+	tabs.forEach(tab => {
+	    tab.addEventListener('click', () => {
+	        const targetTab = tab.getAttribute('data-tab');
 
-              // Xóa class 'active' khỏi tất cả các tab và tab-content
-              tabs.forEach(t => t.classList.remove('active'));
-              tabContents.forEach(content => content.classList.remove('active'));
+	        // Xóa class 'active' khỏi tất cả các tab và tab-content
+	        tabs.forEach(t => t.classList.remove('active'));
+	        tabContents.forEach(content => content.classList.remove('active'));
 
-              // Thêm class 'active' vào tab và tab-content tương ứng
-              tab.classList.add('active');
-              document.querySelector(`.tab-${targetTab}`).classList.add('active');
+	        // Thêm class 'active' vào tab và tab-content tương ứng
+	        tab.classList.add('active');
+	        document.querySelector(`.tab-${targetTab}`).classList.add('active');
 
-              // Nếu là tab 4 (Employee Services List), gửi AJAX để tải dữ liệu dịch vụ của nhân viên
-              if (targetTab === '4') {
-                  const employeeId = document.getElementById('employeeId').value; // Đảm bảo `employeeId` đã được xác định
-                  console.log("Employee ID:", employeeId);
+	        // Nếu là tab 4 (Employee Services List), gửi AJAX để tải dữ liệu dịch vụ của nhân viên
+	        if (targetTab === '4') {
+	            const employeeId = document.getElementById('employeeId').value; // Đảm bảo `employeeId` đã được xác định
+	            console.log("Employee ID:", employeeId);
 
-                  if (!employeeId) {
-                      console.error('Employee ID not found');
-                      return;
-                  }
+	            if (!employeeId) {
+	                console.error('Employee ID not found');
+	                return;
+	            }
 
-                  // Gửi yêu cầu fetch để lấy dữ liệu từ server
-                  fetch(`/employees/services/list?employeeId=${employeeId}`)
-                      .then(response => response.json())  // Chắc chắn là JSON
-                      .then(data => {
-                          console.log(data);  // In dữ liệu JSON để kiểm tra
+	            // Gửi yêu cầu fetch để lấy dữ liệu từ server chỉ khi cần
+	            loadEmployeeServices(employeeId); // Hàm này sẽ tải dữ liệu dịch vụ của nhân viên
+	        }
+	    });
+	});
+	// Hàm để tải lại dịch vụ nhân viên (làm mới bảng sau khi cập nhật)
+	function loadEmployeeServices(employeeId) {
+	    fetch(`/employees/services/list?employeeId=${employeeId}`)
+	        .then(response => response.json())
+	        .then(data => {
+	            let htmlContent = `
+	                <table class="table custom-table">
+	                    <thead>
+	                        <tr>
+	                            <th scope="col">Service Name</th>
+	                            <th scope="col">Details</th>
+	                            <th scope="col">Actions</th>
+	                        </tr>
+	                    </thead>
+	                    <tbody>
+	            `;
 
-                          // Xử lý dữ liệu và hiển thị nó trong tab menu
-                          const employeeServicesTabContent = document.getElementById('employeeServicesTabContent');
-                          
-						  let htmlContent = `
-						              <table class="table custom-table">
-						                  <thead>
-						                      <tr>
-						                          <th scope="col">Service Name</th>
-						                          <th scope="col">Details</th>
-						                          <th scope="col">Actions</th>
-						                      </tr>
-						                  </thead>
-						                  <tbody>
-						          `;
+	            // Duyệt qua dữ liệu và tạo các hàng trong bảng
+	            data.forEach(service => {
+	                const buttonText = service.status === 1 ? 'Deactivate' : 'Activate';
+	                const buttonClass = service.status === 1 ? 'btn-warning' : 'btn-success';
+	                const nextStatus = service.status === 1 ? 0 : 1;
+	                htmlContent += `
+	                    <tr>
+	                        <td>${service.serviceName}</td>
+	                        <td>${service.serviceDescription || 'No details available'}</td>
+	                        <td>
+	                            <form action="/employees/services/updateStatus" method="post" id="updateStatusForm${service.empServiceId}">
+	                                <input type="hidden" name="id" value="${service.empServiceId}" />
+	                                <input type="hidden" name="status" value="${nextStatus}" />
+	                                <button type="submit" class="btn ${buttonClass}">${buttonText}</button>
+	                            </form>
+	                        </td>
+	                    </tr>
+	                `;
+	            });
 
-						          // Duyệt qua dữ liệu và tạo các hàng trong bảng
-						          data.forEach(service => {
-						              htmlContent += `
-						                  <tr>
-						                      <td>${service.serviceName}</td>
-						                      <td>${service.serviceDescription || 'No details available'}</td>
-						                      <td>
-						                          <form action="/employees/services/updateStatus" method="post">
-						                              <input type="hidden" name="id" value="${service.empServiceId}" />
-						                              <input type="hidden" name="status" value="${service.status == 1 ? 0 : 1}" />
-						                              <button type="submit" class="btn btn-warning">${service.status == 1 ? 'Deactivate' : 'Activate'}</button>
-						                          </form>
-						                      </td>
-						                  </tr>
-						              `;
-						          });
+	            if (data.length === 0) {
+	                htmlContent += `
+	                    <tr>
+	                        <td colspan="3" class="text-center">No services found.</td>
+	                    </tr>
+	                `;
+	            }
 
-						          // Nếu không có dịch vụ, hiển thị thông báo
-						          if (data.length === 0) {
-						              htmlContent += `
-						                  <tr>
-						                      <td colspan="3" class="text-center">No services found.</td>
-						                  </tr>
-						              `;
-						          }
+	            htmlContent += `</tbody></table>`;
 
-						          htmlContent += `
-						                  </tbody>
-						              </table>
-						          `;
+	            // Đưa nội dung vào tab menu
+	            document.getElementById('employeeServicesTabContent').innerHTML = htmlContent;
 
+	            // Gắn sự kiện submit cho tất cả các form để ngăn hành động mặc định và sử dụng AJAX
+	            data.forEach(service => {
+	                const form = document.getElementById(`updateStatusForm${service.empServiceId}`);
+	                form.addEventListener("submit", function(event) {
+	                    event.preventDefault();  // Ngăn chặn hành động submit mặc định
 
-                          // Đưa nội dung vào tab menu
-                          employeeServicesTabContent.innerHTML = htmlContent;
-                      })
-                      .catch(error => console.error('Error loading employee services:', error));
-              }
-          });
-      });
+	                    const empServiceId = service.empServiceId;
+	                    const status = form.querySelector('input[name="status"]').value; // Lấy status từ form
+
+	                    // Gửi yêu cầu AJAX
+	                    fetch('/employees/services/updateStatus', {
+	                        method: 'POST',
+	                        headers: {
+	                            'Content-Type': 'application/x-www-form-urlencoded',
+	                        },
+	                        body: new URLSearchParams({
+	                            id: empServiceId,
+	                            status: status
+	                        })
+	                    })
+	                    .then(response => {
+	                        if (response.ok) {
+	                            alert('Status updated successfully!');
+	                            loadEmployeeServices(employeeId);  // Load lại danh sách dịch vụ
+	                        } else {
+	                            alert('Failed to update status!');
+	                        }
+	                    })
+	                    .catch(error => {
+	                        console.error('Có lỗi xảy ra:', error);
+	                    });
+	                });
+	            });
+
+	        })
+	        .catch(error => console.error('Error loading employee services:', error));
+	}
+
   </script>
-
-
 </body>
 </html>

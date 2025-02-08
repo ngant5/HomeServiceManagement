@@ -112,5 +112,9 @@ public class EmployeeServicesService {
     public List<EmployeeServiceList> getEmployeeServices(Long employeeId) {
         return employeeServicesRepository.getEmployeeServices(employeeId);
     }
+    
+    public boolean updateServiceStatus(Long empServiceId, int status) {
+        return employeeServicesRepository.updateServiceStatus(empServiceId, status);
+    }
 
 }
