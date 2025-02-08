@@ -84,5 +84,10 @@ public class ContractDetailService {
         }
         return details;
     }
+    
+    public ContractDetails findById(Long contractDetailId) {
+        return contractDetailsRepository.findById(contractDetailId).orElse(null);
+    }
+
 
 }

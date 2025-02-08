@@ -73,6 +73,9 @@ public class EmployeeReviewsService {
     public void updateReview(EmployeeReviews review) {
         employeeReviewsRepository.updateReview(review);
     }
+    public List<EmployeeReviews> getAllReviews() {
+        return employeeReviewsRepository.findAll();
+    }
 
 
 }

@@ -103,5 +103,17 @@ public class EmployeeReviewsController {
             return ResponseEntity.ok("Review submitted successfully!");
         }
     }
+    
+    @GetMapping("/employee-reviews/all")
+    public String getAllReviews(Model model) {
+        List<EmployeeReviews> allReviews = employeeReviewsService.getAllReviews();
+        
+        System.out.println("All Reviews: " + allReviews);
+
+        model.addAttribute("allReviews", allReviews);
+        
+        return "admin/customers/cus_review"; 
+    }
+
 
 }

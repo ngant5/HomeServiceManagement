@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="../assets_admin/images/favicon.svg" type="image/x-icon" />
+    <title>Customer Management</title>
+	<th:block th:insert="~{common/head_tag}"></th:block>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+	
+
+	<style>
+	    /* Đảm bảo sao được chọn có màu vàng */
+	    .fa-star.checked {
+	        color: gold;
+	    }
+
+	    /* Đảm bảo các sao chưa được chọn có màu xám */
+	    .fa-star {
+	        color: gray;
+	    }
+	</style>
+</head>
+<body>
+	<th:block th:insert="~{common/ad_content_first}"></th:block>
+	
+    <!-- ========== section start ========== -->
+    <section class="section">
+        <div class="container-fluid">
+            <!-- ========== title-wrapper start ========== -->
+            <div class="title-wrapper pt-30">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="title">
+                            <h2>Customer Reviews Management</h2>
+                        </div>
+                    </div>
+                    <!-- end col -->
+                    <div class="col-md-6">
+                        <div class="breadcrumb-wrapper">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a href="#0">Dashboard</a>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">Admin</li>
+                                    <li class="breadcrumb-item active" aria-current="page">Customer</li>
+                                    <li class="breadcrumb-item active" aria-current="page">Reviews</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                    <!-- end col -->
+                </div>
+                <!-- end row -->
+            </div>
+            <!-- ========== title-wrapper end ========== -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card-style mb-30">
+                        <div class="title d-flex flex-wrap align-items-center justify-content-between">
+                            <div class="right">
+                                <div class="select-style-1">
+                                    <div class="select-position select-sm">
+                                        <select class="light-bg">
+                                            <option value="">Today</option>
+                                            <option value="">Yesterday</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- end select -->
+                            </div>
+                        </div>
+                        <!-- End Title -->
+                        <div class="table-responsive">
+                            <table class="table top-selling-table">
+								<thead>
+								            <tr>
+								                <th>No.</th>
+								                <th>Rating</th>
+								                <th>Comment</th>
+								                <th>Created At</th>
+												<th>View Info</th>
+								            </tr>
+								        </thead>
+								        <tbody>
+								            <tr th:each="review, iterStat : ${allReviews}">
+								                <td th:text="${iterStat.index + 1}"></td> 
+												<td>
+												    <span th:each="i : ${#numbers.sequence(1, 5)}">
+												        <i class="fa fa-star"
+												           th:classappend="${i <= review.rating} ? ' checked' : ''"></i>
+												    </span>
+												</td>
+								                <td th:text="${review.comment}"></td>
+												<td th:text="${#dates.format(review.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+												<td>
+												        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#contractDetailModal" 
+												                th:data-contractDetailId="${review.contractDetailId}">
+												            View Info
+												        </button>
+												    </td>
+
+											</tr>
+								        </tbody>
+                            </table>
+                            <!-- End Table -->
+                        </div>
+                    </div>
+                </div>
+                <!-- End Col -->
+            </div>
+            <!-- End Row -->
+        </div>
+		<!-- Modal hiển thị chi tiết hợp đồng -->
+		<div class="modal fade" id="contractDetailModal" tabindex="-1" aria-labelledby="contractDetailModalLabel" aria-hidden="true">
+		    <div class="modal-dialog">
+		        <div class="modal-content">
+		            <div class="modal-header">
+		                <h5 class="modal-title" id="contractDetailModalLabel">Contract Details</h5>
+		                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		            </div>
+		            <div class="modal-body">
+		               <div id="contractDetailContent">
+					</div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+
+        <!-- end container -->
+    </section>
+    <!-- ========== section end ========== -->
+
+    <th:block th:insert="~{common/ad_content_footer}"></th:block>
+	<!-- Thêm jQuery vào trước tất cả các đoạn mã JavaScript của bạn -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+	<script>
+		$(document).ready(function() {
+				    // Kiểm tra xem phần tử calendar có tồn tại không
+				    if ($('#calendar').length) {
+				        $('#calendar').fullCalendar({
+				            // Cấu hình của fullcalendar
+				        });
+				    }
+
+				    // Kiểm tra xem phần tử vmap có tồn tại không
+				    if ($('#vmap').length) {
+				        $('#vmap').vectorMap({
+				            // Cấu hình của jvectormap
+				        });
+				    }
+
+					// Lắng nghe sự kiện khi modal được mở
+					$('#contractDetailModal').on('show.bs.modal', function (event) {
+					    var button = $(event.relatedTarget); // Nút được nhấn
+					    var contractDetailId = button.data('contractdetailid'); // Lấy contractDetailId từ data attribute
+
+					    // In giá trị contractDetailId ra console để kiểm tra
+					    console.log("Contract Detail ID: ", contractDetailId); 
+
+					    // Kiểm tra xem contractDetailId có tồn tại không
+					    if (!contractDetailId) {
+					        console.error("contractDetailId không tồn tại!");
+					        return;
+					    }
+
+					    // Gọi API để lấy thông tin chi tiết hợp đồng từ controller
+					    $.get("/contractDetails/" + contractDetailId, function(data) {
+					        // Kiểm tra dữ liệu trả về từ API
+					        if (data) {
+					            // Hiển thị thông tin hợp đồng trong modal
+					            var content = `
+					                <h5>Contract ID: ${data.contractDetailId}</h5>
+					                
+					            `;
+					            $('#contractDetailContent').html(content);
+					        } else {
+					            console.error("Không tìm thấy dữ liệu hợp đồng.");
+					        }
+					    }).fail(function() {
+					        console.error("Gọi API thất bại.");
+					    });
+					});
+
+		$('i.fa-star').each(function() {
+		    var starIndex = $(this).siblings().index($(this)) + 1; // Tính index của sao
+		    var rating = $(this).closest('tr').data('rating');  // Lấy rating từ data attribute của tr
+
+		    // Kiểm tra rating trước khi sử dụng
+		    if (rating !== undefined) {
+		        console.log('Star index:', starIndex);
+		        console.log('Review rating:', rating);
+		        if ($(this).hasClass('checked')) {
+		            console.log('Star ' + starIndex + ' is checked for rating ' + rating);
+		        } else {
+		            console.log('Star ' + starIndex + ' is NOT checked for rating ' + rating);
+		        }
+		    } else {
+		        console.log('Rating is undefined for this review.');
+		    }
+		});
+
+		</script>
+
+
+
+</body>
+</html>

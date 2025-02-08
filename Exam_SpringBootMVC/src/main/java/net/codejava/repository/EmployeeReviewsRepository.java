@@ -69,5 +69,10 @@ public class EmployeeReviewsRepository {
         jdbcTemplate.update(sql, review.getRating(), review.getComment(), review.getCreatedAt(),
                             review.getContractDetailId(), review.getEmployeeId());
     }
+    
+    public List<EmployeeReviews> findAll() {
+        String sql = "SELECT * FROM Employee_Reviews";
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(EmployeeReviews.class));
+    }
 
 }

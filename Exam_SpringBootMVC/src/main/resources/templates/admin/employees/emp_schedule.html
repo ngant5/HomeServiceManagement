@@ -18,7 +18,7 @@
 	      <div class="row align-items-center">
 	        <div class="col-md-6">
 	          <div class="title">
-	            <h2>Employee Management</h2>
+	            <h2>Employee Work Schedule Management</h2>
 	          </div>
 	        </div>
 	        <!-- end col -->
@@ -80,7 +80,7 @@
 			  <label for="datePicker">Select Date </label>
 			                      <input type="date" id="datePicker" name="date" th:value="${today}">
 
-			                      <button onclick="getSchedules()">View Employee Work Schedule</button>
+			                      <button onclick="getSchedules()">Show Schedule</button>
 
 			                      <div id="scheduleList"></div>
 
@@ -113,6 +113,12 @@
             const monthPicker = document.getElementById('monthYearPicker');
             monthPicker.min = minDate;
             monthPicker.max = maxDate;
+			
+			const datePicker = document.getElementById('datePicker');
+			datePicker.value = currentDate.toISOString().split('T')[0];
+
+			getSchedules();
+
         });
 
         function createSchedulesForAllEmployees() {

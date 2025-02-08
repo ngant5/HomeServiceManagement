@@ -13,6 +13,8 @@ import net.codejava.service.EmployeeContractScheduleService;
 import net.codejava.service.EmployeeServicesService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -180,4 +182,17 @@ public class ContractDetailController {
         // Gọi service để cập nhật hoặc tạo mới
         return contractDetailService.updateContractDetail(contractDetail);  // Trả về bản ghi hợp đồng đã được cập nhật hoặc tạo mới
     }
+    @GetMapping("/{contractDetailId}")
+    public ResponseEntity<ContractDetails> getContractDetail(@PathVariable Long contractDetailId) {
+        System.out.println("Fetching contract details for ID: " + contractDetailId);  // Log ID nhận được
+        ContractDetails contractDetail = contractDetailService.findById(contractDetailId);
+        
+        if (contractDetail == null) {
+            System.out.println("Contract not found for ID: " + contractDetailId);  // Log nếu không tìm thấy hợp đồng
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        
+        return ResponseEntity.ok(contractDetail);
+    }
+
 }

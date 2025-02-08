@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ContractDetailsRepository {
@@ -136,5 +137,15 @@ public class ContractDetailsRepository {
     }
     
 
-   
+    public Optional<ContractDetails> findById(Long id) {
+        String sql = "SELECT * FROM Contract_Details WHERE contract_detail_id = ?";
+        try {
+            ContractDetails contractDetail = jdbcTemplate.queryForObject(sql, this::mapRowToContractDetail, id);
+            return Optional.ofNullable(contractDetail);
+        } catch (EmptyResultDataAccessException e) {
+            logger.warn("No contract details found for contract_detail_id: {}", id);
+            return Optional.empty();
+        }
+    }
+
 }
