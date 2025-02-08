@@ -52,7 +52,9 @@
 									<input type="text" th:if="${proposal.approvalStatus == 0}" name="refusalReason"
 										placeholder="Reason if rejected" />
 								</form>
-								 <span th:if="${proposal.approvalStatus == 2 or proposal.approvalStatus == 1}" style="color: red;">Done</span>
+								 <strong><span th:if="${proposal.approvalStatus == 2 or proposal.approvalStatus == 1}" style="color: green;">
+									Done
+								</span></strong>
 							</td>
 						</tr>
 					</tbody>

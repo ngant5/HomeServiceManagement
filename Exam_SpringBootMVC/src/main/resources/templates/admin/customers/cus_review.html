@@ -21,6 +21,57 @@
 	    .fa-star {
 	        color: gray;
 	    }
+		
+		/* Modal content */
+		.contract-detail-modal {
+		    font-family: Arial, sans-serif;
+		    color: #333;
+		}
+
+		.contract-detail-modal h5 {
+		    font-size: 1.5rem;
+		    margin-bottom: 1rem;
+		    color: #007bff;
+		    font-weight: bold;
+		}
+
+		.contract-detail-modal p {
+		    font-size: 1.1rem;
+		    margin: 0.5rem 0;
+		    padding: 0.3rem;
+		}
+
+		.contract-detail-modal strong {
+		    color: #007bff;
+		}
+
+		/* Border style for each contract detail */
+		.contract-detail-modal p {
+		    border-bottom: 1px solid #ddd;
+		}
+
+		/* Style for the modal close button */
+		.modal-header .btn-close {
+		    border: none;
+		    background-color: transparent;
+		    font-size: 1.5rem;
+		    color: #007bff;
+		}
+
+		.modal-header .btn-close:hover {
+		    color: #0056b3;
+		}
+
+		/* Modal body padding */
+		.modal-body {
+		    padding: 2rem;
+		}
+
+		/* If you want to add some spacing between paragraphs */
+		.contract-detail-modal p + p {
+		    margin-top: 1rem;
+		}
+
 	</style>
 </head>
 <body>
@@ -97,6 +148,8 @@
 								                <td th:text="${review.comment}"></td>
 												<td th:text="${#dates.format(review.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
 												<td>
+													<input type="hidden" id="contractDetailId" value="${review.contractDetailId}">
+
 												        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#contractDetailModal" 
 												                th:data-contractDetailId="${review.contractDetailId}">
 												            View Info
@@ -169,13 +222,26 @@
 					    }
 
 					    // Gọi API để lấy thông tin chi tiết hợp đồng từ controller
-					    $.get("/contractDetails/" + contractDetailId, function(data) {
-					        // Kiểm tra dữ liệu trả về từ API
+					    $.get("/contractDetails/detail/" + contractDetailId, function(data) {
+					        console.log("Data from API: ", data); 
 					        if (data) {
 					            // Hiển thị thông tin hợp đồng trong modal
 					            var content = `
-					                <h5>Contract ID: ${data.contractDetailId}</h5>
-					                
+								start
+								end
+								hours worked
+								total price
+								address
+								phone
+								<div class="contract-detail-modal">
+									<p><strong>Start Date:</strong> ${data.startDate}</p>
+									<p><strong>End Date:</strong> ${data.endDate}</p>
+									<p><strong>Hours Worked:</strong> ${data.hoursWorked}</p>
+									<p><strong>Total Price:</strong> ${data.totalPrice}</p>
+								  	<p><strong>Service Address:</strong> ${data.serviceAddress}</p>
+								 	<p><strong>Service Phone:</strong> ${data.servicePhone}</p>
+								</div>
+
 					            `;
 					            $('#contractDetailContent').html(content);
 					        } else {
@@ -203,7 +269,7 @@
 		        console.log('Rating is undefined for this review.');
 		    }
 		});
-
+	});
 		</script>
 
 

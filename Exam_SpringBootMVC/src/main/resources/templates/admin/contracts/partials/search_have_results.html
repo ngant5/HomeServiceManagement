@@ -1,53 +1,76 @@
-<tr th:fragment="contractTable" th:each="contract, iterStat : ${contracts}" >
-        <td th:text="${iterStat.index + 1}"></td>
-        <td th:text="${contract.customer.fullname}"></td>
-        <td th:text="${contract.totalPrice}"></td>
-        <td th:text="${contract.paymentStatus == 0 ? 'Unpaid' : 
-                       contract.paymentStatus == 1 ? 'Paid' : 
-                       'Unknown'}"></td>
-        <td th:text="${contract.contractStatus == 0 ? 'Requested' : 
-                       contract.contractStatus == 1 ? 'Wait for Employee Confirm' :
-                       contract.contractStatus == 2 ? 'Employee Confirmed' : 
-                       contract.contractStatus == 3 ? 'In Progress' : 
-                       contract.contractStatus == 4 ? 'Done' : 
-                       contract.contractStatus == 5 ? 'Completed' : 
-                       'Unknown'}"></td>
-        <td th:text="${#temporals.format(contract.contractDetail.startDate, 'yyyy-MM-dd')}"></td>
-        <td th:text="${#temporals.format(contract.contractDetail.endDate, 'yyyy-MM-dd')}"></td>
-		<td>
-		         <form th:action="@{/admin/contracts/updateStatus/{contractId}(contractId=${contract.contractId})}" method="post">      
-		             <button type="submit" class="btn btn-success mt-2" name="status" value="1" th:if="${contract.contractStatus == 0}">Approve</button>	         
-		         </form>
-<div>
-	<span th:if="${contract.contractStatus == 1}" style="font-size: 0.8rem; color: #6c757d; white-space: normal;">
-			                 Wait for<br>Employee<br>Confirm
-			             </span>  
-</div>
-		         <div class="upload-btn" th:if="${contract.contractStatus == 2}">
-		             <form th:id="'uploadForm_' + ${contract.contractId}" enctype="multipart/form-data">
-		                 <span class="d-block mt-2">
-		                     <span th:if="${contract.contractFile != null && contract.contractFile != ''}">
-		                         <a target="_blank" th:href="@{/admin/contracts/view-file/{contractId}(contractId=${contract.contractId})}" class="text-info" th:text="${contract.contractFile}"></a>
-		                     </span>
-		                     <span th:if="${contract.contractFile == null || contract.contractFile == ''}">
-		                         No file selected
-		                     </span>
-		                 </span>
 
-		                 <label th:for="'contractFile_' + ${contract.contractId}" class="btn btn-secondary mt-2" th:id="'fileButton_' + ${contract.contractId}">
-		                     Choose File
-		                 </label>
-		                 <input type="file" th:id="'contractFile_' + ${contract.contractId}" name="contractFile" accept=".pdf" style="display: none;" />
-		                 <input type="hidden" th:id="'contractId_' + ${contract.contractId}" name="contractId" th:value="${contract.contractId}" />
-		                 <button type="submit" class="btn btn-secondary mt-2" th:id="'uploadButton_' + ${contract.contractId}" disabled>Upload</button>
-		             </form>
-		             <div id="uploadMessage"></div>
-		         </div>
 
-		         <div class="view-file-btn" th:if="${contract.contractStatus == 3}">
-		             <a target="_blank" th:href="@{/admin/contracts/view-file/{contractId}(contractId=${contract.contractId})}" class="btn btn-info mt-2">View File</a>
-		         </div>
-		     </td>
-    </tr>
-	
-	
+<tr th:fragment="contractTable" th:each="contract, iterStat : ${contracts}">
+    <td th:text="${iterStat.index + 1}"></td>
+    <td th:text="${contract.customer.fullname}"></td>
+    <td th:text="${contract.totalPrice}"></td>
+
+    <!-- Payment Status -->
+    <td th:text="${contract.paymentStatus == 0 ? 'Unpaid' : 
+                   contract.paymentStatus == 1 ? 'Paid' : 
+                   'Unknown'}"
+        th:classappend="${contract.paymentStatus == 0 ? 'payment-unpaid' : 
+                        contract.paymentStatus == 1 ? 'payment-paid' : ''}">
+    </td>
+
+    <!-- Contract Status -->
+    <td th:text="${contract.contractStatus == 0 ? 'Requested' : 
+                   contract.contractStatus == 1 ? 'Wait for Employee Confirm' :
+                   contract.contractStatus == 2 ? 'Employee Confirmed' : 
+                   contract.contractStatus == 3 ? 'In Progress' : 
+                   contract.contractStatus == 4 ? 'Done' : 
+                   contract.contractStatus == 5 ? 'Completed' : 
+                   'Unknown'}"
+        th:classappend="${contract.contractStatus == 0 ? 'status-requested' :
+                        contract.contractStatus == 1 ? 'status-employee-confirmed' : 
+                        contract.contractStatus == 2 ? 'status-employee-confirmed' : 
+                        contract.contractStatus == 3 ? 'status-in-progress' : 
+                        contract.contractStatus == 4 ? 'status-done' : 
+                        contract.contractStatus == 5 ? 'status-completed' : ''}">
+    </td>
+
+    <td th:text="${#temporals.format(contract.contractDetail.startDate, 'yyyy-MM-dd')}"></td>
+    <td th:text="${#temporals.format(contract.contractDetail.endDate, 'yyyy-MM-dd')}"></td>
+    
+    <!-- Action buttons -->
+    <td>
+        <form th:action="@{/admin/contracts/updateStatus/{contractId}(contractId=${contract.contractId})}" method="post">      
+            <button type="submit" class="btn btn-success mt-2" name="status" value="1" th:if="${contract.contractStatus == 0}">Approve</button>         
+        </form>
+        <div>
+            <span th:if="${contract.contractStatus == 1}" style="font-size: 0.8rem; color: #6c757d; white-space: normal;">
+                Wait for Employee Confirm
+            </span>  
+        </div>
+        <div class="upload-btn" th:if="${contract.contractStatus == 2}">
+            <form th:id="'uploadForm_' + ${contract.contractId}" enctype="multipart/form-data">
+                <span class="d-block mt-2">
+                    <span th:if="${contract.contractFile != null && contract.contractFile != ''}">
+                        <a target="_blank" th:href="@{/admin/contracts/view-file/{contractId}(contractId=${contract.contractId})}" class="text-info" th:text="${contract.contractFile}"></a>
+                    </span>
+                    <span th:if="${contract.contractFile == null || contract.contractFile == ''}">
+                        No file selected
+                    </span>
+                </span>
+                <label th:for="'contractFile_' + ${contract.contractId}" class="btn btn-secondary mt-2" th:id="'fileButton_' + ${contract.contractId}">
+                    Choose File
+                </label>
+                <input type="file" th:id="'contractFile_' + ${contract.contractId}" name="contractFile" accept=".pdf" style="display: none;" />
+                <input type="hidden" th:id="'contractId_' + ${contract.contractId}" name="contractId" th:value="${contract.contractId}" />
+                <button type="submit" class="btn btn-secondary mt-2" th:id="'uploadButton_' + ${contract.contractId}" disabled>Upload</button>
+            </form>
+            <div id="uploadMessage"></div>
+        </div>
+        
+        <!-- Other Status views -->
+        <div class="view-file-btn" th:if="${contract.contractStatus == 3}">
+            <a target="_blank" th:href="@{/admin/contracts/view-file/{contractId}(contractId=${contract.contractId})}" class="btn btn-info mt-2">View File</a>
+        </div>
+        <div class="view-file-btn" th:if="${contract.contractStatus == 4}">
+            <a target="_blank" th:href="@{/admin/contracts/view-file/{contractId}(contractId=${contract.contractId})}" class="btn btn-info mt-2">View File</a>
+        </div>
+        <div class="view-file-btn" th:if="${contract.contractStatus == 5}">
+            <a target="_blank" th:href="@{/admin/contracts/view-file/{contractId}(contractId=${contract.contractId})}" class="btn btn-info mt-2">View File</a>
+        </div>
+    </td>
+</tr>

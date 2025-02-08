@@ -169,29 +169,13 @@ public class ContractDetailController {
         }
         return employeeServicesList;
     }
-
-
-
-    @PostMapping("/update/{contractDetailId}")
-    @ResponseBody
-    public ContractDetails updateContractDetail(@PathVariable int contractDetailId, 
-                                                @RequestBody ContractDetails contractDetail) {
-        // Gán contractDetailId từ URL vào đối tượng contractDetail nhận từ request body
-        contractDetail.setContractDetailId(contractDetailId);
-
-        // Gọi service để cập nhật hoặc tạo mới
-        return contractDetailService.updateContractDetail(contractDetail);  // Trả về bản ghi hợp đồng đã được cập nhật hoặc tạo mới
-    }
-    @GetMapping("/{contractDetailId}")
+    
+    @GetMapping("/detail/{contractDetailId}")
     public ResponseEntity<ContractDetails> getContractDetail(@PathVariable Long contractDetailId) {
-        System.out.println("Fetching contract details for ID: " + contractDetailId);  // Log ID nhận được
         ContractDetails contractDetail = contractDetailService.findById(contractDetailId);
-        
         if (contractDetail == null) {
-            System.out.println("Contract not found for ID: " + contractDetailId);  // Log nếu không tìm thấy hợp đồng
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        
         return ResponseEntity.ok(contractDetail);
     }
 
