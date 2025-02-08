@@ -116,7 +116,10 @@ public class ContractService {
         contractRepository.updateContractPaymentStatus(contractId, paymentStatus);
     }
     
-    
+    public List<Contracts> getContractsByStatus(int status) {
+    	return contractRepository.getContractsByStatus(status);
+    }
+
     
 
 

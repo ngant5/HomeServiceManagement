@@ -205,5 +205,29 @@ public class AdminContractController {
     }
     
     
+    @GetMapping("/new")
+    public String getAllContracts(HttpServletRequest request, Model model) {
+        // Lấy tất cả hợp đồng có status = 0
+        List<Contracts> contracts = contractService.getContractsByStatus(0);
+        
+        for (Contracts contract : contracts) {
+            Customers customer = customerService.findById(contract.getCustomerId());
+            contract.setCustomer(customer);
+        }
+
+        model.addAttribute("contracts", contracts);
+        model.addAttribute("noResultsMessage", contracts.isEmpty() ? "No results found" : null);
+
+        if (request.getHeader("X-Requested-With") != null && request.getHeader("X-Requested-With").equals("XMLHttpRequest")) {
+            if (contracts != null && !contracts.isEmpty()) {
+                return "admin/contracts/partials/search_have_results :: contractTable";
+            } else {
+                return "admin/contracts/partials/search_no_result :: contractNoTable";
+            }
+        }
+
+        return "admin/contracts/con_new";
+    }
+
    
 }

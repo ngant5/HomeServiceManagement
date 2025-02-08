@@ -210,4 +210,16 @@ public class ContractRepository {
         String sql = "UPDATE Contracts SET payment_status = ? WHERE contract_id = ?";
         jdbcTemplate.update(sql, payment_status, contractId);
     }
+	
+	public List<Contracts> getContractsByStatus(int status) {
+	    String sql = "SELECT c.contract_id, c.customer_id, c.contract_status, c.total_price, c.payment_status, "
+	               + "c.created_at, c.contract_file, cd.start_date, cd.end_date "
+	               + "FROM Contracts c "
+	               + "JOIN Contract_Details cd ON c.contract_id = cd.contract_id "
+	               + "WHERE c.contract_status = ? "
+	               + "ORDER BY c.created_at DESC";
+
+	    return jdbcTemplate.query(sql, new Object[]{status}, this::mapRowToContract);
+	}
+
 }
